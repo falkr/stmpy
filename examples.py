@@ -89,12 +89,34 @@ def test_ping_pong():
 
     scheduler.add_stm(stm_ping)
     scheduler.add_stm(stm_pong)
-    scheduler.start(max_transitions=10)
+    scheduler.start(max_transitions=100)
+    print('scheduler started')
+
+    scheduler.wait_until_finished()
+
+
+class Busy:
+
+    def on_busy(self):
+        #self.count = self.count + 1
+        #print('Busy! {}'.format(self.count))
+        print('Busy!')
+        self.stm.add_event('busy')
+
+
+def test_busy():
+    busy = Busy()
+    t = {'event':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
+    stm_busy = StateMachine(state='s_busy', transitions=[t], obj=busy, id='stm_busy', initial='on_busy')
+    busy.stm = stm_busy
+
+    scheduler = Scheduler()
+    scheduler.add_stm(stm_busy)
+    scheduler.start(max_transitions=100)
     print('scheduler started')
 
     scheduler.wait_until_finished()
 
 
 
-
-test_ping_pong()
+test_busy()

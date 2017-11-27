@@ -68,7 +68,7 @@ class StateMachine:
 
 
     def add_event(self, event_id, data=None):
-        self.scheduler.add_event(event_id, data, self)
+        self.scheduler._add_event(event_id, data, self)
 
 
 class _Transition:

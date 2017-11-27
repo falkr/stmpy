@@ -1,6 +1,6 @@
 # State Machines in Python
 
-This a simple implementation for state machines in Python. State machines define their logic in terms of states and transitions. Transitions are triggered by general event or the expirations or timers. The following features are supported:
+This is a simple implementation for state machines in Python. State machines define their logic in terms of states and transitions. Transitions are triggered by general event or the expirations or timers. The following features are supported:
 
 - states and transitions
 - transitions with action(s)
