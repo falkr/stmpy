@@ -19,7 +19,7 @@ class StateMachine:
             self._table[t_id] = transition
 
 
-    def __init__(self, first_state, transitions, obj, stm_id, initial_effects=[]):
+    def __init__(self, first_state, transitions, obj, stm_id, initial_effects=''):
         self._first_state = first_state
         self._state = None
         self._obj = obj
@@ -88,8 +88,13 @@ class StateMachine:
 
 
     def send_signal(self, signal_id, args=[], kwargs={}):
-        print('Add signal {}'.format(signal_id))
-        self._scheduler._add_event(signal_id, args, kwargs, self)
+        """
+        Send a signal to this state machine.
+
+        Note: To send a signal to a machine by its stm_id, use the method in the
+        scheduler.
+        """
+        self._scheduler._add_event(event_id=signal_id, args=args, kwargs=kwargs, stm=self)
 
 
     def terminate(self):

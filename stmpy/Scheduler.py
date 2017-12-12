@@ -10,6 +10,16 @@ from queue import Empty
 def _current_time_millis():
     return int(round(time.time() * 1000))
 
+class IterableQueue():
+    def __init__(self,source_queue):
+            self.source_queue = source_queue
+    def __iter__(self):
+        while True:
+            try:
+               yield self.source_queue.get_nowait()
+            except Empty:
+               return
+
 
 class Scheduler:
 
@@ -26,6 +36,20 @@ class Scheduler:
         Scheduler._stms_by_id = {}
 
 
+    def print_state(self):
+        print('=== State Machines: ===')
+        for stm_id in Scheduler._stms_by_id:
+            stm = Scheduler._stms_by_id[stm_id]
+            print('    - {} in state {}'.format(stm.id, stm.state))
+        print('=== Events in Queue: ===')
+        #print('Queue: {}'.format(self._event_queue))
+        for event in IterableQueue(self._event_queue):
+            if event is not None:
+                print('    - {} for {} with args:{} kwargs:{}'.format(event['id'], event['stm'].id, event['args'], event['kwargs']))
+        print('=== Active Timers: ===')
+        for timer in self._timer_queue:
+            print('    - {} for {} with timeout {}'.format(timer['id'], timer['stm'].id, timer['timeout']))
+
     def add_stm(self, stm):
         """
         Add the state machine to this scheduler.
@@ -36,9 +60,9 @@ class Scheduler:
         if stm.id is not None:
             # TODO warning when STM already registered
             Scheduler._stms_by_id[stm.id] = stm
-            self._event_queue.put({'id': None, 'stm': stm})
+            self._event_queue.put({'id': None, 'stm': stm, 'args': [], 'kwargs': {}})
 
-    def start(self, max_transitions=None, keep_active=False):
+    def start(self, max_transitions=None, keep_active=False, block=True):
         """
         max_transitions: execute only this number of transitions, then stop
         keep_active: When true, keep the scheduler running even when all state machines terminated
@@ -48,6 +72,12 @@ class Scheduler:
         self._keep_active = keep_active
         self.thread = Thread(target = self._start_loop)
         self.thread.start()
+        if block:
+            self.thread.join()
+
+
+    def step(self, steps=1):
+        self.start(max_transitions=steps, block=True)
 
     def stop(self):
         self._active = False
@@ -85,6 +115,8 @@ class Scheduler:
                 # not necessary to set next timeout, complete check timers will be called again
             else:
                 self._next_timeout = (timer['timeout_abs'] -  _current_time_millis()) / 1000
+                if self._next_timeout<0:
+                    self._next_timeout = 0
         else:
             self._next_timeout = None
 
@@ -94,7 +126,7 @@ class Scheduler:
         self._event_queue.put({'id': event_id, 'args': args, 'kwargs':kwargs, 'stm': stm})
 
 
-    def send_signal(self, stm_id, signal_id, args=[], kwargs={}):
+    def send_signal(self, signal_id, stm_id, args=[], kwargs={}):
         """
         Send a signal to a state machine handled by this scheduler. If you have
         a reference to the state machine, you can also send it directly to it by
@@ -113,10 +145,9 @@ class Scheduler:
         Scheduler._stms_by_id.pop(stm_id, None)
 
 
-    def _execute_transition(self, stm, id, args, kwargs):
-        stm._execute_transition(id, args, kwargs)
+    def _execute_transition(self, stm, event_id, args, kwargs):
+        stm._execute_transition(event_id, args, kwargs)
         if self._max_transitions is not None:
-            print('checking max {}'.format(self._max_transitions))
             self._max_transitions = self._max_transitions-1
             if self._max_transitions == 0:
                 self._active = False
@@ -129,16 +160,14 @@ class Scheduler:
             # check timer queue, if a timer expired
             self._check_timers()
             try:
-                print("Wait for next event, {} sec max.".format(self._next_timeout))
+                #print("Wait for next event, {} sec max.".format(self._next_timeout))
                 event = self._event_queue.get(block=True, timeout=(self._next_timeout))
                 if event is None:
                     # somebody added a timer, or shutdown the scheduler
-                    print("Event queue interrupted None Event")
+                    pass
                 else:
-                    self._execute_transition(event['stm'], event['id'], event['args'], event['kwargs'])
-                    print('after execute {}'.format(Scheduler._stms_by_id))
+                    self._execute_transition(stm=event['stm'], event_id=event['id'], args=event['args'], kwargs=event['kwargs'])
                     if not Scheduler._stms_by_id and not self._keep_active: # no more state machines
-                        print('after execute and terminate')
                         self._active = False
             except Empty:
                 # timeout has occured

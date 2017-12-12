@@ -48,7 +48,7 @@ class Pong:
         pass
 
     def on_timeout(self):
-        self.stm.scheduler.send_event('stm_ping', 'pong')
+        self.stm.scheduler.send_signal('pong', 'stm_ping')
 
     def on_ping(self):
         print('Ping!')
@@ -65,7 +65,7 @@ class Ping:
         self.stm.start_timer('t', 1000)
 
     def on_timeout(self):
-        self.stm.send_signal('stm_pong', 'ping')
+        self.stm.scheduler.send_signal('ping', 'stm_pong')
 
     def on_pong(self):
         print('Pong!')
@@ -79,23 +79,28 @@ def test_ping_pong():
     ping = Ping()
     t1 = {'trigger':'t',    'source':'s_1', 'target':'s_2', 'effect':'on_timeout'}
     t2 = {'trigger':'pong', 'source':'s_2', 'target':'s_1', 'effect':'on_pong'}
-    stm_ping = StateMachine(state='s_1', transitions=[t1, t2], obj=ping, id='stm_ping', initial='on_init')
+    stm_ping = StateMachine(first_state='s_1', transitions=[t1, t2], obj=ping, stm_id='stm_ping', initial_effects='on_init')
     ping.stm = stm_ping
 
     pong = Pong()
     t1 = {'trigger':'t',    'source':'s_2', 'target':'s_1', 'effect':'on_timeout'}
     t2 = {'trigger':'ping', 'source':'s_1', 'target':'s_2', 'effect':'on_ping'}
-    stm_pong = StateMachine(state='s_1', transitions=[t1, t2], obj=pong, id='stm_pong')
+    stm_pong = StateMachine(first_state='s_1', transitions=[t1, t2], obj=pong, stm_id='stm_pong')
     pong.stm = stm_pong
 
     scheduler.add_stm(stm_ping)
     scheduler.add_stm(stm_pong)
-    scheduler.start(max_transitions=100)
+
+    scheduler.step(steps=4)
+    scheduler.print_state()
+    scheduler.step()
+    scheduler.print_state()
+
     print('scheduler started')
 
-    scheduler.wait_until_finished()
 
-#test_ping_pong()
+
+test_ping_pong()
 
 
 class Busy:
@@ -173,5 +178,5 @@ def test_image():
     panel.pack(side = "bottom", fill = "both", expand = "yes")
     root.mainloop()
 
-test_button()
+#test_button()
 #test_image()
