@@ -5,28 +5,40 @@ def _tid(state_id, event_id):
 
 class StateMachine:
 
-    def _parse_Transitions(self, transitions):
+    def _parse_transitions(self, transitions):
         for transition_string in transitions:
             t_dict = transition_string #ast.literal_eval(transition_string)
             # TODO error handling: string may be written in a wrong way
             trigger = t_dict['trigger']
             source = t_dict['source']
             target = t_dict['target']
-            effect = t_dict['effect']
+            if 'effect' in t_dict:
+                effect = t_dict['effect']
+            else:
+                effect = ''
             t_id = _tid(source, trigger)
             transition = _Transition(trigger, source, target, effect)
             # TODO error handling: what if several transition with same id start from same source state?
             self._table[t_id] = transition
 
+    def _parse_states(self, states):
+        for s_dict in states:
+            entry = s_dict['entry']
+            exit = s_dict['exit']
+            name = s_dict['name']
+            self._states[name] = _State(entry, exit)
 
-    def __init__(self, first_state, transitions, obj, stm_id, initial_effects=''):
+
+    def __init__(self, first_state, transitions, obj, stm_id, initial_effects='', states=[]):
         self._first_state = first_state
         self._state = None
         self._obj = obj
         self._initial_effects = initial_effects.split()
         self._id = stm_id
         self._table = {}
-        self._parse_Transitions(transitions)
+        self._states = {}
+        self._parse_states(states)
+        self._parse_transitions(transitions)
 
 
     @property
@@ -57,6 +69,21 @@ class StateMachine:
         # run initial transition
 
 
+    def _enter_state(self, state):
+        # execute any entry actions
+        if state in self._states:
+            for entry in self._states[state].entry:
+                self._run_function(self._obj, entry, args=[], kwargs={})
+        self._state = state
+        print('state --> {}'.format(self._state))
+
+
+    def _exit_state(self, state):
+        # execute any exit actions
+        if state in self._states:
+            for exit in self._states[state].exit:
+                self._run_function(self._obj, exit, args=[], kwargs={})
+
 
     def _execute_transition(self, event_id, args, kwargs):
         # execute the initial transition
@@ -64,7 +91,7 @@ class StateMachine:
             if self._initial_effects is not None:
                 for function in self._initial_effects:
                     self._run_function(self._obj, function, args=[], kwargs={})
-            self._state = self._first_state
+            self._enter_state(self._first_state)
         else:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
@@ -72,12 +99,11 @@ class StateMachine:
                 print('Error: State machine is in state {} and received event {}, but no transition with this event is declared! {} '.format(self._state, event_id, self._table))
             else:
                 transition = self._table[t_id]
+                self._exit_state(self._state)
                 for function in transition.effect:
                     self._run_function(self._obj, function, args, kwargs)
-
                 # go into the next state
-                self._state = transition.target
-                print('state --> {}'.format(self._state))
+                self._enter_state(transition.target)
 
     def start_timer(self, timer_id, timeout):
         self._scheduler._start_timer(timer_id, timeout, self)
@@ -108,3 +134,10 @@ class _Transition:
         self.source = source
         self.target = target
         self.effect = effect.split()
+
+
+class _State:
+
+    def __init__(self, entry, exit):
+        self.exit = exit.split()
+        self.entry = entry.split()

@@ -73,7 +73,11 @@ class Scheduler:
         self.thread = Thread(target = self._start_loop)
         self.thread.start()
         if block:
-            self.thread.join()
+            try:
+                self.thread.join()
+            except KeyboardInterrupt:
+                print('Scheduler aborted by keyboard.')
+                self._active = False
 
 
     def step(self, steps=1):
@@ -143,6 +147,10 @@ class Scheduler:
         # remove the state machine
         logging.warning('terminating stm with frnk id {}'.format(stm_id))
         Scheduler._stms_by_id.pop(stm_id, None)
+        if not self._keep_active:
+            if not Scheduler._stms_by_id:
+                self._active = False
+                self._event_queue.put(None) # wake up the thread
 
 
     def _execute_transition(self, stm, event_id, args, kwargs):
@@ -172,6 +180,8 @@ class Scheduler:
             except Empty:
                 # timeout has occured
                 print("Event queue interrupted waiting because of timeout")
-                pass
+            except KeyboardInterrupt:
+                self.active = False
+                print("Scheduler aborted.")
 
         print('Scheduler finished')
