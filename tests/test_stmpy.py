@@ -26,8 +26,9 @@ class BusyTestCase(unittest.TestCase):
 
     def test_busy(self):
         busy = Busy()
-        t = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
-        stm_busy = StateMachine(first_state='s_busy', transitions=[t], obj=busy, stm_id='stm_busy', initial_effects='on_busy')
+        t0 = {'source': 'initial', 'target': 's_busy', 'effect': 'on_busy'}
+        t1 = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
+        stm_busy = StateMachine(name='busy', transitions=[t0, t1], obj=busy)
         busy.stm = stm_busy
 
         scheduler = Scheduler()
@@ -65,8 +66,9 @@ class TwoMethodsTestCase(unittest.TestCase):
 
     def test_two(self):
         two = TwoMethods()
-        t = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1 m2'}
-        stm_two = StateMachine(first_state='s_1', transitions=[t], obj=two, stm_id='stm_two')
+        t0 = {'source': 'initial', 'target': 's_1'}
+        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1; m2'}
+        stm_two = StateMachine(name='stm_two', transitions=[t0, t1], obj=two)
         two.stm = stm_two
 
         scheduler = Scheduler()
@@ -97,13 +99,14 @@ class TerminateTestCase(unittest.TestCase):
 
     def test_terminate(self):
         terminate = Terminate()
-        t = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'action'}
-        stm_terminate = StateMachine(first_state='s_1', transitions=[t], obj=terminate, stm_id='stm_terminate')
+        t0 = {'source': 'initial', 'target': 's_1'}
+        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'action'}
+        stm_terminate = StateMachine(name='stm_terminate', transitions=[t0,t1], obj=terminate)
         terminate.stm = stm_terminate
 
         scheduler = Scheduler()
         scheduler.add_stm(stm_terminate)
-        scheduler.start(max_transitions=2, block=False, keep_active=False)
+        scheduler.start(max_transitions=2, keep_active=False)
         print('scheduler started')
         scheduler.send_signal('t', 'stm_terminate')
 

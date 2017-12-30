@@ -61,6 +61,7 @@ class StateMachine:
 
 
     def _run_function(self, obj, function_name, args, kwargs):
+        function_name = function_name.strip()
         try:
             func = getattr(obj, function_name)
             print(str(func))
@@ -136,11 +137,11 @@ class _Transition:
         self.trigger = trigger
         self.source = source
         self.target = target
-        self.effect = effect.split()
+        self.effect = effect.split(';')
 
 
 class _State:
 
     def __init__(self, entry, exit):
-        self.exit = exit.split()
-        self.entry = entry.split()
+        self.exit = exit.split(';')
+        self.entry = entry.split(';')
