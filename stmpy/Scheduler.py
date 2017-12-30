@@ -10,7 +10,7 @@ from queue import Empty
 def _current_time_millis():
     return int(round(time.time() * 1000))
 
-class IterableQueue():
+class _IterableQueue():
     def __init__(self,source_queue):
             self.source_queue = source_queue
     def __iter__(self):
@@ -43,7 +43,7 @@ class Scheduler:
             print('    - {} in state {}'.format(stm.id, stm.state))
         print('=== Events in Queue: ===')
         #print('Queue: {}'.format(self._event_queue))
-        for event in IterableQueue(self._event_queue):
+        for event in _IterableQueue(self._event_queue):
             if event is not None:
                 print('    - {} for {} with args:{} kwargs:{}'.format(event['id'], event['stm'].id, event['args'], event['kwargs']))
         print('=== Active Timers: ===')
