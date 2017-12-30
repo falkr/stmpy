@@ -62,7 +62,7 @@ class Scheduler:
             Scheduler._stms_by_id[stm.id] = stm
             self._event_queue.put({'id': None, 'stm': stm, 'args': [], 'kwargs': {}})
 
-    def start(self, max_transitions=None, keep_active=False, block=True):
+    def start(self, max_transitions=None, keep_active=False):
         """
         max_transitions: execute only this number of transitions, then stop
         keep_active: When true, keep the scheduler running even when all state machines terminated
@@ -72,23 +72,23 @@ class Scheduler:
         self._keep_active = keep_active
         self.thread = Thread(target = self._start_loop)
         self.thread.start()
-        if block:
-            try:
-                self.thread.join()
-            except KeyboardInterrupt:
-                print('Scheduler aborted by keyboard.')
-                self._active = False
 
 
     def step(self, steps=1):
         self.start(max_transitions=steps, block=True)
 
+
     def stop(self):
         self._active = False
         self._event_queue.put(None) # wake up the thread
 
+
     def wait_until_finished(self):
-        self.thread.join()
+        try:
+            self.thread.join()
+        except KeyboardInterrupt:
+            print('Scheduler aborted by keyboard.')
+            self._active = False
 
 
     def _sort_timer_queue(self):
