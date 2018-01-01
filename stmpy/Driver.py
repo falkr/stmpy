@@ -21,7 +21,7 @@ class _IterableQueue():
                return
 
 
-class Scheduler:
+class Driver:
 
     _stms_by_id = {}
 
@@ -33,7 +33,7 @@ class Scheduler:
         self._timer_queue = []
         self._next_timeout = None
         # TODO need clarity if this should be a class variable
-        Scheduler._stms_by_id = {}
+        Driver._stms_by_id = {}
 
 
     def _wake_queue(self):
@@ -44,8 +44,8 @@ class Scheduler:
     def print_state(self):
         l = []
         l.append('=== State Machines: ===')
-        for stm_id in Scheduler._stms_by_id:
-            stm = Scheduler._stms_by_id[stm_id]
+        for stm_id in Driver._stms_by_id:
+            stm = Driver._stms_by_id[stm_id]
             l.append('    - {} in state {}'.format(stm.id, stm.state))
         l.append('=== Events in Queue: ===')
         for event in _IterableQueue(self._event_queue):
@@ -59,23 +59,23 @@ class Scheduler:
 
     def add_stm(self, stm):
         """
-        Add the state machine to this scheduler.
+        Add the state machine to this driver.
         """
-        stm._scheduler = self
+        stm._driver = self
         if stm.id is not None:
             # TODO warning when STM already registered
-            Scheduler._stms_by_id[stm.id] = stm
+            Driver._stms_by_id[stm.id] = stm
             self._event_queue.put({'id': None, 'stm': stm, 'args': [], 'kwargs': {}})
 
 
     def start(self, max_transitions=None, keep_active=False):
         """
-        Start the scheduler. This method creates a thread which runs the event
-        loop. The method returns immediately. To wait until the scheduler
-        finishes, use `stmpy.Scheduler.wait_until_finished`.
+        Start the driver. This method creates a thread which runs the event
+        loop. The method returns immediately. To wait until the driver
+        finishes, use `stmpy.Driver.wait_until_finished`.
 
         `max_transitions`: execute only this number of transitions, then stop
-        `keep_active`: When true, keep the scheduler running even when all state machines terminated
+        `keep_active`: When true, keep the driver running even when all state machines terminated
         """
         self._active = True
         self._max_transitions = max_transitions
@@ -150,13 +150,13 @@ class Scheduler:
 
     def send_signal(self, signal_id, stm_id, args=[], kwargs={}):
         """
-        Send a signal to a state machine handled by this scheduler. If you have
+        Send a signal to a state machine handled by this driver. If you have
         a reference to the state machine, you can also send it directly to it by
-        using StateMachine.send_signal().
+        using Machine.send_signal().
 
-        `stm_id` must be the id of a state machine earlier added to the scheduler.
+        `stm_id` must be the id of a state machine earlier added to the driver.
         """
-        stm = Scheduler._stms_by_id[stm_id]
+        stm = Driver._stms_by_id[stm_id]
         if stm is None:
             self._logger.warn('Machine with name {} cannot be found. Ignoring signal {}.'.format(stm_id, event_id))
         else:
@@ -166,8 +166,8 @@ class Scheduler:
     def _terminate_stm(self, stm_id):
         self._logger.debug('Terminating machine {}.'.format(stm_id))
         # removing it from the table of machines
-        Scheduler._stms_by_id.pop(stm_id, None)
-        if not self._keep_active and not Scheduler._stms_by_id:
+        Driver._stms_by_id.pop(stm_id, None)
+        if not self._keep_active and not Driver._stms_by_id:
             self._logger.debug('No machines anymore, stopping driver.')
             self._active = False
             self._event_queue.put(None) # wake up the thread

@@ -4,7 +4,7 @@ import logging
 def _tid(state_id, event_id):
     return state_id + '_' + 'event_id'
 
-class StateMachine:
+class Machine:
 
     def _parse_transitions(self, transitions):
         self._intial_transition = None
@@ -59,7 +59,7 @@ class StateMachine:
 
     @property
     def scheduler(self):
-        return self._scheduler
+        return self._driver
 
 
     def _run_function(self, obj, function_name, args, kwargs):
@@ -73,7 +73,7 @@ class StateMachine:
 
 
     def _initialize(self, scheduler):
-        self._scheduler = scheduler
+        self._driver = scheduler
 
 
     def _enter_state(self, state):
@@ -118,11 +118,11 @@ class StateMachine:
         expiration, but may vary due to the state of the event queue and the
         load of the system.
         """
-        self._scheduler._start_timer(timer_id, timeout, self)
+        self._driver._start_timer(timer_id, timeout, self)
 
 
     def stop_timer(self, timer_id):
-        self._scheduler._stop_timer(timer_id, self)
+        self._driver._stop_timer(timer_id, self)
 
 
     def send_signal(self, signal_id, args=[], kwargs={}):
@@ -130,9 +130,9 @@ class StateMachine:
         Send a signal to this state machine.
 
         To send a signal to a machine by its name, use
-        `stmpy.Scheduler.send_signal` instead.
+        `stmpy.Driver.send_signal` instead.
         """
-        self._scheduler._add_event(event_id=signal_id, args=args, kwargs=kwargs, stm=self)
+        self._driver._add_event(event_id=signal_id, args=args, kwargs=kwargs, stm=self)
 
 
     def terminate(self):
@@ -141,7 +141,7 @@ class StateMachine:
         If this is the last state machine of the scheduler and the scheduler is
         not configured to stay active, this will also terminate the scheduler.
         """
-        self._scheduler._terminate_stm(self.id)
+        self._driver._terminate_stm(self.id)
 
 
 class _Transition:

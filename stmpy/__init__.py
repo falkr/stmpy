@@ -1,2 +1,2 @@
-from stmpy.StateMachine import StateMachine
-from stmpy.Scheduler import Scheduler
+from stmpy.Machine import Machine
+from stmpy.Driver import Driver
