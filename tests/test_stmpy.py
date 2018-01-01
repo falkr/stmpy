@@ -1,7 +1,7 @@
 import unittest
 import logging
-from stmpy import StateMachine
-from stmpy import Scheduler
+from engines import Machine
+from engines import Driver
 
 # See https://docs.python.org/3/library/unittest.html
 
@@ -20,7 +20,7 @@ class Busy:
 
 class BusyTestCase(unittest.TestCase):
     def setUp(self):
-        logger = logging.getLogger('stmpy')
+        logger = logging.getLogger('engines')
         logger.setLevel(logging.DEBUG)
         pass
 
@@ -31,10 +31,10 @@ class BusyTestCase(unittest.TestCase):
         busy = Busy()
         t0 = {'source': 'initial', 'target': 's_busy', 'effect': 'on_busy'}
         t1 = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
-        stm_busy = StateMachine(name='busy', transitions=[t0, t1], obj=busy)
+        stm_busy = Machine(name='busy', transitions=[t0, t1], obj=busy)
         busy.stm = stm_busy
 
-        scheduler = Scheduler()
+        scheduler = Driver()
         scheduler.add_stm(stm_busy)
         scheduler.start(max_transitions=5)
         scheduler.wait_until_finished()
@@ -69,10 +69,10 @@ class TwoMethodsTestCase(unittest.TestCase):
         two = TwoMethods()
         t0 = {'source': 'initial', 'target': 's_1'}
         t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1;m2'}
-        stm_two = StateMachine(name='stm_two', transitions=[t0, t1], obj=two)
+        stm_two = Machine(name='stm_two', transitions=[t0, t1], obj=two)
         two.stm = stm_two
 
-        scheduler = Scheduler()
+        scheduler = Driver()
         scheduler.add_stm(stm_two)
         scheduler.start(max_transitions=2)
         print('scheduler started')
@@ -102,10 +102,10 @@ class TerminateTestCase(unittest.TestCase):
         terminate = Terminate()
         t0 = {'source': 'initial', 'target': 's_1'}
         t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'action'}
-        stm_terminate = StateMachine(name='stm_terminate', transitions=[t0,t1], obj=terminate)
+        stm_terminate = Machine(name='stm_terminate', transitions=[t0,t1], obj=terminate)
         terminate.stm = stm_terminate
 
-        scheduler = Scheduler()
+        scheduler = Driver()
         scheduler.add_stm(stm_terminate)
         scheduler.start(max_transitions=2, keep_active=False)
         print('scheduler started')
