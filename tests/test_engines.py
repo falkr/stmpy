@@ -11,7 +11,6 @@ class Busy:
     def __init__(self):
         self.count = 0
 
-
     def on_busy(self):
         self.count = self.count + 1
         print('Busy! {}'.format(self.count))
@@ -30,7 +29,8 @@ class BusyTestCase(unittest.TestCase):
     def test_busy(self):
         busy = Busy()
         t0 = {'source': 'initial', 'target': 's_busy', 'effect': 'on_busy'}
-        t1 = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
+        t1 = {'trigger': 'busy', 'source': 's_busy',
+              'target': 's_busy', 'effect': 'on_busy'}
         stm_busy = Machine(name='busy', transitions=[t0, t1], obj=busy)
         busy.stm = stm_busy
 
@@ -68,7 +68,8 @@ class TwoMethodsTestCase(unittest.TestCase):
     def test_two(self):
         two = TwoMethods()
         t0 = {'source': 'initial', 'target': 's_1'}
-        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1;m2'}
+        t1 = {'trigger': 't', 'source': 's_1', 'target': 's_2',
+              'effect': 'm1;m2'}
         stm_two = Machine(name='stm_two', transitions=[t0, t1], obj=two)
         two.stm = stm_two
 
@@ -101,8 +102,10 @@ class TerminateTestCase(unittest.TestCase):
     def test_terminate(self):
         terminate = Terminate()
         t0 = {'source': 'initial', 'target': 's_1'}
-        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'action'}
-        stm_terminate = Machine(name='stm_terminate', transitions=[t0,t1], obj=terminate)
+        t1 = {'trigger': 't', 'source': 's_1', 'target': 's_2',
+              'effect': 'action'}
+        stm_terminate = Machine(name='stm_terminate', transitions=[t0, t1],
+                                obj=terminate)
         terminate.stm = stm_terminate
 
         scheduler = Driver()
