@@ -1,8 +1,4 @@
 ---
-layout: page
-title:  "Engines - State Machines in Python"
-date:   2018-01-01 16:16:01 -0600
-categories: jekyll update
 ---
 
 # State Machines in Python
