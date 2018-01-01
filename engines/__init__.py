@@ -65,19 +65,19 @@ class Driver:
     def print_state(self):
         """Provide a snapshot of the current state."""
         s = []
-        s.append('=== State Machines: ===')
+        s.append('=== State Machines: ===\n')
         for stm_id in Driver._stms_by_id:
             stm = Driver._stms_by_id[stm_id]
-            s.append('    - {} in state {}'.format(stm.id, stm.state))
-        s.append('=== Events in Queue: ===')
+            s.append('    - {} in state {}\n'.format(stm.id, stm.state))
+        s.append('=== Events in Queue: ===\n')
         for event in _IterableQueue(self._event_queue):
             if event is not None:
-                s.append('    - {} for {} with args:{} kwargs:{}'.format(
+                s.append('    - {} for {} with args:{} kwargs:{}\n'.format(
                     event['id'], event['stm'].id,
                     event['args'], event['kwargs']))
-        s.append('=== Active Timers: ===')
+        s.append('=== Active Timers: ===\n')
         for timer in self._timer_queue:
-            s.append('    - {} for {} with timeout {}'.format(
+            s.append('    - {} for {} with timeout {}\n'.format(
                 timer['id'], timer['stm'].id, timer['timeout']))
         return ''.join(s)
 
@@ -134,17 +134,26 @@ class Driver:
         self._logger.debug('Start timer with id={} from stm={}'
                            .format(timer_id, stm))
         timeout_abs = _current_time_millis() + int(timeout)
+        self._stop_timer(timer_id, stm)
         self._timer_queue.append(
-            {'id': timer_id, 'timeout': timeout,
-             'timeout_abs': timeout_abs, 'stm': stm})
+            {'id': timer_id, 'timeout': timeout, 'timeout_abs': timeout_abs,
+             'stm': stm, 'tid': stm.id + '_' + timer_id})
         self._sort_timer_queue()
         self._wake_queue()
 
     def _stop_timer(self, timer_id, stm):
         self._logger.debug('Stopping timer with id={} from stm={}'
                            .format(timer_id, stm))
-        # TODO search through the timer queue and remove timer, sort again
-        self._wake_queue()
+        index = 0
+        index_to_delete = None
+        tid = stm.id + '_' + timer_id
+        for timer in self._timer_queue:
+            if timer['tid'] is tid:
+                index_to_delete = index
+                print('found timer')
+            ++index
+        if index_to_delete is not None:
+            self._timer_queue.pop(index_to_delete)
 
     def _check_timers(self):
         """
