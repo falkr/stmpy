@@ -1,4 +1,5 @@
 import unittest
+import logging
 from stmpy import StateMachine
 from stmpy import Scheduler
 
@@ -10,15 +11,17 @@ class Busy:
     def __init__(self):
         self.count = 0
 
+
     def on_busy(self):
         self.count = self.count + 1
         print('Busy! {}'.format(self.count))
-        print('Busy!')
         self.stm.send_signal('busy')
 
 
 class BusyTestCase(unittest.TestCase):
     def setUp(self):
+        logger = logging.getLogger('stmpy')
+        logger.setLevel(logging.DEBUG)
         pass
 
     def tearDown(self):
@@ -34,8 +37,6 @@ class BusyTestCase(unittest.TestCase):
         scheduler = Scheduler()
         scheduler.add_stm(stm_busy)
         scheduler.start(max_transitions=5)
-        print('scheduler started')
-
         scheduler.wait_until_finished()
 
         self.assertTrue(True)
@@ -67,13 +68,13 @@ class TwoMethodsTestCase(unittest.TestCase):
     def test_two(self):
         two = TwoMethods()
         t0 = {'source': 'initial', 'target': 's_1'}
-        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1; m2'}
+        t1 = {'trigger':'t', 'source':'s_1', 'target':'s_2', 'effect':'m1;m2'}
         stm_two = StateMachine(name='stm_two', transitions=[t0, t1], obj=two)
         two.stm = stm_two
 
         scheduler = Scheduler()
         scheduler.add_stm(stm_two)
-        scheduler.start(max_transitions=1)
+        scheduler.start(max_transitions=2)
         print('scheduler started')
         scheduler.send_signal('t', 'stm_two')
 

@@ -1,4 +1,5 @@
 import ast
+import logging
 
 def _tid(state_id, event_id):
     return state_id + '_' + 'event_id'
@@ -15,7 +16,7 @@ class StateMachine:
             if 'effect' in t_dict:
                 effect = t_dict['effect']
             else:
-                effect = ''
+                effect = None
             if source is 'initial':
                 self._intial_transition = _Transition(None, source, target, effect)
             else:
@@ -25,8 +26,8 @@ class StateMachine:
                 # TODO error handling: what if several transition with same id start from same source state?
                 self._table[t_id] = transition
         if self._intial_transition is None:
-            pass
-            # TODO raise exception for missing initial transition
+            raise Exception('The machine has no initial transition')
+
 
     def _parse_states(self, states):
         for s_dict in states:
@@ -38,6 +39,7 @@ class StateMachine:
 
 
     def __init__(self, name, transitions, obj, states=[]):
+        self._logger = logging.getLogger(__name__)
         self._state = 'initial'
         self._obj = obj
         self._id = name
@@ -62,30 +64,29 @@ class StateMachine:
 
     def _run_function(self, obj, function_name, args, kwargs):
         function_name = function_name.strip()
+        self._logger.debug('Running function {}.'.format(function_name))
         try:
             func = getattr(obj, function_name)
-            print(str(func))
             func(*args, **kwargs)
         except AttributeError as error:
-            print('Error when running function from state machine: {}'.format(error))
-            #print("function {} not found on {}".format(function_name, obj))
+            self._logger.error('Error when running function {} from machine.'.format(function_name), exc_info=True)
 
 
     def _initialize(self, scheduler):
         self._scheduler = scheduler
-        # run initial transition
 
 
     def _enter_state(self, state):
+        self._logger.debug('Machine {} enter state {}'.format(id, state))
         # execute any entry actions
         if state in self._states:
             for entry in self._states[state].entry:
                 self._run_function(self._obj, entry, args=[], kwargs={})
         self._state = state
-        print('state --> {}'.format(self._state))
 
 
     def _exit_state(self, state):
+        self._logger.debug('Machine {} exits state {}'.format(id, state))
         # execute any exit actions
         if state in self._states:
             for exit in self._states[state].exit:
@@ -98,8 +99,8 @@ class StateMachine:
         else:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
-                # TODO: error: no transition declared
-                print('Error: State machine is in state {} and received event {}, but no transition with this event is declared! {} '.format(self._state, event_id, self._table))
+                self._logger.error('Error: State machine is in state {} and received event {}, but no transition with this event is declared! {} '.format(self._state, event_id, self._table))
+                return
             else:
                 transition = self._table[t_id]
                 self._exit_state(self._state)
@@ -110,6 +111,13 @@ class StateMachine:
 
 
     def start_timer(self, timer_id, timeout):
+        """
+        Start a timer. The timeout is given in milliseconds. If a timer with the
+        same name already exists, it is restarted with the specified timeout.
+        Note that the timeout is intended as the minimum time until the timer's
+        expiration, but may vary due to the state of the event queue and the
+        load of the system.
+        """
         self._scheduler._start_timer(timer_id, timeout, self)
 
 
@@ -121,13 +129,18 @@ class StateMachine:
         """
         Send a signal to this state machine.
 
-        Note: To send a signal to a machine by its stm_id, use the method in the
-        scheduler.
+        To send a signal to a machine by its name, use
+        `stmpy.Scheduler.send_signal` instead.
         """
         self._scheduler._add_event(event_id=signal_id, args=args, kwargs=kwargs, stm=self)
 
 
     def terminate(self):
+        """
+        Terminate this state machine. This removes it from the scheduler.
+        If this is the last state machine of the scheduler and the scheduler is
+        not configured to stay active, this will also terminate the scheduler.
+        """
         self._scheduler._terminate_stm(self.id)
 
 
@@ -137,7 +150,10 @@ class _Transition:
         self.trigger = trigger
         self.source = source
         self.target = target
-        self.effect = effect.split(';')
+        if effect:
+            self.effect = effect.split(';')
+        else:
+            self.effect = []
 
 
 class _State:

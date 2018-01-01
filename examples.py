@@ -1,5 +1,6 @@
 from stmpy import StateMachine
 from stmpy import Scheduler
+import logging
 
 
 class Tick:
@@ -25,19 +26,30 @@ class Tick:
 
 def test_tick():
 
+    logger = logging.getLogger('stmpy.Scheduler')
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+
+
     scheduler = Scheduler()
     tick = Tick()
 
+    t0 = {'source': 'initial', 'target':'s_tick', 'effect':'on_init'}
     t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick'}
     t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock'}
 
-    stm_tick = StateMachine(state='s_tick', transitions=[t1, t2], obj=tick, id='stm_tick', initial='on_init')
+    stm_tick = StateMachine(name='stm_tick', transitions=[t0, t1, t2], obj=tick)
 
     # the object may need the stm to add events and control timers
     tick.stm = stm_tick
 
     scheduler.add_stm(stm_tick)
-    scheduler.start(max_transitions=50)
+    scheduler.start(max_transitions=10)
     scheduler.wait_until_finished()
 
 #test_tick()
@@ -77,30 +89,29 @@ def test_ping_pong():
     scheduler = Scheduler()
 
     ping = Ping()
+    t0 = {'source': 'initial', 'target':'s_1', 'effect':'on_init'}
     t1 = {'trigger':'t',    'source':'s_1', 'target':'s_2', 'effect':'on_timeout'}
     t2 = {'trigger':'pong', 'source':'s_2', 'target':'s_1', 'effect':'on_pong'}
-    stm_ping = StateMachine(first_state='s_1', transitions=[t1, t2], obj=ping, stm_id='stm_ping', initial_effects='on_init')
+    stm_ping = StateMachine(transitions=[t0, t1, t2], obj=ping, name='stm_ping')
     ping.stm = stm_ping
 
     pong = Pong()
+    t0 = {'source': 'initial', 'target':'s_1'}
     t1 = {'trigger':'t',    'source':'s_2', 'target':'s_1', 'effect':'on_timeout'}
     t2 = {'trigger':'ping', 'source':'s_1', 'target':'s_2', 'effect':'on_ping'}
-    stm_pong = StateMachine(first_state='s_1', transitions=[t1, t2], obj=pong, stm_id='stm_pong')
+    stm_pong = StateMachine(transitions=[t0, t1, t2], obj=pong, name='stm_pong')
     pong.stm = stm_pong
 
     scheduler.add_stm(stm_ping)
     scheduler.add_stm(stm_pong)
 
-    scheduler.step(steps=4)
+    scheduler.step(4)
     scheduler.print_state()
     scheduler.step()
     scheduler.print_state()
 
-    print('scheduler started')
 
-
-
-test_ping_pong()
+#test_ping_pong()
 
 
 class Busy:
@@ -111,14 +122,14 @@ class Busy:
     def on_busy(self):
         self.count = self.count + 1
         print('Busy! {}'.format(self.count))
-        print('Busy!')
         self.stm.send_signal('busy')
 
 
 def test_busy():
     busy = Busy()
-    t = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
-    stm_busy = StateMachine(state='s_busy', transitions=[t], obj=busy, id='stm_busy', initial='on_busy')
+    t0 = {'source': 'initial', 'target':'s_busy', 'effect':'on_busy'}
+    t1 = {'trigger':'busy', 'source':'s_busy', 'target':'s_busy', 'effect':'on_busy'}
+    stm_busy = StateMachine(transitions=[t0, t1], obj=busy, name='stm_busy')
     busy.stm = stm_busy
 
     scheduler = Scheduler()
@@ -128,55 +139,4 @@ def test_busy():
 
     scheduler.wait_until_finished()
 
-
-
-#test_busy()
-
-import tkinter as tk
-from PIL import ImageTk, Image
-
-def callback():
-    print("click!")
-
-
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.pack()
-        self.frank_root = master
-        self.create_widgets()
-
-
-    def create_widgets(self):
-        #self.hi_there = tk.Button(self)
-        #self.hi_there["text"] = "Hello World\n(click me)"
-        #self.hi_there["command"] = self.say_hi
-        #self.hi_there.pack(side="top")
-
-        #self.quit = tk.Button(self, text="QUIT", fg="red", command=self.frank_root.destroy)
-        #self.quit.pack(side="bottom")
-
-        self.panel = tk.Label(self.frank_root, image = ImageTk.PhotoImage(Image.open("red_on.gif")))
-        self.panel.pack(side = "bottom", fill = "both", expand = "yes")
-
-        #Label(image=logo).grid()
-    def say_hi(self):
-        print("hi there, everyone!")
-
-
-
-def test_button():
-    root = tk.Tk()
-    app = Application(master=root)
-    app.mainloop()
-
-
-def test_image():
-    root = tk.Tk()
-    img = ImageTk.PhotoImage(Image.open("red_on.gif"))
-    panel = tk.Label(root, image = img)
-    panel.pack(side = "bottom", fill = "both", expand = "yes")
-    root.mainloop()
-
-#test_button()
-#test_image()
+test_busy()
