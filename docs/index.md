@@ -10,12 +10,17 @@ Transitions are triggered by signals or the expiration or timers.
 
 ## Current Project Status
 
-The project is in an early stage, and some features are missing.
+The project is in an early stage, and not all features are in place yet.
 
 
 ## Installation
 
     pip install engines
+
+
+## API Documentation
+
+[Browse the API here.](./engines/index.html)
 
 
 ## Example: Tick Tock State Machine
