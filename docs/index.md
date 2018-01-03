@@ -61,3 +61,26 @@ The project is in an early stage, and not all features are in place yet.
     driver.add_stm(stm_tick)
     scheduler.start(max_transitions=5)
     scheduler.wait_until_finished()
+
+
+## Compound Transitions
+
+Compound transitions can contain decisions, so that the target state of the
+transition can depend on data computed during the execution of the transition.
+To define compound transitions, declare a method that executes the transition.
+
+
+    def transition_1(args, kwargs):
+         # do something
+         if ... :           
+             return 's1'
+         else:
+             return 's2'
+
+The transition is defined in the following way:
+
+t_3 = {'source': 's_0', trigger: 't', function: stm.transition_1}
+
+This is similar to simple transition, as it declares source state and trigger.
+It does not declare a target state or effects, however. Instead, it refers to a
+function that executes the transition, and returns the target state.s

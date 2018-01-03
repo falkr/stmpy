@@ -254,18 +254,16 @@ class Machine:
             t_dict = transition_string  # ast.literal_eval(transition_string)
             # TODO error handling: string may be written in a wrong way
             source = t_dict['source']
-            target = t_dict['target']
             if 'effect' in t_dict:
                 effect = t_dict['effect']
             else:
                 effect = None
             if source is 'initial':
-                self._intial_transition = _Transition(
-                    None, source, target, effect)
+                self._intial_transition = _Transition(transition_string)
             else:
                 trigger = t_dict['trigger']
                 t_id = _tid(source, trigger)
-                transition = _Transition(trigger, source, target, effect)
+                transition = _Transition(transition_string)
                 # TODO error handling: what if several transition with same
                 # id start from same source state?
                 self._table[t_id] = transition
@@ -355,10 +353,20 @@ class Machine:
             else:
                 transition = self._table[t_id]
                 self._exit_state(self._state)
+        # execute all effects
         for function in transition.effect:
             self._run_function(self._obj, function, args, kwargs)
+        if transition.target:
+            # simple transition
+            target = transition.target
+        else:
+            # compound transitions defined in code
+            target = transition.function(*args, **kwargs)
         # go into the next state
-        self._enter_state(transition.target)
+        self._enter_state(target)
+
+
+
 
     def start_timer(self, timer_id, timeout):
         """
@@ -403,14 +411,23 @@ class Machine:
 
 class _Transition:
 
-    def __init__(self, trigger, source, target, effect):
-        self.trigger = trigger
-        self.source = source
-        self.target = target
-        if effect:
-            self.effect = effect.split(';')
+    def __init__(self, t_dict):
+        self.source =  t_dict['source']
+        if 'effect' in t_dict:
+            self.effect = t_dict['effect'].split(';')
         else:
             self.effect = []
+        if 'trigger' in t_dict:
+            self.trigger = t_dict['trigger']
+        else:
+            self.trigger = None
+        if 'function' in t_dict:
+            # transition is defined by a function
+            self.target = None
+            self.function = t_dict['function']
+        else:
+            # transition is declared in data structure
+            self.target = t_dict['target']
 
 
 class _State:
