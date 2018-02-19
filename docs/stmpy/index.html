@@ -4,11 +4,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>stmpy API documentation</title>
-    <meta name="description" content="Module `stmpy` provides support for state machines.
+    <meta name="description" content="Module `stmpy` provides support for state machines in Python.
 
 ## Contributing
 
-`stmpy` [is on GitHub](https:/..." />
+`stmpy` [is on GitHu..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1054,7 +1054,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#stmpy.Driver.__init__">__init__</a></li>
-    <li class="mono"><a href="#stmpy.Driver.add_stm">add_stm</a></li>
+    <li class="mono"><a href="#stmpy.Driver.add_machine">add_machine</a></li>
     <li class="mono"><a href="#stmpy.Driver.print_status">print_status</a></li>
     <li class="mono"><a href="#stmpy.Driver.send_signal">send_signal</a></li>
     <li class="mono"><a href="#stmpy.Driver.start">start</a></li>
@@ -1092,14 +1092,14 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">stmpy</span> module</h1>
-  <p>Module <code>stmpy</code> provides support for state machines.</p>
+  <p>Module <code>stmpy</code> provides support for state machines in Python.</p>
 <h2>Contributing</h2>
 <p><code>stmpy</code> <a href="https://github.com/falkr/stmpy">is on GitHub</a>. Pull
 requests and bug reports are welcome.</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy', this);">Show source &equiv;</a></p>
   <div id="source-stmpy" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Module `stmpy` provides support for state machines.</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Module `stmpy` provides support for state machines in Python.</span>
 
 <span class="sd">## Contributing</span>
 
@@ -1168,7 +1168,7 @@ requests and bug reports are welcome.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current status.&quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
@@ -1186,14 +1186,14 @@ requests and bug reports are welcome.</p>
                 <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]))</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
-        <span class="n">stm</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">if</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># TODO warning when STM already registered</span>
-            <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">stm</span>
+            <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-                <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
+                <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">machine</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_transitions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">keep_active</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1386,6 +1386,72 @@ requests and bug reports are welcome.</p>
         <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
 
 <span class="sd">        Throws an exception if the state machine is not well-formed.</span>
+
+<span class="sd">        **Transitions:**</span>
+<span class="sd">        Transitions are specified as a dictionary with the following key / value</span>
+<span class="sd">        pairs:</span>
+
+<span class="sd">          * trigger: string with the name of a trigger, either a signal to receive or the name of a timer.</span>
+<span class="sd">          * source: string with the name of a state.</span>
+<span class="sd">          * target: string with the name of a state.</span>
+<span class="sd">          * effect: (optional) a set of strings that refers to method name of the object passed to the state machine via `obj`. Several effects can be separated with a `;`.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            t_1 = {&#39;trigger&#39;: &#39;tick&#39;,</span>
+<span class="sd">                   &#39;source&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">                   &#39;target&#39;: &#39;s_tock&#39;,</span>
+<span class="sd">                   &#39;effect&#39;: &#39;on_tick&#39;}</span>
+
+<span class="sd">        **Initial Transition:**</span>
+<span class="sd">        A state machine requires a single initial transition. This is a normal</span>
+<span class="sd">        transition that has a source state with name `&#39;initial&#39;`, and no</span>
+<span class="sd">        trigger.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            t_0 = {&#39;source&#39;: &#39;initial&#39;,</span>
+<span class="sd">                   &#39;target&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">                   &#39;effect&#39;: &#39;on_init&#39;}</span>
+
+<span class="sd">        **Compound Transitions:**</span>
+<span class="sd">        A compound transition is used to declare a transition that can contain decisions.</span>
+<span class="sd">        A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
+<span class="sd">        It is declared like a normal transition, but does not declare any effect or target.</span>
+<span class="sd">        Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            def transition_1(args, kwargs):</span>
+<span class="sd">                # do something</span>
+<span class="sd">                if ... :</span>
+<span class="sd">                    return &#39;s1&#39;</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return &#39;s2&#39;</span>
+
+<span class="sd">            t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
+<span class="sd">                   &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">                   &#39;function&#39;: transition_1}</span>
+
+<span class="sd">        **States:**</span>
+<span class="sd">        States are specified as sources and targets as part of the transitions.</span>
+<span class="sd">        This is done by simple strings.</span>
+
+<span class="sd">        States can also declare entry and exit actions that are called when they are entered or exited.</span>
+<span class="sd">        To declare these actions, declare a dictionary for the state. The name key refers to</span>
+<span class="sd">        the name of the state that is also used in the transition declaration.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
+<span class="sd">                   &#39;entry&#39;: &#39;op1; op2&#39;,</span>
+<span class="sd">                   &#39;exit&#39;: &#39;op3&#39;}</span>
+
+
+
+<span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
+
+<span class="sd">        `transitions`: A set of transitions.</span>
+
+<span class="sd">        `obj`: An object that encapsulates any actions called from states or transitions.</span>
+
+<span class="sd">        `states`: Optional state declarations to add entry and exit actions to them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initial&#39;</span>
@@ -1584,7 +1650,7 @@ within this single thread.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current status.&quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
@@ -1602,14 +1668,14 @@ within this single thread.</p></div>
                 <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]))</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
-        <span class="n">stm</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">if</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># TODO warning when STM already registered</span>
-            <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">stm</span>
+            <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-                <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
+                <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">machine</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_transitions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">keep_active</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1804,8 +1870,8 @@ within this single thread.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="stmpy.Driver.add_stm">
-    <p>def <span class="ident">add_stm</span>(</p><p>self, stm)</p>
+    <div class="name def" id="stmpy.Driver.add_machine">
+    <p>def <span class="ident">add_machine</span>(</p><p>self, machine)</p>
     </div>
     
 
@@ -1813,16 +1879,16 @@ within this single thread.</p></div>
   
     <div class="desc"><p>Add the state machine to this driver.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.add_stm', this);">Show source &equiv;</a></p>
-  <div id="source-stmpy.Driver.add_stm" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.add_machine', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.add_machine" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
-    <span class="n">stm</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
-    <span class="k">if</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c1"># TODO warning when STM already registered</span>
-        <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">stm</span>
+        <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
+            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">machine</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{}})</span>
 </pre></div>
 
   </div>
@@ -1839,12 +1905,12 @@ within this single thread.</p></div>
 
     
   
-    <div class="desc"><p>Provide a snapshot of the current state.</p></div>
+    <div class="desc"><p>Provide a snapshot of the current status.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.print_status', this);">Show source &equiv;</a></p>
   <div id="source-stmpy.Driver.print_status" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current status.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
@@ -2073,6 +2139,72 @@ machines terminated</p></div>
         <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
 
 <span class="sd">        Throws an exception if the state machine is not well-formed.</span>
+
+<span class="sd">        **Transitions:**</span>
+<span class="sd">        Transitions are specified as a dictionary with the following key / value</span>
+<span class="sd">        pairs:</span>
+
+<span class="sd">          * trigger: string with the name of a trigger, either a signal to receive or the name of a timer.</span>
+<span class="sd">          * source: string with the name of a state.</span>
+<span class="sd">          * target: string with the name of a state.</span>
+<span class="sd">          * effect: (optional) a set of strings that refers to method name of the object passed to the state machine via `obj`. Several effects can be separated with a `;`.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            t_1 = {&#39;trigger&#39;: &#39;tick&#39;,</span>
+<span class="sd">                   &#39;source&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">                   &#39;target&#39;: &#39;s_tock&#39;,</span>
+<span class="sd">                   &#39;effect&#39;: &#39;on_tick&#39;}</span>
+
+<span class="sd">        **Initial Transition:**</span>
+<span class="sd">        A state machine requires a single initial transition. This is a normal</span>
+<span class="sd">        transition that has a source state with name `&#39;initial&#39;`, and no</span>
+<span class="sd">        trigger.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            t_0 = {&#39;source&#39;: &#39;initial&#39;,</span>
+<span class="sd">                   &#39;target&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">                   &#39;effect&#39;: &#39;on_init&#39;}</span>
+
+<span class="sd">        **Compound Transitions:**</span>
+<span class="sd">        A compound transition is used to declare a transition that can contain decisions.</span>
+<span class="sd">        A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
+<span class="sd">        It is declared like a normal transition, but does not declare any effect or target.</span>
+<span class="sd">        Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            def transition_1(args, kwargs):</span>
+<span class="sd">                # do something</span>
+<span class="sd">                if ... :</span>
+<span class="sd">                    return &#39;s1&#39;</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return &#39;s2&#39;</span>
+
+<span class="sd">            t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
+<span class="sd">                   &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">                   &#39;function&#39;: transition_1}</span>
+
+<span class="sd">        **States:**</span>
+<span class="sd">        States are specified as sources and targets as part of the transitions.</span>
+<span class="sd">        This is done by simple strings.</span>
+
+<span class="sd">        States can also declare entry and exit actions that are called when they are entered or exited.</span>
+<span class="sd">        To declare these actions, declare a dictionary for the state. The name key refers to</span>
+<span class="sd">        the name of the state that is also used in the transition declaration.</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
+<span class="sd">                   &#39;entry&#39;: &#39;op1; op2&#39;,</span>
+<span class="sd">                   &#39;exit&#39;: &#39;op3&#39;}</span>
+
+
+
+<span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
+
+<span class="sd">        `transitions`: A set of transitions.</span>
+
+<span class="sd">        `obj`: An object that encapsulates any actions called from states or transitions.</span>
+
+<span class="sd">        `states`: Optional state declarations to add entry and exit actions to them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initial&#39;</span>
@@ -2218,13 +2350,122 @@ machines terminated</p></div>
     
   
     <div class="desc"><p>Create a new state machine.</p>
-<p>Throws an exception if the state machine is not well-formed.</p></div>
+<p>Throws an exception if the state machine is not well-formed.</p>
+<p><strong>Transitions:</strong>
+Transitions are specified as a dictionary with the following key / value
+pairs:</p>
+<ul>
+<li>trigger: string with the name of a trigger, either a signal to receive or the name of a timer.</li>
+<li>source: string with the name of a state.</li>
+<li>target: string with the name of a state.</li>
+<li>
+<p>effect: (optional) a set of strings that refers to method name of the object passed to the state machine via <code>obj</code>. Several effects can be separated with a <code>;</code>.</p>
+<h1>!python</h1>
+<p>t_1 = {'trigger': 'tick',
+       'source': 's_tick',
+       'target': 's_tock',
+       'effect': 'on_tick'}</p>
+</li>
+</ul>
+<p><strong>Initial Transition:</strong>
+A state machine requires a single initial transition. This is a normal
+transition that has a source state with name <code>'initial'</code>, and no
+trigger.</p>
+<div class="codehilite"><pre><span></span><span class="n">t_0</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;initial&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;s_tick&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;effect&#39;</span><span class="p">:</span> <span class="s1">&#39;on_init&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+<p><strong>Compound Transitions:</strong>
+A compound transition is used to declare a transition that can contain decisions.
+A compound transition can decide upon the target state at run-time, for instance based on data in variables.
+It is declared like a normal transition, but does not declare any effect or target.
+Instead, it refers to a function that is executed. The function must return a string that determines the target state.</p>
+<div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">transition_1</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># do something</span>
+    <span class="k">if</span> <span class="o">...</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;s1&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;s2&#39;</span>
+
+<span class="n">t_3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;s_0&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;trigger&#39;</span><span class="p">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="n">transition_1</span><span class="p">}</span>
+</pre></div>
+
+
+<p><strong>States:</strong>
+States are specified as sources and targets as part of the transitions.
+This is done by simple strings.</p>
+<p>States can also declare entry and exit actions that are called when they are entered or exited.
+To declare these actions, declare a dictionary for the state. The name key refers to
+the name of the state that is also used in the transition declaration.</p>
+<div class="codehilite"><pre><span></span><span class="n">s_0</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;s_0&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;entry&#39;</span><span class="p">:</span> <span class="s1">&#39;op1; op2&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;exit&#39;</span><span class="p">:</span> <span class="s1">&#39;op3&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+<p><code>name</code>: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</p>
+<p><code>transitions</code>: A set of transitions.</p>
+<p><code>obj</code>: An object that encapsulates any actions called from states or transitions.</p>
+<p><code>states</code>: Optional state declarations to add entry and exit actions to them.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.__init__', this);">Show source &equiv;</a></p>
   <div id="source-stmpy.Machine.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">transitions</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
 <span class="sd">    Throws an exception if the state machine is not well-formed.</span>
+<span class="sd">    **Transitions:**</span>
+<span class="sd">    Transitions are specified as a dictionary with the following key / value</span>
+<span class="sd">    pairs:</span>
+<span class="sd">      * trigger: string with the name of a trigger, either a signal to receive or the name of a timer.</span>
+<span class="sd">      * source: string with the name of a state.</span>
+<span class="sd">      * target: string with the name of a state.</span>
+<span class="sd">      * effect: (optional) a set of strings that refers to method name of the object passed to the state machine via `obj`. Several effects can be separated with a `;`.</span>
+<span class="sd">        #!python</span>
+<span class="sd">        t_1 = {&#39;trigger&#39;: &#39;tick&#39;,</span>
+<span class="sd">               &#39;source&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">               &#39;target&#39;: &#39;s_tock&#39;,</span>
+<span class="sd">               &#39;effect&#39;: &#39;on_tick&#39;}</span>
+<span class="sd">    **Initial Transition:**</span>
+<span class="sd">    A state machine requires a single initial transition. This is a normal</span>
+<span class="sd">    transition that has a source state with name `&#39;initial&#39;`, and no</span>
+<span class="sd">    trigger.</span>
+<span class="sd">        #!python</span>
+<span class="sd">        t_0 = {&#39;source&#39;: &#39;initial&#39;,</span>
+<span class="sd">               &#39;target&#39;: &#39;s_tick&#39;,</span>
+<span class="sd">               &#39;effect&#39;: &#39;on_init&#39;}</span>
+<span class="sd">    **Compound Transitions:**</span>
+<span class="sd">    A compound transition is used to declare a transition that can contain decisions.</span>
+<span class="sd">    A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
+<span class="sd">    It is declared like a normal transition, but does not declare any effect or target.</span>
+<span class="sd">    Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+<span class="sd">        #!python</span>
+<span class="sd">        def transition_1(args, kwargs):</span>
+<span class="sd">            # do something</span>
+<span class="sd">            if ... :</span>
+<span class="sd">                return &#39;s1&#39;</span>
+<span class="sd">            else:</span>
+<span class="sd">                return &#39;s2&#39;</span>
+<span class="sd">        t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
+<span class="sd">               &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">               &#39;function&#39;: transition_1}</span>
+<span class="sd">    **States:**</span>
+<span class="sd">    States are specified as sources and targets as part of the transitions.</span>
+<span class="sd">    This is done by simple strings.</span>
+<span class="sd">    States can also declare entry and exit actions that are called when they are entered or exited.</span>
+<span class="sd">    To declare these actions, declare a dictionary for the state. The name key refers to</span>
+<span class="sd">    the name of the state that is also used in the transition declaration.</span>
+<span class="sd">        #!python</span>
+<span class="sd">        s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
+<span class="sd">               &#39;entry&#39;: &#39;op1; op2&#39;,</span>
+<span class="sd">               &#39;exit&#39;: &#39;op3&#39;}</span>
+<span class="sd">    `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
+<span class="sd">    `transitions`: A set of transitions.</span>
+<span class="sd">    `obj`: An object that encapsulates any actions called from states or transitions.</span>
+<span class="sd">    `states`: Optional state declarations to add entry and exit actions to them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initial&#39;</span>

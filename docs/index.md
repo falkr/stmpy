@@ -17,6 +17,10 @@ The project is in an early stage, and not all features are in place yet.
 
     pip install stmpy
 
+To upgrade, use:
+
+    pip install --upgrade stmpy
+
 
 ## API Documentation
 
@@ -27,8 +31,8 @@ The project is in an early stage, and not all features are in place yet.
 
 State machines are implemented by a combination of the two classes *Machine* and *Driver.*
 
-* A Machine represents a state machine diagrams.
-* A Driver maintains event queues and control the execution of several machines.
+* A Machine represents a state machine diagram.
+* A Driver maintains event queues and controls the execution of several machines.
 
 
 ## Example: Tick Tock State Machine

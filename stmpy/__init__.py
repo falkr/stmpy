@@ -1,4 +1,4 @@
-"""Module `stmpy` provides support for state machines.
+"""Module `stmpy` provides support for state machines in Python.
 
 ## Contributing
 
@@ -67,7 +67,7 @@ class Driver:
         self._event_queue.put(None)
 
     def print_status(self):
-        """Provide a snapshot of the current state."""
+        """Provide a snapshot of the current status."""
         s = []
         s.append('=== State Machines: ===\n')
         for stm_id in Driver._stms_by_id:
@@ -85,14 +85,14 @@ class Driver:
                 timer['id'], timer['stm'].id, timer['timeout']))
         return ''.join(s)
 
-    def add_stm(self, stm):
+    def add_machine(self, machine):
         """Add the state machine to this driver."""
-        stm._driver = self
-        if stm.id is not None:
+        machine._driver = self
+        if machine.id is not None:
             # TODO warning when STM already registered
-            Driver._stms_by_id[stm.id] = stm
+            Driver._stms_by_id[machine.id] = machine
             self._event_queue.put(
-                {'id': None, 'stm': stm, 'args': [], 'kwargs': {}})
+                {'id': None, 'stm': machine, 'args': [], 'kwargs': {}})
 
     def start(self, max_transitions=None, keep_active=False):
         """
@@ -285,6 +285,72 @@ class Machine:
         """Create a new state machine.
 
         Throws an exception if the state machine is not well-formed.
+
+        **Transitions:**
+        Transitions are specified as a dictionary with the following key / value
+        pairs:
+
+          * trigger: string with the name of a trigger, either a signal to receive or the name of a timer.
+          * source: string with the name of a state.
+          * target: string with the name of a state.
+          * effect: (optional) a set of strings that refers to method name of the object passed to the state machine via `obj`. Several effects can be separated with a `;`.
+
+            #!python
+            t_1 = {'trigger': 'tick',
+                   'source': 's_tick',
+                   'target': 's_tock',
+                   'effect': 'on_tick'}
+
+        **Initial Transition:**
+        A state machine requires a single initial transition. This is a normal
+        transition that has a source state with name `'initial'`, and no
+        trigger.
+
+            #!python
+            t_0 = {'source': 'initial',
+                   'target': 's_tick',
+                   'effect': 'on_init'}
+
+        **Compound Transitions:**
+        A compound transition is used to declare a transition that can contain decisions.
+        A compound transition can decide upon the target state at run-time, for instance based on data in variables.
+        It is declared like a normal transition, but does not declare any effect or target.
+        Instead, it refers to a function that is executed. The function must return a string that determines the target state.
+
+            #!python
+            def transition_1(args, kwargs):
+                # do something
+                if ... :
+                    return 's1'
+                else:
+                    return 's2'
+
+            t_3 = {'source': 's_0',
+                   'trigger': 't',
+                   'function': transition_1}
+
+        **States:**
+        States are specified as sources and targets as part of the transitions.
+        This is done by simple strings.
+
+        States can also declare entry and exit actions that are called when they are entered or exited.
+        To declare these actions, declare a dictionary for the state. The name key refers to
+        the name of the state that is also used in the transition declaration.
+
+            #!python
+            s_0 = {'name': 's_0',
+                   'entry': 'op1; op2',
+                   'exit': 'op3'}
+
+
+
+        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.
+
+        `transitions`: A set of transitions, as explained above. There must be at least one initial transition.
+
+        `obj`: An object that encapsulates any actions called from states or transitions.
+
+        `states`: Optional state declarations to add entry and exit actions to them.
         """
         self._logger = logging.getLogger(__name__)
         self._state = 'initial'
