@@ -1,4 +1,4 @@
-from engines import Machine, Driver
+from stmpy import Machine, Driver
 import logging
 
 
@@ -121,7 +121,7 @@ def test_tick_2():
     scheduler.start(max_transitions=10)
     scheduler.wait_until_finished()
 
-test_tick_2()
+#test_tick_2()
 
 class Pong:
 
@@ -209,3 +209,47 @@ def test_busy():
     scheduler.wait_until_finished()
 
 #test_busy()
+
+def test_timer():
+    if 's' is 's':
+        print('same!')
+    t0 = {'source': 'initial', 'target': 's_1'}
+    m = Machine(transitions=[t0], obj=None, name='t')
+    driver = Driver()
+    driver.add_stm(m)
+    m.start_timer('t', 1000)
+    print(driver.print_status())
+    m.stop_timer('t')
+    print(driver.print_status())
+
+
+#test_timer()
+
+
+class Blink:
+
+    def on(self):
+        print('on')
+        self.stm.start_timer('t', 1000)
+
+    def off(self):
+        print('off')
+        self.stm.start_timer('t', 1000)
+
+
+def test_blink():
+    blink = Blink()
+    t0 = {'source': 'initial', 'target': 'blink_on', 'effect': 'on'}
+    t1 = {'trigger': 't', 'source': 'blink_on', 'target': 'blink_off', 'effect': 'off'}
+    t2 = {'trigger': 't', 'source': 'blink_off', 'target': 'blink_on', 'effect': 'on'}
+    stm_blink = Machine(transitions=[t0, t1, t2], obj=blink, name='blink')
+    blink.stm = stm_blink
+
+    scheduler = Driver()
+    scheduler.add_stm(stm_blink)
+    scheduler.start()
+    print('scheduler started')
+
+    scheduler.wait_until_finished()
+
+test_blink()

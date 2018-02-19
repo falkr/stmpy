@@ -12,12 +12,12 @@ The project is in an early stage, and some features are missing.
 
 ## Installation
 
-    pip install engines
+    pip install stmpy
 
 
 ## Example: Tick Tock State Machine
 
-    from engines import Machine, Driver
+    from stmpy import Machine, Driver
 
     class Tick:
 

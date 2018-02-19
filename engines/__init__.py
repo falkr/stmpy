@@ -1,8 +1,8 @@
-"""Module `engines` provides support for state machines.
+"""Module `stmpy` provides support for state machines.
 
 ## Contributing
 
-`engines` [is on GitHub](https://github.com/falkr/engines). Pull
+`stmpy` [is on GitHub](https://github.com/falkr/stmpy). Pull
 requests and bug reports are welcome.
 """
 
@@ -11,8 +11,12 @@ import logging
 from queue import Queue
 from queue import Empty
 from threading import Thread
-# from threading import Event
-# from threading import Condition
+
+
+__version__ = '0.2.5'
+"""
+The current version of stmpy.
+"""
 
 
 def _current_time_millis():
@@ -38,7 +42,7 @@ class _IterableQueue():
 
 class Driver:
     """
-    A driver can run several state machines.
+    A driver can run several  machines.
 
     One driver contains one thread. Machines assigned to a driver are executed
     within this single thread.
@@ -62,7 +66,7 @@ class Driver:
         # Sends a None event to wake up the queue.
         self._event_queue.put(None)
 
-    def print_state(self):
+    def print_status(self):
         """Provide a snapshot of the current state."""
         s = []
         s.append('=== State Machines: ===\n')
@@ -96,7 +100,7 @@ class Driver:
 
         This method creates a thread which runs the event loop.
         The method returns immediately. To wait until the driver
-        finishes, use `engines.Driver.wait_until_finished`.
+        finishes, use `stmpy.Driver.wait_until_finished`.
 
         `max_transitions`: execute only this number of transitions, then stop
         `keep_active`: When true, keep the driver running even when all state
@@ -130,27 +134,26 @@ class Driver:
         self._timer_queue = sorted(
             self._timer_queue, key=lambda timer: timer['timeout_abs'])
 
-    def _start_timer(self, timer_id, timeout, stm):
-        self._logger.debug('Start timer with id={} from stm={}'
-                           .format(timer_id, stm))
+    def _start_timer(self, name, timeout, stm):
+        self._logger.debug('Start timer with name={} from stm={}'
+                           .format(name, stm))
         timeout_abs = _current_time_millis() + int(timeout)
-        self._stop_timer(timer_id, stm)
+        self._stop_timer(name, stm)
         self._timer_queue.append(
-            {'id': timer_id, 'timeout': timeout, 'timeout_abs': timeout_abs,
-             'stm': stm, 'tid': stm.id + '_' + timer_id})
+            {'id': name, 'timeout': timeout, 'timeout_abs': timeout_abs,
+             'stm': stm, 'tid': stm.id + '_' + name})
         self._sort_timer_queue()
         self._wake_queue()
 
-    def _stop_timer(self, timer_id, stm):
-        self._logger.debug('Stopping timer with id={} from stm={}'
-                           .format(timer_id, stm))
+    def _stop_timer(self, name, stm):
+        self._logger.debug('Stopping timer with name={} from stm={}'
+                           .format(name, stm))
         index = 0
         index_to_delete = None
-        tid = stm.id + '_' + timer_id
+        tid = stm.id + '_' + name
         for timer in self._timer_queue:
-            if timer['tid'] is tid:
+            if timer['tid'] == tid:
                 index_to_delete = index
-                print('found timer')
             ++index
         if index_to_delete is not None:
             self._timer_queue.pop(index_to_delete)
@@ -191,7 +194,7 @@ class Driver:
         Send a signal to a state machine handled by this driver.
 
         If you have a reference to the state machine, you can also send it
-        directly to it by using `engines.Machine.send_signal`.
+        directly to it by using `stmpy.Machine.send_signal`.
 
         `stm_id` must be the id of a state machine earlier added to the driver.
         """
@@ -346,7 +349,7 @@ class Machine:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
                 self._logger.error(
-                    'Error: State machine is in state {} and received'
+                    'Error: Machine is in state {} and received'
                     'event {}, but no transition with this event is declared!'
                     .format(self._state, event_id, self._table))
                 return
@@ -364,9 +367,6 @@ class Machine:
             target = transition.function(*args, **kwargs)
         # go into the next state
         self._enter_state(target)
-
-
-
 
     def start_timer(self, timer_id, timeout):
         """
@@ -393,7 +393,7 @@ class Machine:
         Send a signal to this state machine.
 
         To send a signal to a machine by its name, use
-        `engines.Driver.send_signal` instead.
+        `stmpy.Driver.send_signal` instead.
         """
         self._driver._add_event(
             event_id=signal_id, args=args, kwargs=kwargs, stm=self)
@@ -412,7 +412,7 @@ class Machine:
 class _Transition:
 
     def __init__(self, t_dict):
-        self.source =  t_dict['source']
+        self.source = t_dict['source']
         if 'effect' in t_dict:
             self.effect = t_dict['effect'].split(';')
         else:

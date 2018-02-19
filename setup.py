@@ -1,14 +1,14 @@
 from distutils.core import setup
 setup(
-  name='engines',
-  packages=['engines'],
-  version='0.2.4',
+  name='stmpy',
+  packages=['stmpy'],
+  version='0.2.5',
   description='Support for simple state machines',
   author='Frank Alexander Kraemer',
   author_email='kraemer.frank@gmail.com',
   license='MIT',
-  url='https://github.com/falkr/engines',
-  download_url='https://github.com/falkr/engines/archive/0.2.tar.gz',
+  url='https://github.com/falkr/stmpy',
+  download_url='https://github.com/falkr/stmpy/archive/0.2.tar.gz',
   keywords=['state machines', 'stm', 'automata'],
   classifiers=[
         'Development Status :: 3 - Alpha',
