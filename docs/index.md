@@ -15,17 +15,25 @@ The project is in an early stage, and not all features are in place yet.
 
 ## Installation
 
-    pip install engines
+    pip install stmpy
 
 
 ## API Documentation
 
-[Browse the API here.](./engines/index.html)
+[Browse the API here.](./stmpy/index.html)
+
+
+## Overview
+
+State machines are implemented by a combination of the two classes *Machine* and *Driver.*
+
+* A Machine represents a state machine diagrams.
+* A Driver maintains event queues and control the execution of several machines.
 
 
 ## Example: Tick Tock State Machine
 
-    from engines import Machine, Driver
+    from stmpy import Machine, Driver
 
     class Tick:
 

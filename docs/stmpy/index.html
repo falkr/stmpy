@@ -3,12 +3,12 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>engines API documentation</title>
-    <meta name="description" content="Module `engines` provides support for state machines.
+    <title>stmpy API documentation</title>
+    <meta name="description" content="Module `stmpy` provides support for state machines.
 
 ## Contributing
 
-`engines` [is on GitHub](htt..." />
+`stmpy` [is on GitHub](https:/..." />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1049,31 +1049,31 @@ table {
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
         <li class="mono">
-        <span class="class_name"><a href="#engines.Driver">Driver</a></span>
+        <span class="class_name"><a href="#stmpy.Driver">Driver</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#engines.Driver.__init__">__init__</a></li>
-    <li class="mono"><a href="#engines.Driver.add_stm">add_stm</a></li>
-    <li class="mono"><a href="#engines.Driver.print_state">print_state</a></li>
-    <li class="mono"><a href="#engines.Driver.send_signal">send_signal</a></li>
-    <li class="mono"><a href="#engines.Driver.start">start</a></li>
-    <li class="mono"><a href="#engines.Driver.step">step</a></li>
-    <li class="mono"><a href="#engines.Driver.stop">stop</a></li>
-    <li class="mono"><a href="#engines.Driver.wait_until_finished">wait_until_finished</a></li>
+    <li class="mono"><a href="#stmpy.Driver.__init__">__init__</a></li>
+    <li class="mono"><a href="#stmpy.Driver.add_stm">add_stm</a></li>
+    <li class="mono"><a href="#stmpy.Driver.print_status">print_status</a></li>
+    <li class="mono"><a href="#stmpy.Driver.send_signal">send_signal</a></li>
+    <li class="mono"><a href="#stmpy.Driver.start">start</a></li>
+    <li class="mono"><a href="#stmpy.Driver.step">step</a></li>
+    <li class="mono"><a href="#stmpy.Driver.stop">stop</a></li>
+    <li class="mono"><a href="#stmpy.Driver.wait_until_finished">wait_until_finished</a></li>
   </ul>
 
         </li>
         <li class="mono">
-        <span class="class_name"><a href="#engines.Machine">Machine</a></span>
+        <span class="class_name"><a href="#stmpy.Machine">Machine</a></span>
         
           
   <ul>
-    <li class="mono"><a href="#engines.Machine.__init__">__init__</a></li>
-    <li class="mono"><a href="#engines.Machine.send_signal">send_signal</a></li>
-    <li class="mono"><a href="#engines.Machine.start_timer">start_timer</a></li>
-    <li class="mono"><a href="#engines.Machine.stop_timer">stop_timer</a></li>
-    <li class="mono"><a href="#engines.Machine.terminate">terminate</a></li>
+    <li class="mono"><a href="#stmpy.Machine.__init__">__init__</a></li>
+    <li class="mono"><a href="#stmpy.Machine.send_signal">send_signal</a></li>
+    <li class="mono"><a href="#stmpy.Machine.start_timer">start_timer</a></li>
+    <li class="mono"><a href="#stmpy.Machine.stop_timer">stop_timer</a></li>
+    <li class="mono"><a href="#stmpy.Machine.terminate">terminate</a></li>
   </ul>
 
         </li>
@@ -1091,19 +1091,19 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">engines</span> module</h1>
-  <p>Module <code>engines</code> provides support for state machines.</p>
+  <h1 class="title"><span class="name">stmpy</span> module</h1>
+  <p>Module <code>stmpy</code> provides support for state machines.</p>
 <h2>Contributing</h2>
-<p><code>engines</code> <a href="https://github.com/falkr/engines">is on GitHub</a>. Pull
+<p><code>stmpy</code> <a href="https://github.com/falkr/stmpy">is on GitHub</a>. Pull
 requests and bug reports are welcome.</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines', this);">Show source &equiv;</a></p>
-  <div id="source-engines" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Module `engines` provides support for state machines.</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy" class="source">
+    <div class="codehilite"><pre><span></span><span class="sd">&quot;&quot;&quot;Module `stmpy` provides support for state machines.</span>
 
 <span class="sd">## Contributing</span>
 
-<span class="sd">`engines` [is on GitHub](https://github.com/falkr/engines). Pull</span>
+<span class="sd">`stmpy` [is on GitHub](https://github.com/falkr/stmpy). Pull</span>
 <span class="sd">requests and bug reports are welcome.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -1112,8 +1112,12 @@ requests and bug reports are welcome.</p>
 <span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Queue</span>
 <span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Empty</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
-<span class="c1"># from threading import Event</span>
-<span class="c1"># from threading import Condition</span>
+
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.2.5&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The current version of stmpy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_current_time_millis</span><span class="p">():</span>
@@ -1139,7 +1143,7 @@ requests and bug reports are welcome.</p>
 
 <span class="k">class</span> <span class="nc">Driver</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A driver can run several state machines.</span>
+<span class="sd">    A driver can run several  machines.</span>
 
 <span class="sd">    One driver contains one thread. Machines assigned to a driver are executed</span>
 <span class="sd">    within this single thread.</span>
@@ -1163,22 +1167,22 @@ requests and bug reports are welcome.</p>
         <span class="c1"># Sends a None event to wake up the queue.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">print_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
             <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===&#39;</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">_IterableQueue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">event</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                     <span class="n">event</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]))</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]))</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
@@ -1197,7 +1201,7 @@ requests and bug reports are welcome.</p>
 
 <span class="sd">        This method creates a thread which runs the event loop.</span>
 <span class="sd">        The method returns immediately. To wait until the driver</span>
-<span class="sd">        finishes, use `engines.Driver.wait_until_finished`.</span>
+<span class="sd">        finishes, use `stmpy.Driver.wait_until_finished`.</span>
 
 <span class="sd">        `max_transitions`: execute only this number of transitions, then stop</span>
 <span class="sd">        `keep_active`: When true, keep the driver running even when all state</span>
@@ -1231,21 +1235,29 @@ requests and bug reports are welcome.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">timer</span><span class="p">:</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout_abs&#39;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start timer with id={} from stm={}&#39;</span>
-                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">_start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start timer with name={} from stm={}&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
         <span class="n">timeout_abs</span> <span class="o">=</span> <span class="n">_current_time_millis</span><span class="p">()</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_timer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">timer_id</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span>
-             <span class="s1">&#39;timeout_abs&#39;</span><span class="p">:</span> <span class="n">timeout_abs</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">})</span>
+            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span> <span class="s1">&#39;timeout_abs&#39;</span><span class="p">:</span> <span class="n">timeout_abs</span><span class="p">,</span>
+             <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">,</span> <span class="s1">&#39;tid&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sort_timer_queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wake_queue</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Stopping timer with id={} from stm={}&#39;</span>
-                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
-        <span class="c1"># TODO search through the timer queue and remove timer, sort again</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wake_queue</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Stopping timer with name={} from stm={}&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">index_to_delete</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tid</span><span class="p">:</span>
+                <span class="n">index_to_delete</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="o">++</span><span class="n">index</span>
+        <span class="k">if</span> <span class="n">index_to_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_to_delete</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1283,7 +1295,7 @@ requests and bug reports are welcome.</p>
 <span class="sd">        Send a signal to a state machine handled by this driver.</span>
 
 <span class="sd">        If you have a reference to the state machine, you can also send it</span>
-<span class="sd">        directly to it by using `engines.Machine.send_signal`.</span>
+<span class="sd">        directly to it by using `stmpy.Machine.send_signal`.</span>
 
 <span class="sd">        `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1346,18 +1358,16 @@ requests and bug reports are welcome.</p>
             <span class="n">t_dict</span> <span class="o">=</span> <span class="n">transition_string</span>  <span class="c1"># ast.literal_eval(transition_string)</span>
             <span class="c1"># TODO error handling: string may be written in a wrong way</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
                 <span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">effect</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span>
-                    <span class="bp">None</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">effect</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">trigger</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;trigger&#39;</span><span class="p">]</span>
                 <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
-                <span class="n">transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">effect</span><span class="p">)</span>
+                <span class="n">transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
                 <span class="c1"># TODO error handling: what if several transition with same</span>
                 <span class="c1"># id start from same source state?</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">transition</span>
@@ -1440,17 +1450,24 @@ requests and bug reports are welcome.</p>
             <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s1">&#39;Error: State machine is in state {} and received&#39;</span>
+                    <span class="s1">&#39;Error: Machine is in state {} and received&#39;</span>
                     <span class="s1">&#39;event {}, but no transition with this event is declared!&#39;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">))</span>
                 <span class="k">return</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span>
+        <span class="c1"># execute all effects</span>
         <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
+            <span class="c1"># simple transition</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># compound transitions defined in code</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># go into the next state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1477,7 +1494,7 @@ requests and bug reports are welcome.</p>
 <span class="sd">        Send a signal to this state machine.</span>
 
 <span class="sd">        To send a signal to a machine by its name, use</span>
-<span class="sd">        `engines.Driver.send_signal` instead.</span>
+<span class="sd">        `stmpy.Driver.send_signal` instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span>
             <span class="n">event_id</span><span class="o">=</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -1495,14 +1512,23 @@ requests and bug reports are welcome.</p>
 
 <span class="k">class</span> <span class="nc">_Transition</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">effect</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span> <span class="o">=</span> <span class="n">trigger</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
-        <span class="k">if</span> <span class="n">effect</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s1">&#39;trigger&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;trigger&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="s1">&#39;function&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
+            <span class="c1"># transition is defined by a function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># transition is declared in data structure</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
 
 
 <span class="k">class</span> <span class="nc">_State</span><span class="p">:</span>
@@ -1522,18 +1548,18 @@ requests and bug reports are welcome.</p>
     <h2 class="section-title" id="header-classes">Classes</h2>
       
       <div class="item">
-      <p id="engines.Driver" class="name">class <span class="ident">Driver</span></p>
+      <p id="stmpy.Driver" class="name">class <span class="ident">Driver</span></p>
       
   
-    <div class="desc"><p>A driver can run several state machines.</p>
+    <div class="desc"><p>A driver can run several  machines.</p>
 <p>One driver contains one thread. Machines assigned to a driver are executed
 within this single thread.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Driver</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A driver can run several state machines.</span>
+<span class="sd">    A driver can run several  machines.</span>
 
 <span class="sd">    One driver contains one thread. Machines assigned to a driver are executed</span>
 <span class="sd">    within this single thread.</span>
@@ -1557,22 +1583,22 @@ within this single thread.</p></div>
         <span class="c1"># Sends a None event to wake up the queue.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">print_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
             <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===&#39;</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">_IterableQueue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">event</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                     <span class="n">event</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]))</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]))</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
@@ -1591,7 +1617,7 @@ within this single thread.</p></div>
 
 <span class="sd">        This method creates a thread which runs the event loop.</span>
 <span class="sd">        The method returns immediately. To wait until the driver</span>
-<span class="sd">        finishes, use `engines.Driver.wait_until_finished`.</span>
+<span class="sd">        finishes, use `stmpy.Driver.wait_until_finished`.</span>
 
 <span class="sd">        `max_transitions`: execute only this number of transitions, then stop</span>
 <span class="sd">        `keep_active`: When true, keep the driver running even when all state</span>
@@ -1625,21 +1651,29 @@ within this single thread.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">timer</span><span class="p">:</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout_abs&#39;</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start timer with id={} from stm={}&#39;</span>
-                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">_start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Start timer with name={} from stm={}&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
         <span class="n">timeout_abs</span> <span class="o">=</span> <span class="n">_current_time_millis</span><span class="p">()</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_timer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">timer_id</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span>
-             <span class="s1">&#39;timeout_abs&#39;</span><span class="p">:</span> <span class="n">timeout_abs</span><span class="p">,</span> <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">})</span>
+            <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;timeout&#39;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span> <span class="s1">&#39;timeout_abs&#39;</span><span class="p">:</span> <span class="n">timeout_abs</span><span class="p">,</span>
+             <span class="s1">&#39;stm&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="p">,</span> <span class="s1">&#39;tid&#39;</span><span class="p">:</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sort_timer_queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wake_queue</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Stopping timer with id={} from stm={}&#39;</span>
-                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
-        <span class="c1"># TODO search through the timer queue and remove timer, sort again</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wake_queue</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Stopping timer with name={} from stm={}&#39;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">index_to_delete</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tid</span><span class="p">:</span>
+                <span class="n">index_to_delete</span> <span class="o">=</span> <span class="n">index</span>
+            <span class="o">++</span><span class="n">index</span>
+        <span class="k">if</span> <span class="n">index_to_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_to_delete</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_check_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1677,7 +1711,7 @@ within this single thread.</p></div>
 <span class="sd">        Send a signal to a state machine handled by this driver.</span>
 
 <span class="sd">        If you have a reference to the state machine, you can also send it</span>
-<span class="sd">        directly to it by using `engines.Machine.send_signal`.</span>
+<span class="sd">        directly to it by using `stmpy.Machine.send_signal`.</span>
 
 <span class="sd">        `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1734,13 +1768,13 @@ within this single thread.</p></div>
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#engines.Driver">Driver</a></li>
+          <li><a href="#stmpy.Driver">Driver</a></li>
           <li>builtins.object</li>
           </ul>
           <h3>Static methods</h3>
             
   <div class="item">
-    <div class="name def" id="engines.Driver.__init__">
+    <div class="name def" id="stmpy.Driver.__init__">
     <p>def <span class="ident">__init__</span>(</p><p>self)</p>
     </div>
     
@@ -1749,8 +1783,8 @@ within this single thread.</p></div>
   
     <div class="desc"><p>Create a new driver.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.__init__" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a new driver.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -1770,7 +1804,7 @@ within this single thread.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.add_stm">
+    <div class="name def" id="stmpy.Driver.add_stm">
     <p>def <span class="ident">add_stm</span>(</p><p>self, stm)</p>
     </div>
     
@@ -1779,8 +1813,8 @@ within this single thread.</p></div>
   
     <div class="desc"><p>Add the state machine to this driver.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.add_stm', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.add_stm" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.add_stm', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.add_stm" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
     <span class="n">stm</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
@@ -1798,8 +1832,8 @@ within this single thread.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.print_state">
-    <p>def <span class="ident">print_state</span>(</p><p>self)</p>
+    <div class="name def" id="stmpy.Driver.print_status">
+    <p>def <span class="ident">print_status</span>(</p><p>self)</p>
     </div>
     
 
@@ -1807,24 +1841,24 @@ within this single thread.</p></div>
   
     <div class="desc"><p>Provide a snapshot of the current state.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.print_state', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.print_state" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.print_status', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.print_status" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Provide a snapshot of the current state.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== State Machines: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">stm_id</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
         <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} in state {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">stm</span><span class="o">.</span><span class="n">state</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Events in Queue: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">_IterableQueue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_queue</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with args:{} kwargs:{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">event</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                 <span class="n">event</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]))</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;=== Active Timers: ===</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;    - {} for {} with timeout {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;stm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout&#39;</span><span class="p">]))</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
@@ -1836,7 +1870,7 @@ within this single thread.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.send_signal">
+    <div class="name def" id="stmpy.Driver.send_signal">
     <p>def <span class="ident">send_signal</span>(</p><p>self, signal_id, stm_id, args=[], kwargs={})</p>
     </div>
     
@@ -1845,16 +1879,16 @@ within this single thread.</p></div>
   
     <div class="desc"><p>Send a signal to a state machine handled by this driver.</p>
 <p>If you have a reference to the state machine, you can also send it
-directly to it by using <a href="#engines.Machine.send_signal"><code>send_signal</code></a>.</p>
+directly to it by using <a href="#stmpy.Machine.send_signal"><code>send_signal</code></a>.</p>
 <p><code>stm_id</code> must be the id of a state machine earlier added to the driver.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.send_signal', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.send_signal" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.send_signal', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.send_signal" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">,</span> <span class="n">stm_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Send a signal to a state machine handled by this driver.</span>
 <span class="sd">    If you have a reference to the state machine, you can also send it</span>
-<span class="sd">    directly to it by using `engines.Machine.send_signal`.</span>
+<span class="sd">    directly to it by using `stmpy.Machine.send_signal`.</span>
 <span class="sd">    `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
@@ -1872,7 +1906,7 @@ directly to it by using <a href="#engines.Machine.send_signal"><code>send_signal
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.start">
+    <div class="name def" id="stmpy.Driver.start">
     <p>def <span class="ident">start</span>(</p><p>self, max_transitions=None, keep_active=False)</p>
     </div>
     
@@ -1882,19 +1916,19 @@ directly to it by using <a href="#engines.Machine.send_signal"><code>send_signal
     <div class="desc"><p>Start the driver.</p>
 <p>This method creates a thread which runs the event loop.
 The method returns immediately. To wait until the driver
-finishes, use <a href="#engines.Driver.wait_until_finished"><code>wait_until_finished</code></a>.</p>
+finishes, use <a href="#stmpy.Driver.wait_until_finished"><code>wait_until_finished</code></a>.</p>
 <p><code>max_transitions</code>: execute only this number of transitions, then stop
 <code>keep_active</code>: When true, keep the driver running even when all state
 machines terminated</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.start', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.start" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.start', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.start" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_transitions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">keep_active</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start the driver.</span>
 <span class="sd">    This method creates a thread which runs the event loop.</span>
 <span class="sd">    The method returns immediately. To wait until the driver</span>
-<span class="sd">    finishes, use `engines.Driver.wait_until_finished`.</span>
+<span class="sd">    finishes, use `stmpy.Driver.wait_until_finished`.</span>
 <span class="sd">    `max_transitions`: execute only this number of transitions, then stop</span>
 <span class="sd">    `keep_active`: When true, keep the driver running even when all state</span>
 <span class="sd">    machines terminated</span>
@@ -1913,7 +1947,7 @@ machines terminated</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.step">
+    <div class="name def" id="stmpy.Driver.step">
     <p>def <span class="ident">step</span>(</p><p>self, steps=1)</p>
     </div>
     
@@ -1922,8 +1956,8 @@ machines terminated</p></div>
   
     <div class="desc"><p>Execute a single step.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.step', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.step" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.step', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.step" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Execute a single step.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">max_transitions</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span>
@@ -1937,7 +1971,7 @@ machines terminated</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.stop">
+    <div class="name def" id="stmpy.Driver.stop">
     <p>def <span class="ident">stop</span>(</p><p>self)</p>
     </div>
     
@@ -1946,8 +1980,8 @@ machines terminated</p></div>
   
     <div class="desc"><p>Stop the driver.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.stop', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.stop" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.stop', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.stop" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Stop the driver.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="bp">False</span>
@@ -1961,7 +1995,7 @@ machines terminated</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Driver.wait_until_finished">
+    <div class="name def" id="stmpy.Driver.wait_until_finished">
     <p>def <span class="ident">wait_until_finished</span>(</p><p>self)</p>
     </div>
     
@@ -1970,8 +2004,8 @@ machines terminated</p></div>
   
     <div class="desc"><p>Blocking method to wait until the driver finished its execution.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Driver.wait_until_finished', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Driver.wait_until_finished" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver.wait_until_finished', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Driver.wait_until_finished" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">wait_until_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Blocking method to wait until the driver finished its execution.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -1990,14 +2024,14 @@ machines terminated</p></div>
       </div>
       
       <div class="item">
-      <p id="engines.Machine" class="name">class <span class="ident">Machine</span></p>
+      <p id="stmpy.Machine" class="name">class <span class="ident">Machine</span></p>
       
   
     <div class="desc"><p>Implements a state machine.</p>
 <p>A machine must be added to a driver to execute it.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine" class="source">
     <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Machine</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Implements a state machine.</span>
@@ -2011,18 +2045,16 @@ machines terminated</p></div>
             <span class="n">t_dict</span> <span class="o">=</span> <span class="n">transition_string</span>  <span class="c1"># ast.literal_eval(transition_string)</span>
             <span class="c1"># TODO error handling: string may be written in a wrong way</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
                 <span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">effect</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span>
-                    <span class="bp">None</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">effect</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">trigger</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;trigger&#39;</span><span class="p">]</span>
                 <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
-                <span class="n">transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">effect</span><span class="p">)</span>
+                <span class="n">transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
                 <span class="c1"># TODO error handling: what if several transition with same</span>
                 <span class="c1"># id start from same source state?</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">transition</span>
@@ -2105,17 +2137,24 @@ machines terminated</p></div>
             <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s1">&#39;Error: State machine is in state {} and received&#39;</span>
+                    <span class="s1">&#39;Error: Machine is in state {} and received&#39;</span>
                     <span class="s1">&#39;event {}, but no transition with this event is declared!&#39;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">))</span>
                 <span class="k">return</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span>
+        <span class="c1"># execute all effects</span>
         <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
+            <span class="c1"># simple transition</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># compound transitions defined in code</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># go into the next state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enter_state</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2142,7 +2181,7 @@ machines terminated</p></div>
 <span class="sd">        Send a signal to this state machine.</span>
 
 <span class="sd">        To send a signal to a machine by its name, use</span>
-<span class="sd">        `engines.Driver.send_signal` instead.</span>
+<span class="sd">        `stmpy.Driver.send_signal` instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span>
             <span class="n">event_id</span><span class="o">=</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -2165,13 +2204,13 @@ machines terminated</p></div>
       <div class="class">
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
-          <li><a href="#engines.Machine">Machine</a></li>
+          <li><a href="#stmpy.Machine">Machine</a></li>
           <li>builtins.object</li>
           </ul>
           <h3>Static methods</h3>
             
   <div class="item">
-    <div class="name def" id="engines.Machine.__init__">
+    <div class="name def" id="stmpy.Machine.__init__">
     <p>def <span class="ident">__init__</span>(</p><p>self, name, transitions, obj, states=[])</p>
     </div>
     
@@ -2181,8 +2220,8 @@ machines terminated</p></div>
     <div class="desc"><p>Create a new state machine.</p>
 <p>Throws an exception if the state machine is not well-formed.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine.__init__" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.__init__" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">transitions</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
 <span class="sd">    Throws an exception if the state machine is not well-formed.</span>
@@ -2204,7 +2243,7 @@ machines terminated</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Machine.send_signal">
+    <div class="name def" id="stmpy.Machine.send_signal">
     <p>def <span class="ident">send_signal</span>(</p><p>self, signal_id, args=[], kwargs={})</p>
     </div>
     
@@ -2213,15 +2252,15 @@ machines terminated</p></div>
   
     <div class="desc"><p>Send a signal to this state machine.</p>
 <p>To send a signal to a machine by its name, use
-<a href="#engines.Driver.send_signal"><code>send_signal</code></a> instead.</p></div>
+<a href="#stmpy.Driver.send_signal"><code>send_signal</code></a> instead.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine.send_signal', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine.send_signal" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.send_signal', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.send_signal" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">send_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Send a signal to this state machine.</span>
 <span class="sd">    To send a signal to a machine by its name, use</span>
-<span class="sd">    `engines.Driver.send_signal` instead.</span>
+<span class="sd">    `stmpy.Driver.send_signal` instead.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span>
         <span class="n">event_id</span><span class="o">=</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -2234,7 +2273,7 @@ machines terminated</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Machine.start_timer">
+    <div class="name def" id="stmpy.Machine.start_timer">
     <p>def <span class="ident">start_timer</span>(</p><p>self, timer_id, timeout)</p>
     </div>
     
@@ -2248,8 +2287,8 @@ Note that the timeout is intended as the minimum time until the timer's
 expiration, but may vary due to the state of the event queue and the
 load of the system.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine.start_timer', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine.start_timer" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.start_timer', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.start_timer" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">start_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start a timer or restart an active one.</span>
@@ -2269,7 +2308,7 @@ load of the system.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Machine.stop_timer">
+    <div class="name def" id="stmpy.Machine.stop_timer">
     <p>def <span class="ident">stop_timer</span>(</p><p>self, timer_id)</p>
     </div>
     
@@ -2279,8 +2318,8 @@ load of the system.</p></div>
     <div class="desc"><p>Stop a timer.</p>
 <p>If the timer is not active, nothing happens.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine.stop_timer', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine.stop_timer" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.stop_timer', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.stop_timer" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">stop_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stop a timer.</span>
@@ -2296,7 +2335,7 @@ load of the system.</p></div>
   
             
   <div class="item">
-    <div class="name def" id="engines.Machine.terminate">
+    <div class="name def" id="stmpy.Machine.terminate">
     <p>def <span class="ident">terminate</span>(</p><p>self)</p>
     </div>
     
@@ -2308,8 +2347,8 @@ load of the system.</p></div>
 If this is the last state machine of the scheduler and the scheduler is
 not configured to stay active, this will also terminate the scheduler.</p></div>
   <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-engines.Machine.terminate', this);">Show source &equiv;</a></p>
-  <div id="source-engines.Machine.terminate" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.terminate', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.terminate" class="source">
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Terminate this state machine.</span>
@@ -2327,7 +2366,7 @@ not configured to stay active, this will also terminate the scheduler.</p></div>
   
           <h3>Instance variables</h3>
             <div class="item">
-            <p id="engines.Machine.driver" class="name">var <span class="ident">driver</span></p>
+            <p id="stmpy.Machine.driver" class="name">var <span class="ident">driver</span></p>
             
 
             
@@ -2338,7 +2377,7 @@ not configured to stay active, this will also terminate the scheduler.</p></div>
 
             </div>
             <div class="item">
-            <p id="engines.Machine.id" class="name">var <span class="ident">id</span></p>
+            <p id="stmpy.Machine.id" class="name">var <span class="ident">id</span></p>
             
 
             
@@ -2349,7 +2388,7 @@ not configured to stay active, this will also terminate the scheduler.</p></div>
 
             </div>
             <div class="item">
-            <p id="engines.Machine.state" class="name">var <span class="ident">state</span></p>
+            <p id="stmpy.Machine.state" class="name">var <span class="ident">state</span></p>
             
 
             
