@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.2.5'
+__version__ = '0.2.7'
 """
 The current version of stmpy.
 """
@@ -275,8 +275,14 @@ class Machine:
 
     def _parse_states(self, states):
         for s_dict in states:
-            entry = s_dict['entry']
-            exit = s_dict['exit']
+            if 'entry' in s_dict:
+                entry = s_dict['entry']
+            else:
+                entry = ''
+            if 'exit' in s_dict:
+                exit = s_dict['exit']
+            else:
+                exit = ''
             name = s_dict['name']
             # initial state cannot be detailed
             self._states[name] = _State(entry, exit)
