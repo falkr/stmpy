@@ -13,11 +13,69 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 """
 The current version of stmpy.
 """
 
+def _parse_arg_list(arglist):
+    """
+    Parses a list of arguments.
+
+    Arguments are expected to be split by a comma, surrounded by any amount
+    of whitespace. Arguments are then run through Python's eval() method.
+    """
+    args = []
+    for arg in arglist.split(','):
+        arg = arg.strip()
+        if arg: # string is not empty
+            args.append(eval(arg))
+    return args
+
+def _parse_action(action):
+    """
+    Parses a single action item, for instance one of the following:
+
+        m; m(); m(True); m(*)
+
+    The brackets must match.
+    """
+    i_open = action.find('(')
+    if i_open is -1:
+        # return action name, finished
+        return {'name': action, 'args': [], 'event_args': False}
+    # we need to parse the arguments
+    i_close = action.rfind(')')
+    if i_close is -1:
+        raise Exception('Bracket in argument opened but not closed.')
+    action_name = action[:i_open]
+    arglist = action[i_open+1:i_close].strip()
+    if not arglist:
+        # no arglist, just return method name
+        return {'name': action_name, 'args': [], 'event_args': False}
+    if '*' in arglist:
+        return {'name': action_name, 'args': [], 'event_args': True}
+    return {'name': action_name, 'args': _parse_arg_list(arglist), 'event_args': False}
+
+def _parse_action_list_attribute(attribute):
+    """
+    Parses a list of actions, as found in the effect attribute of
+    transitions, and the enry and exit actions of states.
+
+    Actions are separated by a semicolon, surrounded by any amount of
+    whitespace. A action can have the following form:
+
+        m; m(); m(True); m(*)
+
+    The asterisk that the state machine should provide the args and
+    kwargs from the incoming event.
+    """
+    actions = []
+    for action_call in attribute.split(';'):
+        action_call = action_call.strip()
+        if action_call: # string is not empty
+            actions.append(_parse_action(action_call))
+    return actions
 
 def _current_time_millis():
     return int(round(time.time() * 1000))
@@ -257,10 +315,6 @@ class Machine:
             t_dict = transition_string  # ast.literal_eval(transition_string)
             # TODO error handling: string may be written in a wrong way
             source = t_dict['source']
-            if 'effect' in t_dict:
-                effect = t_dict['effect']
-            else:
-                effect = None
             if source is 'initial':
                 self._intial_transition = _Transition(transition_string)
             else:
@@ -341,6 +395,24 @@ class Machine:
                    'entry': 'op1; op2',
                    'exit': 'op3'}
 
+        **Actions and Effects:**
+        The value of the attributes for transition effects and for state entry
+        and exit actions can list several actions that are called on the object
+        provided to the state machine.
+
+        This list of actions can look in the following way:
+
+            effect='m1; m2(); m3(1, True, "a"); m4(*)'
+
+        This is a semicolon-separated list of actions that are called, here as
+        part of a transition's effect. Method m1 has no arguments, and neither
+        does m2. This means the empty brackets are optional. Method m3 has three
+        litteral arguments, here the integer 1, the boolean True and the string
+        'a'. Note how the string is surrounded by double quotation marks, since
+        the entire effect is coded in single quotation marks. Vice-versa is also
+        possible. The last method, m4, declares an asterisk as argument. This
+        means that the state machine uses the args and kwargs of the incoming
+        event and offers them to the method.
 
 
         `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.
@@ -392,20 +464,27 @@ class Machine:
     def _initialize(self, scheduler):
         self._driver = scheduler
 
+    def _run_actions(self, actions, args=[], kwargs={}):
+        for action in actions:
+            if action['event_args']:
+                # use the arguments provided by the event
+                self._run_function(self._obj, action['name'], args, kwargs)
+            else:
+                # use the static arguments provided by declaration
+                self._run_function(self._obj, action['name'], action['args'], {})
+
     def _enter_state(self, state):
         self._logger.debug('Machine {} enter state {}'.format(id, state))
         # execute any entry actions
         if state in self._states:
-            for entry in self._states[state].entry:
-                self._run_function(self._obj, entry, args=[], kwargs={})
+            self._run_actions(self._states[state].entry)
         self._state = state
 
     def _exit_state(self, state):
         self._logger.debug('Machine {} exits state {}'.format(id, state))
         # execute any exit actions
         if state in self._states:
-            for exit in self._states[state].exit:
-                self._run_function(self._obj, exit, args=[], kwargs={})
+            self._run_actions(self._states[state].exit)
 
     def _execute_transition(self, event_id, args, kwargs):
         if self._state is 'initial':
@@ -414,7 +493,7 @@ class Machine:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
                 self._logger.warning(
-                    'Error: Machine is in state {} and received'
+                    'Machine is in state {} and received '
                     'event {}, but no transition with this event is declared!'
                     .format(self._state, event_id, self._table))
                 return
@@ -422,8 +501,7 @@ class Machine:
                 transition = self._table[t_id]
                 self._exit_state(self._state)
         # execute all effects
-        for function in transition.effect:
-            self._run_function(self._obj, function, args, kwargs)
+        self._run_actions(transition.effect, args, kwargs)
         if transition.target:
             # simple transition
             target = transition.target
@@ -479,7 +557,7 @@ class _Transition:
     def __init__(self, t_dict):
         self.source = t_dict['source']
         if 'effect' in t_dict:
-            self.effect = t_dict['effect'].split(';')
+            self.effect = _parse_action_list_attribute(t_dict['effect'])
         else:
             self.effect = []
         if 'trigger' in t_dict:
@@ -499,10 +577,10 @@ class _State:
     # TODO does not work with empty entry and exit dict entries.
     def __init__(self, s_dict):
         if 'entry' in s_dict:
-            self.entry = s_dict['entry'].split(';')
+            self.entry = _parse_action_list_attribute(s_dict['entry'])
         else:
             self.entry = []
         if 'exit' in s_dict:
-            self.exit = s_dict['exit'].split(';')
+            self.exit = _parse_action_list_attribute(s_dict['exit'])
         else:
             self.exit = []
