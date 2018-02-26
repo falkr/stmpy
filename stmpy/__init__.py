@@ -413,7 +413,7 @@ class Machine:
         else:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
-                self._logger.error(
+                self._logger.warning(
                     'Error: Machine is in state {} and received'
                     'event {}, but no transition with this event is declared!'
                     .format(self._state, event_id, self._table))
