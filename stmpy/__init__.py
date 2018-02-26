@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.2.7'
+__version__ = '0.3.0'
 """
 The current version of stmpy.
 """
@@ -24,7 +24,7 @@ def _current_time_millis():
 
 
 def _tid(state_id, event_id):
-    return state_id + '_' + 'event_id'
+    return state_id + '_' + event_id
 
 
 class _IterableQueue():
@@ -275,17 +275,10 @@ class Machine:
 
     def _parse_states(self, states):
         for s_dict in states:
-            if 'entry' in s_dict:
-                entry = s_dict['entry']
-            else:
-                entry = ''
-            if 'exit' in s_dict:
-                exit = s_dict['exit']
-            else:
-                exit = ''
             name = s_dict['name']
+            # TODO check that state name is given
             # initial state cannot be detailed
-            self._states[name] = _State(entry, exit)
+            self._states[name] = _State(s_dict)
 
     def __init__(self, name, transitions, obj, states=[]):
         """Create a new state machine.
@@ -503,7 +496,13 @@ class _Transition:
 
 
 class _State:
-
-    def __init__(self, entry, exit):
-        self.exit = exit.split(';')
-        self.entry = entry.split(';')
+    # TODO does not work with empty entry and exit dict entries.
+    def __init__(self, s_dict):
+        if 'entry' in s_dict:
+            self.entry = s_dict['entry'].split(';')
+        else:
+            self.entry = []
+        if 'exit' in s_dict:
+            self.exit = s_dict['exit'].split(';')
+        else:
+            self.exit = []
