@@ -1114,18 +1114,76 @@ requests and bug reports are welcome.</p>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.2.5&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.4.0&#39;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The current version of stmpy.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="k">def</span> <span class="nf">_parse_arg_list</span><span class="p">(</span><span class="n">arglist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a list of arguments.</span>
+
+<span class="sd">    Arguments are expected to be split by a comma, surrounded by any amount</span>
+<span class="sd">    of whitespace. Arguments are then run through Python&#39;s eval() method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arglist</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">):</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">arg</span><span class="p">:</span> <span class="c1"># string is not empty</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+<span class="k">def</span> <span class="nf">_parse_action</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a single action item, for instance one of the following:</span>
+
+<span class="sd">        m; m(); m(True); m(*)</span>
+
+<span class="sd">    The brackets must match.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i_open</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i_open</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># return action name, finished</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;event_args&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+    <span class="c1"># we need to parse the arguments</span>
+    <span class="n">i_close</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">i_close</span> <span class="ow">is</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Bracket in argument opened but not closed.&#39;</span><span class="p">)</span>
+    <span class="n">action_name</span> <span class="o">=</span> <span class="n">action</span><span class="p">[:</span><span class="n">i_open</span><span class="p">]</span>
+    <span class="n">arglist</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="n">i_open</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i_close</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">arglist</span><span class="p">:</span>
+        <span class="c1"># no arglist, just return method name</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">action_name</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;event_args&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+    <span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="n">arglist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">action_name</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;event_args&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">action_name</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">_parse_arg_list</span><span class="p">(</span><span class="n">arglist</span><span class="p">),</span> <span class="s1">&#39;event_args&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">_parse_action_list_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a list of actions, as found in the effect attribute of</span>
+<span class="sd">    transitions, and the enry and exit actions of states.</span>
+
+<span class="sd">    Actions are separated by a semicolon, surrounded by any amount of</span>
+<span class="sd">    whitespace. A action can have the following form:</span>
+
+<span class="sd">        m; m(); m(True); m(*)</span>
+
+<span class="sd">    The asterisk that the state machine should provide the args and</span>
+<span class="sd">    kwargs from the incoming event.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">action_call</span> <span class="ow">in</span> <span class="n">attribute</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">):</span>
+        <span class="n">action_call</span> <span class="o">=</span> <span class="n">action_call</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">action_call</span><span class="p">:</span> <span class="c1"># string is not empty</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_parse_action</span><span class="p">(</span><span class="n">action_call</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">actions</span>
 
 <span class="k">def</span> <span class="nf">_current_time_millis</span><span class="p">():</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_tid</span><span class="p">(</span><span class="n">state_id</span><span class="p">,</span> <span class="n">event_id</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">state_id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;event_id&#39;</span>
+    <span class="k">return</span> <span class="n">state_id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">event_id</span>
 
 
 <span class="k">class</span> <span class="nc">_IterableQueue</span><span class="p">():</span>
@@ -1358,10 +1416,6 @@ requests and bug reports are welcome.</p>
             <span class="n">t_dict</span> <span class="o">=</span> <span class="n">transition_string</span>  <span class="c1"># ast.literal_eval(transition_string)</span>
             <span class="c1"># TODO error handling: string may be written in a wrong way</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
-                <span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">effect</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1376,11 +1430,10 @@ requests and bug reports are welcome.</p>
 
     <span class="k">def</span> <span class="nf">_parse_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">s_dict</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">entry</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">]</span>
-            <span class="nb">exit</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;exit&#39;</span><span class="p">]</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="c1"># TODO check that state name is given</span>
             <span class="c1"># initial state cannot be detailed</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_State</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">exit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_State</span><span class="p">(</span><span class="n">s_dict</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">transitions</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
@@ -1443,11 +1496,29 @@ requests and bug reports are welcome.</p>
 <span class="sd">                   &#39;entry&#39;: &#39;op1; op2&#39;,</span>
 <span class="sd">                   &#39;exit&#39;: &#39;op3&#39;}</span>
 
+<span class="sd">        **Actions and Effects:**</span>
+<span class="sd">        The value of the attributes for transition effects and for state entry</span>
+<span class="sd">        and exit actions can list several actions that are called on the object</span>
+<span class="sd">        provided to the state machine.</span>
+
+<span class="sd">        This list of actions can look in the following way:</span>
+
+<span class="sd">            effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</span>
+
+<span class="sd">        This is a semicolon-separated list of actions that are called, here as</span>
+<span class="sd">        part of a transition&#39;s effect. Method m1 has no arguments, and neither</span>
+<span class="sd">        does m2. This means the empty brackets are optional. Method m3 has three</span>
+<span class="sd">        litteral arguments, here the integer 1, the boolean True and the string</span>
+<span class="sd">        &#39;a&#39;. Note how the string is surrounded by double quotation marks, since</span>
+<span class="sd">        the entire effect is coded in single quotation marks. Vice-versa is also</span>
+<span class="sd">        possible. The last method, m4, declares an asterisk as argument. This</span>
+<span class="sd">        means that the state machine uses the args and kwargs of the incoming</span>
+<span class="sd">        event and offers them to the method.</span>
 
 
 <span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
 
-<span class="sd">        `transitions`: A set of transitions.</span>
+<span class="sd">        `transitions`: A set of transitions, as explained above. There must be at least one initial transition.</span>
 
 <span class="sd">        `obj`: An object that encapsulates any actions called from states or transitions.</span>
 
@@ -1494,20 +1565,27 @@ requests and bug reports are welcome.</p>
     <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">scheduler</span>
 
+    <span class="k">def</span> <span class="nf">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
+                <span class="c1"># use the arguments provided by the event</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># use the static arguments provided by declaration</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="p">{})</span>
+
     <span class="k">def</span> <span class="nf">_enter_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Machine {} enter state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
         <span class="c1"># execute any entry actions</span>
         <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">entry</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
     <span class="k">def</span> <span class="nf">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Machine {} exits state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
         <span class="c1"># execute any exit actions</span>
         <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
-            <span class="k">for</span> <span class="nb">exit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">exit</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="nb">exit</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">exit</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_execute_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
@@ -1515,8 +1593,8 @@ requests and bug reports are welcome.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s1">&#39;Error: Machine is in state {} and received&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Machine is in state {} and received &#39;</span>
                     <span class="s1">&#39;event {}, but no transition with this event is declared!&#39;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">))</span>
                 <span class="k">return</span>
@@ -1524,8 +1602,7 @@ requests and bug reports are welcome.</p>
                 <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span>
         <span class="c1"># execute all effects</span>
-        <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
             <span class="c1"># simple transition</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span>
@@ -1581,7 +1658,7 @@ requests and bug reports are welcome.</p>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_dict</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="n">_parse_action_list_attribute</span><span class="p">(</span><span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">effect</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="s1">&#39;trigger&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
@@ -1598,10 +1675,16 @@ requests and bug reports are welcome.</p>
 
 
 <span class="k">class</span> <span class="nc">_State</span><span class="p">:</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="nb">exit</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="nb">exit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO does not work with empty entry and exit dict entries.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;entry&#39;</span> <span class="ow">in</span> <span class="n">s_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">_parse_action_list_attribute</span><span class="p">(</span><span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s1">&#39;exit&#39;</span> <span class="ow">in</span> <span class="n">s_dict</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="n">_parse_action_list_attribute</span><span class="p">(</span><span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;exit&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
 
   </div>
@@ -2111,10 +2194,6 @@ machines terminated</p></div>
             <span class="n">t_dict</span> <span class="o">=</span> <span class="n">transition_string</span>  <span class="c1"># ast.literal_eval(transition_string)</span>
             <span class="c1"># TODO error handling: string may be written in a wrong way</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="s1">&#39;effect&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
-                <span class="n">effect</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">effect</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_intial_transition</span> <span class="o">=</span> <span class="n">_Transition</span><span class="p">(</span><span class="n">transition_string</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -2129,11 +2208,10 @@ machines terminated</p></div>
 
     <span class="k">def</span> <span class="nf">_parse_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">s_dict</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">entry</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">]</span>
-            <span class="nb">exit</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;exit&#39;</span><span class="p">]</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="c1"># TODO check that state name is given</span>
             <span class="c1"># initial state cannot be detailed</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_State</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">exit</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_State</span><span class="p">(</span><span class="n">s_dict</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">transitions</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">states</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;Create a new state machine.</span>
@@ -2196,11 +2274,29 @@ machines terminated</p></div>
 <span class="sd">                   &#39;entry&#39;: &#39;op1; op2&#39;,</span>
 <span class="sd">                   &#39;exit&#39;: &#39;op3&#39;}</span>
 
+<span class="sd">        **Actions and Effects:**</span>
+<span class="sd">        The value of the attributes for transition effects and for state entry</span>
+<span class="sd">        and exit actions can list several actions that are called on the object</span>
+<span class="sd">        provided to the state machine.</span>
+
+<span class="sd">        This list of actions can look in the following way:</span>
+
+<span class="sd">            effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</span>
+
+<span class="sd">        This is a semicolon-separated list of actions that are called, here as</span>
+<span class="sd">        part of a transition&#39;s effect. Method m1 has no arguments, and neither</span>
+<span class="sd">        does m2. This means the empty brackets are optional. Method m3 has three</span>
+<span class="sd">        litteral arguments, here the integer 1, the boolean True and the string</span>
+<span class="sd">        &#39;a&#39;. Note how the string is surrounded by double quotation marks, since</span>
+<span class="sd">        the entire effect is coded in single quotation marks. Vice-versa is also</span>
+<span class="sd">        possible. The last method, m4, declares an asterisk as argument. This</span>
+<span class="sd">        means that the state machine uses the args and kwargs of the incoming</span>
+<span class="sd">        event and offers them to the method.</span>
 
 
 <span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
 
-<span class="sd">        `transitions`: A set of transitions.</span>
+<span class="sd">        `transitions`: A set of transitions, as explained above. There must be at least one initial transition.</span>
 
 <span class="sd">        `obj`: An object that encapsulates any actions called from states or transitions.</span>
 
@@ -2247,20 +2343,27 @@ machines terminated</p></div>
     <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">scheduler</span>
 
+    <span class="k">def</span> <span class="nf">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
+                <span class="c1"># use the arguments provided by the event</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># use the static arguments provided by declaration</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="p">{})</span>
+
     <span class="k">def</span> <span class="nf">_enter_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Machine {} enter state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
         <span class="c1"># execute any entry actions</span>
         <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">entry</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">entry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">state</span>
 
     <span class="k">def</span> <span class="nf">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Machine {} exits state {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">state</span><span class="p">))</span>
         <span class="c1"># execute any exit actions</span>
         <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
-            <span class="k">for</span> <span class="nb">exit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">exit</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="nb">exit</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">exit</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_execute_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">is</span> <span class="s1">&#39;initial&#39;</span><span class="p">:</span>
@@ -2268,8 +2371,8 @@ machines terminated</p></div>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">t_id</span> <span class="o">=</span> <span class="n">_tid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s1">&#39;Error: Machine is in state {} and received&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s1">&#39;Machine is in state {} and received &#39;</span>
                     <span class="s1">&#39;event {}, but no transition with this event is declared!&#39;</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">))</span>
                 <span class="k">return</span>
@@ -2277,8 +2380,7 @@ machines terminated</p></div>
                 <span class="n">transition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_exit_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">)</span>
         <span class="c1"># execute all effects</span>
-        <span class="k">for</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_actions</span><span class="p">(</span><span class="n">transition</span><span class="o">.</span><span class="n">effect</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
             <span class="c1"># simple transition</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">transition</span><span class="o">.</span><span class="n">target</span>
@@ -2407,8 +2509,26 @@ the name of the state that is also used in the transition declaration.</p>
 </pre></div>
 
 
+<p><strong>Actions and Effects:</strong>
+The value of the attributes for transition effects and for state entry
+and exit actions can list several actions that are called on the object
+provided to the state machine.</p>
+<p>This list of actions can look in the following way:</p>
+<div class="codehilite"><pre><span></span>effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;
+</pre></div>
+
+
+<p>This is a semicolon-separated list of actions that are called, here as
+part of a transition's effect. Method m1 has no arguments, and neither
+does m2. This means the empty brackets are optional. Method m3 has three
+litteral arguments, here the integer 1, the boolean True and the string
+'a'. Note how the string is surrounded by double quotation marks, since
+the entire effect is coded in single quotation marks. Vice-versa is also
+possible. The last method, m4, declares an asterisk as argument. This
+means that the state machine uses the args and kwargs of the incoming
+event and offers them to the method.</p>
 <p><code>name</code>: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</p>
-<p><code>transitions</code>: A set of transitions.</p>
+<p><code>transitions</code>: A set of transitions, as explained above. There must be at least one initial transition.</p>
 <p><code>obj</code>: An object that encapsulates any actions called from states or transitions.</p>
 <p><code>states</code>: Optional state declarations to add entry and exit actions to them.</p></div>
   <div class="source_cont">
@@ -2462,8 +2582,23 @@ the name of the state that is also used in the transition declaration.</p>
 <span class="sd">        s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
 <span class="sd">               &#39;entry&#39;: &#39;op1; op2&#39;,</span>
 <span class="sd">               &#39;exit&#39;: &#39;op3&#39;}</span>
+<span class="sd">    **Actions and Effects:**</span>
+<span class="sd">    The value of the attributes for transition effects and for state entry</span>
+<span class="sd">    and exit actions can list several actions that are called on the object</span>
+<span class="sd">    provided to the state machine.</span>
+<span class="sd">    This list of actions can look in the following way:</span>
+<span class="sd">        effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</span>
+<span class="sd">    This is a semicolon-separated list of actions that are called, here as</span>
+<span class="sd">    part of a transition&#39;s effect. Method m1 has no arguments, and neither</span>
+<span class="sd">    does m2. This means the empty brackets are optional. Method m3 has three</span>
+<span class="sd">    litteral arguments, here the integer 1, the boolean True and the string</span>
+<span class="sd">    &#39;a&#39;. Note how the string is surrounded by double quotation marks, since</span>
+<span class="sd">    the entire effect is coded in single quotation marks. Vice-versa is also</span>
+<span class="sd">    possible. The last method, m4, declares an asterisk as argument. This</span>
+<span class="sd">    means that the state machine uses the args and kwargs of the incoming</span>
+<span class="sd">    event and offers them to the method.</span>
 <span class="sd">    `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
-<span class="sd">    `transitions`: A set of transitions.</span>
+<span class="sd">    `transitions`: A set of transitions, as explained above. There must be at least one initial transition.</span>
 <span class="sd">    `obj`: An object that encapsulates any actions called from states or transitions.</span>
 <span class="sd">    `states`: Optional state declarations to add entry and exit actions to them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
