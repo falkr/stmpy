@@ -102,9 +102,14 @@ class Driver:
     """
     A driver can run several  machines.
 
+    **Run-to-completion:**
     One driver contains one thread. Machines assigned to a driver are executed
-    within this single thread.
-
+    within this single thread. This provides a strict temporal ordering of
+    behavior for state machines assigned to the same driver. A driver only
+    executes one transition at a time, and always executes this transition to
+    completion. This means that the action within a transition can access shared
+    variables without interleaving behavior. One transition is always executed
+    separate from all other transitions.
     """
 
     _stms_by_id = {}
