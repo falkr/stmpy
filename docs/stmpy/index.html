@@ -1114,7 +1114,7 @@ requests and bug reports are welcome.</p>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.4.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.0&#39;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The current version of stmpy.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -1178,6 +1178,9 @@ requests and bug reports are welcome.</p>
             <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_parse_action</span><span class="p">(</span><span class="n">action_call</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">actions</span>
 
+<span class="k">def</span> <span class="nf">_is_state_machine_method</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;start_timer&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_timer&#39;</span><span class="p">,</span> <span class="s1">&#39;send_signal&#39;</span><span class="p">]</span>
+
 <span class="k">def</span> <span class="nf">_current_time_millis</span><span class="p">():</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
 
@@ -1203,9 +1206,14 @@ requests and bug reports are welcome.</p>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A driver can run several  machines.</span>
 
+<span class="sd">    **Run-to-completion:**</span>
 <span class="sd">    One driver contains one thread. Machines assigned to a driver are executed</span>
-<span class="sd">    within this single thread.</span>
-
+<span class="sd">    within this single thread. This provides a strict temporal ordering of</span>
+<span class="sd">    behavior for state machines assigned to the same driver. A driver only</span>
+<span class="sd">    executes one transition at a time, and always executes this transition to</span>
+<span class="sd">    completion. This means that the action within a transition can access</span>
+<span class="sd">    shared variables without interleaving behavior. One transition is always</span>
+<span class="sd">    executed separate from all other transitions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stms_by_id</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1247,6 +1255,7 @@ requests and bug reports are welcome.</p>
     <span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
         <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">machine</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># TODO warning when STM already registered</span>
             <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
@@ -1357,11 +1366,11 @@ requests and bug reports are welcome.</p>
 
 <span class="sd">        `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">stm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stm_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Machine with name {} cannot be found. &#39;</span>
                               <span class="s1">&#39;Ignoring signal {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm_id</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_terminate_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm_id</span><span class="p">):</span>
@@ -1515,6 +1524,13 @@ requests and bug reports are welcome.</p>
 <span class="sd">        means that the state machine uses the args and kwargs of the incoming</span>
 <span class="sd">        event and offers them to the method.</span>
 
+<span class="sd">        The actions can also directly refer to the state machine actions</span>
+<span class="sd">        `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and</span>
+<span class="sd">        `stmpy.Machine.send_signal`. A transition can for instance declare the</span>
+<span class="sd">        following effects:</span>
+
+<span class="sd">            effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;); send_signal(&quot;a&quot;)&#39;</span>
+
 
 <span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
 
@@ -1551,6 +1567,9 @@ requests and bug reports are welcome.</p>
         <span class="sd">&quot;&quot;&quot;Return the driver this machine is attached to.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span>
 
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initial&#39;</span>
+
     <span class="k">def</span> <span class="nf">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="n">function_name</span> <span class="o">=</span> <span class="n">function_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Running function {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">function_name</span><span class="p">))</span>
@@ -1562,12 +1581,26 @@ requests and bug reports are welcome.</p>
                 <span class="s1">&#39;Error when running function {} from machine.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">function_name</span><span class="p">),</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_run_state_machine_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;start_timer&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Method {} expects 2 args.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_timer</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;stop_timer&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Method {} expects 1 arg.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_timer</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Action {} is not a built-in method.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">scheduler</span>
 
     <span class="k">def</span> <span class="nf">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_is_state_machine_method</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_state_machine_function</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
                 <span class="c1"># use the arguments provided by the event</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1701,8 +1734,14 @@ requests and bug reports are welcome.</p>
       
   
     <div class="desc"><p>A driver can run several  machines.</p>
-<p>One driver contains one thread. Machines assigned to a driver are executed
-within this single thread.</p></div>
+<p><strong>Run-to-completion:</strong>
+One driver contains one thread. Machines assigned to a driver are executed
+within this single thread. This provides a strict temporal ordering of
+behavior for state machines assigned to the same driver. A driver only
+executes one transition at a time, and always executes this transition to
+completion. This means that the action within a transition can access
+shared variables without interleaving behavior. One transition is always
+executed separate from all other transitions.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Driver', this);">Show source &equiv;</a></p>
   <div id="source-stmpy.Driver" class="source">
@@ -1710,9 +1749,14 @@ within this single thread.</p></div>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A driver can run several  machines.</span>
 
+<span class="sd">    **Run-to-completion:**</span>
 <span class="sd">    One driver contains one thread. Machines assigned to a driver are executed</span>
-<span class="sd">    within this single thread.</span>
-
+<span class="sd">    within this single thread. This provides a strict temporal ordering of</span>
+<span class="sd">    behavior for state machines assigned to the same driver. A driver only</span>
+<span class="sd">    executes one transition at a time, and always executes this transition to</span>
+<span class="sd">    completion. This means that the action within a transition can access</span>
+<span class="sd">    shared variables without interleaving behavior. One transition is always</span>
+<span class="sd">    executed separate from all other transitions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_stms_by_id</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1754,6 +1798,7 @@ within this single thread.</p></div>
     <span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
         <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">machine</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># TODO warning when STM already registered</span>
             <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
@@ -1864,11 +1909,11 @@ within this single thread.</p></div>
 
 <span class="sd">        `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">stm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">stm_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Machine with name {} cannot be found. &#39;</span>
                               <span class="s1">&#39;Ignoring signal {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm_id</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_terminate_stm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stm_id</span><span class="p">):</span>
@@ -1967,6 +2012,7 @@ within this single thread.</p></div>
     <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_machine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Add the state machine to this driver.&quot;&quot;&quot;</span>
     <span class="n">machine</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="n">machine</span><span class="o">.</span><span class="n">_reset</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">machine</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c1"># TODO warning when STM already registered</span>
         <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">machine</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">machine</span>
@@ -2040,11 +2086,11 @@ directly to it by using <a href="#stmpy.Machine.send_signal"><code>send_signal</
 <span class="sd">    directly to it by using `stmpy.Machine.send_signal`.</span>
 <span class="sd">    `stm_id` must be the id of a state machine earlier added to the driver.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">stm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">stm_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Machine with name {} cannot be found. &#39;</span>
                           <span class="s1">&#39;Ignoring signal {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stm_id</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">stm</span> <span class="o">=</span> <span class="n">Driver</span><span class="o">.</span><span class="n">_stms_by_id</span><span class="p">[</span><span class="n">stm_id</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_event</span><span class="p">(</span><span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">stm</span><span class="p">)</span>
 </pre></div>
 
@@ -2293,6 +2339,13 @@ machines terminated</p></div>
 <span class="sd">        means that the state machine uses the args and kwargs of the incoming</span>
 <span class="sd">        event and offers them to the method.</span>
 
+<span class="sd">        The actions can also directly refer to the state machine actions</span>
+<span class="sd">        `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and</span>
+<span class="sd">        `stmpy.Machine.send_signal`. A transition can for instance declare the</span>
+<span class="sd">        following effects:</span>
+
+<span class="sd">            effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;); send_signal(&quot;a&quot;)&#39;</span>
+
 
 <span class="sd">        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
 
@@ -2329,6 +2382,9 @@ machines terminated</p></div>
         <span class="sd">&quot;&quot;&quot;Return the driver this machine is attached to.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span>
 
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initial&#39;</span>
+
     <span class="k">def</span> <span class="nf">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="n">function_name</span> <span class="o">=</span> <span class="n">function_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Running function {}.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">function_name</span><span class="p">))</span>
@@ -2340,12 +2396,26 @@ machines terminated</p></div>
                 <span class="s1">&#39;Error when running function {} from machine.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">function_name</span><span class="p">),</span> <span class="n">exc_info</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_run_state_machine_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;start_timer&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Method {} expects 2 args.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_timer</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;stop_timer&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Method {} expects 1 arg.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stop_timer</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Action {} is not a built-in method.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">scheduler</span>
 
     <span class="k">def</span> <span class="nf">_run_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
         <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">_is_state_machine_method</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_run_state_machine_function</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
                 <span class="c1"># use the arguments provided by the event</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">,</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -2527,6 +2597,14 @@ the entire effect is coded in single quotation marks. Vice-versa is also
 possible. The last method, m4, declares an asterisk as argument. This
 means that the state machine uses the args and kwargs of the incoming
 event and offers them to the method.</p>
+<p>The actions can also directly refer to the state machine actions
+<a href="#stmpy.Machine.start_timer"><code>start_timer</code></a>, <a href="#stmpy.Machine.stop_timer"><code>stop_timer</code></a>, and
+<a href="#stmpy.Machine.send_signal"><code>send_signal</code></a>. A transition can for instance declare the
+following effects:</p>
+<div class="codehilite"><pre><span></span>effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;); send_signal(&quot;a&quot;)&#39;
+</pre></div>
+
+
 <p><code>name</code>: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</p>
 <p><code>transitions</code>: A set of transitions, as explained above. There must be at least one initial transition.</p>
 <p><code>obj</code>: An object that encapsulates any actions called from states or transitions.</p>
@@ -2597,6 +2675,11 @@ event and offers them to the method.</p>
 <span class="sd">    possible. The last method, m4, declares an asterisk as argument. This</span>
 <span class="sd">    means that the state machine uses the args and kwargs of the incoming</span>
 <span class="sd">    event and offers them to the method.</span>
+<span class="sd">    The actions can also directly refer to the state machine actions</span>
+<span class="sd">    `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and</span>
+<span class="sd">    `stmpy.Machine.send_signal`. A transition can for instance declare the</span>
+<span class="sd">    following effects:</span>
+<span class="sd">        effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;); send_signal(&quot;a&quot;)&#39;</span>
 <span class="sd">    `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.</span>
 <span class="sd">    `transitions`: A set of transitions, as explained above. There must be at least one initial transition.</span>
 <span class="sd">    `obj`: An object that encapsulates any actions called from states or transitions.</span>
