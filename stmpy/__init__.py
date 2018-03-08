@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.4.0'
+__version__ = '0.5.0'
 """
 The current version of stmpy.
 """
@@ -154,6 +154,7 @@ class Driver:
     def add_machine(self, machine):
         """Add the state machine to this driver."""
         machine._driver = self
+        machine._reset()
         if machine.id is not None:
             # TODO warning when STM already registered
             Driver._stms_by_id[machine.id] = machine
@@ -464,6 +465,9 @@ class Machine:
     def driver(self):
         """Return the driver this machine is attached to."""
         return self._driver
+
+    def _reset(self):
+        self._state = 'initial'
 
     def _run_function(self, obj, function_name, args, kwargs):
         function_name = function_name.strip()
