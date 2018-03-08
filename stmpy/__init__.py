@@ -77,6 +77,9 @@ def _parse_action_list_attribute(attribute):
             actions.append(_parse_action(action_call))
     return actions
 
+def _is_state_machine_method(name):
+        return name in ['start_timer', 'stop_timer', 'send_signal']
+
 def _current_time_millis():
     return int(round(time.time() * 1000))
 
@@ -419,6 +422,13 @@ class Machine:
         means that the state machine uses the args and kwargs of the incoming
         event and offers them to the method.
 
+        The actions can also directly refer to the state machine actions
+        `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and
+        `stmpy.Machine.send_signal`. A transition can for instance declare the
+        following effects:
+
+            effect='start_timer("t1", 100); stop_timer("t2"); send_signal("a")'
+
 
         `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.
 
@@ -466,12 +476,26 @@ class Machine:
                 'Error when running function {} from machine.'.format(
                     function_name), exc_info=True)
 
+    def _run_state_machine_function(self, name, args, kwargs):
+        if name == 'start_timer':
+            if len(args) != 2:
+                self._logger.error('Method {} expects 2 args.'.format(name))
+            self.start_timer(args[0], args[1])
+        elif name == 'stop_timer':
+            if len(args) != 1:
+                self._logger.error('Method {} expects 1 arg.'.format(name))
+            self.stop_timer(args[0])
+        else:
+            self._logger.error('Action {} is not a built-in method.'.format(name))
+
     def _initialize(self, scheduler):
         self._driver = scheduler
 
     def _run_actions(self, actions, args=[], kwargs={}):
         for action in actions:
-            if action['event_args']:
+            if _is_state_machine_method(action['name']):
+                self._run_state_machine_function(action['name'], action['args'], kwargs)
+            elif action['event_args']:
                 # use the arguments provided by the event
                 self._run_function(self._obj, action['name'], args, kwargs)
             else:
