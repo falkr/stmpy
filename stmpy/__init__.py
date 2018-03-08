@@ -264,11 +264,11 @@ class Driver:
 
         `stm_id` must be the id of a state machine earlier added to the driver.
         """
-        stm = Driver._stms_by_id[stm_id]
-        if stm is None:
+        if stm_id not in Driver._stms_by_id:
             self._logger.warn('Machine with name {} cannot be found. '
                               'Ignoring signal {}.'.format(stm_id, signal_id))
         else:
+            stm = Driver._stms_by_id[stm_id]
             self._add_event(signal_id, args, kwargs, stm)
 
     def _terminate_stm(self, stm_id):
