@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 """
 The current version of stmpy.
 """
@@ -224,6 +224,14 @@ class Driver:
             ++index
         if index_to_delete is not None:
             self._timer_queue.pop(index_to_delete)
+
+    def _get_timer(self, name, stm):
+        self._logger.error('Getting timer duration for timer with name={} from stm={}'.format(name, stm))
+        tid = stm.id + '_' + name
+        for timer in self._timer_queue:
+            if timer['tid'] == tid:
+                return timer['timeout_abs'] - _current_time_millis()
+        return None
 
     def _check_timers(self):
         """
@@ -563,6 +571,14 @@ class Machine:
         If the timer is not active, nothing happens.
         """
         self._driver._stop_timer(timer_id, self)
+
+    def get_timer(self, timer_id):
+            """
+            Gets the remaining time for the timer.
+
+            If the timer is not active, `None` is returned.
+            """
+            return self._driver._get_timer(timer_id, self)
 
     def send_signal(self, signal_id, args=[], kwargs={}):
         """
