@@ -243,12 +243,12 @@ class Driver:
         if self._timer_queue:
             timer = self._timer_queue[0]
             if timer['timeout_abs'] < _current_time_millis():
-                # the timer is expired
-                self._timer_queue.pop()
+                # the timer is expired, remove first element in queue
+                popped = self._timer_queue.pop(0)
                 # put into the event queue
                 # TODO maybe put timer first in queue?
-                self._event_queue.put({'id': timer['id'], 'args': [],
-                                      'kwargs': {}, 'stm': timer['stm']})
+                self._logger.debug('Timer {} expired for stm {}, adding it to event queue.'.format(timer['id'], timer['stm'].id))
+                self._add_event(timer['id'], [], {}, timer['stm'])
                 # not necessary to set next timeout,
                 # complete check timers will be called again
             else:
