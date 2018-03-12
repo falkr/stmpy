@@ -1070,6 +1070,7 @@ table {
           
   <ul>
     <li class="mono"><a href="#stmpy.Machine.__init__">__init__</a></li>
+    <li class="mono"><a href="#stmpy.Machine.get_timer">get_timer</a></li>
     <li class="mono"><a href="#stmpy.Machine.send_signal">send_signal</a></li>
     <li class="mono"><a href="#stmpy.Machine.start_timer">start_timer</a></li>
     <li class="mono"><a href="#stmpy.Machine.stop_timer">stop_timer</a></li>
@@ -1114,7 +1115,7 @@ requests and bug reports are welcome.</p>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.1&#39;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The current version of stmpy.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -1325,6 +1326,14 @@ requests and bug reports are welcome.</p>
             <span class="o">++</span><span class="n">index</span>
         <span class="k">if</span> <span class="n">index_to_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_to_delete</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Getting timer duration for timer with name={} from stm={}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout_abs&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_current_time_millis</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">_check_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1665,6 +1674,14 @@ requests and bug reports are welcome.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_stop_timer</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the remaining time for the timer.</span>
+
+<span class="sd">            If the timer is not active, `None` is returned.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_timer</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">send_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send a signal to this state machine.</span>
@@ -1868,6 +1885,14 @@ executed separate from all other transitions.</p></div>
             <span class="o">++</span><span class="n">index</span>
         <span class="k">if</span> <span class="n">index_to_delete</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">index_to_delete</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Getting timer duration for timer with name={} from stm={}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">stm</span><span class="p">))</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">stm</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span>
+        <span class="k">for</span> <span class="n">timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_queue</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;tid&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">tid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">timer</span><span class="p">[</span><span class="s1">&#39;timeout_abs&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">_current_time_millis</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">_check_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -2480,6 +2505,14 @@ machines terminated</p></div>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_stop_timer</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">get_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Gets the remaining time for the timer.</span>
+
+<span class="sd">            If the timer is not active, `None` is returned.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_timer</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">send_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">signal_id</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Send a signal to this state machine.</span>
@@ -2693,6 +2726,33 @@ following effects:</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">_states</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parse_states</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_parse_transitions</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="stmpy.Machine.get_timer">
+    <p>def <span class="ident">get_timer</span>(</p><p>self, timer_id)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Gets the remaining time for the timer.</p>
+<p>If the timer is not active, <code>None</code> is returned.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.Machine.get_timer', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.Machine.get_timer" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the remaining time for the timer.</span>
+<span class="sd">        If the timer is not active, `None` is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">_get_timer</span><span class="p">(</span><span class="n">timer_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </pre></div>
 
   </div>
