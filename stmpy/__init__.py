@@ -141,13 +141,13 @@ class Driver:
 
     def add_machine(self, machine):
         """Add the state machine to this driver."""
+        self._logger.debug('Adding machine {} to driver'.format(machine.id))
         machine._driver = self
         machine._reset()
         if machine.id is not None:
             # TODO warning when STM already registered
             Driver._stms_by_id[machine.id] = machine
-            self._event_queue.put(
-                {'id': None, 'stm': machine, 'args': [], 'kwargs': {}})
+            self._add_event(event_id=None, args=[], kwargs={}, stm=machine)
 
     def start(self, max_transitions=None, keep_active=False):
         """
