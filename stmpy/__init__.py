@@ -192,18 +192,18 @@ class Driver:
 
     def _start_timer(self, name, timeout, stm):
         self._logger.debug('Start timer with name={} from stm={}'
-                           .format(name, stm))
+                           .format(name, stm.id))
         timeout_abs = _current_time_millis() + int(timeout)
-        self._stop_timer(name, stm)
+        self._stop_timer(name, stm, log=False)
         self._timer_queue.append(
             {'id': name, 'timeout': timeout, 'timeout_abs': timeout_abs,
              'stm': stm, 'tid': stm.id + '_' + name})
         self._sort_timer_queue()
         self._wake_queue()
 
-    def _stop_timer(self, name, stm):
-        self._logger.debug('Stopping timer with name={} from stm={}'
-                           .format(name, stm))
+    def _stop_timer(self, name, stm, log=True):
+        if log: self._logger.debug('Stopping timer with name={} from stm={}'
+                                   .format(name, stm.id))
         index = 0
         index_to_delete = None
         tid = stm.id + '_' + name
@@ -215,7 +215,6 @@ class Driver:
             self._timer_queue.pop(index_to_delete)
 
     def _get_timer(self, name, stm):
-        self._logger.error('Getting timer duration for timer with name={} from stm={}'.format(name, stm))
         tid = stm.id + '_' + name
         for timer in self._timer_queue:
             if timer['tid'] == tid:
@@ -279,16 +278,16 @@ class Driver:
             self._wake_queue()
 
     def _execute_transition(self, stm, event_id, args, kwargs):
-        self._logger.debug('Executing a transition.')
         stm._execute_transition(event_id, args, kwargs)
         if self._max_transitions is not None:
             self._max_transitions = self._max_transitions-1
             if self._max_transitions == 0:
+                self._logger.debug('Stopping driver because max_transitions reached.')
                 self._active = False
 
     def _start_loop(self):
+        self._logger.debug('Starting loop of the driver.')
         while self._active:
-            self._logger.debug('Starting loop of the driver.')
             self._check_timers()
             try:
                 event = self._event_queue.get(block=True,
@@ -504,28 +503,29 @@ class Machine:
                 self._run_function(self._obj, action['name'], action['args'], {})
 
     def _enter_state(self, state):
-        self._logger.debug('Machine {} enter state {}'.format(id, state))
+        self._logger.debug('Machine {} enters state {}'.format(self.id, state))
         # execute any entry actions
         if state in self._states:
             self._run_actions(self._states[state].entry)
         self._state = state
 
     def _exit_state(self, state):
-        self._logger.debug('Machine {} exits state {}'.format(id, state))
+        self._logger.debug('Machine {} exits state {}'.format(self.id, state))
         # execute any exit actions
         if state in self._states:
             self._run_actions(self._states[state].exit)
 
     def _execute_transition(self, event_id, args, kwargs):
+        previous_state = self._state
         if self._state is 'initial':
             transition = self._intial_transition
         else:
             t_id = _tid(self._state, event_id)
             if t_id not in self._table:
                 self._logger.warning(
-                    'Machine is in state {} and received '
+                    'Machine {} is in state {} and received '
                     'event {}, but no transition with this event is declared!'
-                    .format(self._state, event_id, self._table))
+                    .format(self.id, self._state, event_id, self._table))
                 return
             else:
                 transition = self._table[t_id]
@@ -540,6 +540,7 @@ class Machine:
             target = transition.function(*args, **kwargs)
         # go into the next state
         self._enter_state(target)
+        self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
 
     def start_timer(self, timer_id, timeout):
         """
@@ -551,6 +552,7 @@ class Machine:
         expiration, but may vary due to the state of the event queue and the
         load of the system.
         """
+        self._logger.debug('Start timer {} in stm {}'.format(timer_id, self.id))
         self._driver._start_timer(timer_id, timeout, self)
 
     def stop_timer(self, timer_id):
@@ -559,6 +561,7 @@ class Machine:
 
         If the timer is not active, nothing happens.
         """
+        self._logger.debug('Stop timer {} in stm {}'.format(timer_id, self.id))
         self._driver._stop_timer(timer_id, self)
 
     def get_timer(self, timer_id):
@@ -576,6 +579,7 @@ class Machine:
         To send a signal to a machine by its name, use
         `stmpy.Driver.send_signal` instead.
         """
+        self._logger.debug('Send signal {} in stm {}'.format(signal_id, self.id))
         self._driver._add_event(
             event_id=signal_id, args=args, kwargs=kwargs, stm=self)
 
