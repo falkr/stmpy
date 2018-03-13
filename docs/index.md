@@ -71,8 +71,8 @@ State machines are implemented by a combination of the two classes *Machine* and
     tick.stm = stm_tick
 
     driver.add_stm(stm_tick)
-    scheduler.start(max_transitions=5)
-    scheduler.wait_until_finished()
+    driver.start(max_transitions=5)
+    driver.wait_until_finished()
 
 
 ## Compound Transitions

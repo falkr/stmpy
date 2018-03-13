@@ -12,6 +12,11 @@ dev-install: docs
 	python setup.py sdist
 	pip install -U dist/*.tar.gz
 
+deploy: docs
+	rm -rf ./dist
+	python setup.py sdist
+	twine upload dist/*
+
 pep8:
 	pep8-python2 pdoc/__init__.py scripts/pdoc
 
