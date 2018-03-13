@@ -184,6 +184,7 @@ class Driver:
         except KeyboardInterrupt:
             self._logger.debug('Keyboard interrupt detected, stopping driver.')
             self._active = False
+            self._wake_queue()
 
     def _sort_timer_queue(self):
         self._timer_queue = sorted(
