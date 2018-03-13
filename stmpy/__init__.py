@@ -562,12 +562,12 @@ class Machine:
         self._driver._stop_timer(timer_id, self)
 
     def get_timer(self, timer_id):
-            """
-            Gets the remaining time for the timer.
+        """
+        Gets the remaining time for the timer.
 
-            If the timer is not active, `None` is returned.
-            """
-            return self._driver._get_timer(timer_id, self)
+        If the timer is not active, `None` is returned.
+        """
+        return self._driver._get_timer(timer_id, self)
 
     def send_signal(self, signal_id, args=[], kwargs={}):
         """
