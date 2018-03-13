@@ -88,19 +88,6 @@ def _tid(state_id, event_id):
     return state_id + '_' + event_id
 
 
-class _IterableQueue():
-
-    def __init__(self, source_queue):
-            self.source_queue = source_queue
-
-    def __iter__(self):
-        while True:
-            try:
-                yield self.source_queue.get_nowait()
-            except Empty:
-                return
-
-
 class Driver:
     """
     A driver can run several  machines.
@@ -140,15 +127,16 @@ class Driver:
             stm = Driver._stms_by_id[stm_id]
             s.append('    - {} in state {}\n'.format(stm.id, stm.state))
         s.append('=== Events in Queue: ===\n')
-        for event in _IterableQueue(self._event_queue):
+        for event in self._event_queue.queue:
             if event is not None:
                 s.append('    - {} for {} with args:{} kwargs:{}\n'.format(
                     event['id'], event['stm'].id,
                     event['args'], event['kwargs']))
-        s.append('=== Active Timers: ===\n')
+        s.append('=== Active Timers: {} ===\n'.format(len(self._timer_queue)))
         for timer in self._timer_queue:
             s.append('    - {} for {} with timeout {}\n'.format(
                 timer['id'], timer['stm'].id, timer['timeout']))
+        s.append('=== ================ ===\n')
         return ''.join(s)
 
     def add_machine(self, machine):
