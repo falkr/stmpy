@@ -13,10 +13,101 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.6.0'
+__version__ = '0.6.1'
 """
 The current version of stmpy.
 """
+
+def _print_action(action):
+    s = []
+    s.append(action['name'])
+    if action['event_args']:
+        s.append('(*)')
+    else:
+        s.append('(')
+        first = True
+        for arg in action['args']:
+            if first:
+                s.append('{}'.format(arg))
+                first = False
+            else:
+                s.append(', {}'.format(arg))
+        s.append(')')
+    return ''.join(s)
+
+def _print_state(state):
+    s = []
+    s.append('{} [shape=plaintext margin=0 label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" STYLE="ROUNDED"><TR><TD><B>{}</B></TD></TR>\n'.format(state.name, state.name))
+    if state.entry or state.exit:
+        s.append('<HR/>')
+        s.append('<TR><TD ALIGN="LEFT">')
+        for entry in state.entry:
+            s.append('entry / {}<BR/>'.format(_print_action(entry)))
+        for exit in state.exit:
+            s.append('exit / {}<BR/>'.format(_print_action(exit)))
+        s.append('</TD></TR>')
+    s.append('</TABLE>>];')
+    return ''.join(s)
+
+def _print_transition(t):
+    s = []
+    label = ''
+    if t.trigger:
+        label = label + t.trigger
+    if t.effect:
+        label = label + ' /'
+        if t.trigger: label = label + '\\n'
+        for effect in t.effect:
+            label = label + '{};\\n'.format(_print_action(effect))
+    s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
+    return ''.join(s)
+
+def get_graphviz_dot(machine):
+    """
+    Return the graph of the state machine.
+
+    The format is the dot format for Graphviz, and can be directly used as input
+    to Graphviz.
+
+    To learn more about Graphviz, visit https://graphviz.gitlab.io.
+
+    **Display in Jupyter Notebook**
+    Install Python support for Graphviz via `pip install graphviz`.
+    Install Graphviz.
+    In a notebook, build a stmpy.Machine. Then, declare a cell with the
+    following content:
+
+        from graphviz import Source
+        src = Source(stmpy.get_graphviz_dot(stm))
+        src
+
+    **Using Graphviz on the Command Line**
+
+    Write the graph file with the following code:
+
+        with open("graph.gv", "w") as file:
+        print(stmpy.get_graphviz_dot(stm), file=file)
+
+    You can now use the command line tools from Graphviz to create a graphic
+    file with the graph. For instance:
+
+        dot -Tsvg graph.gv -o graph.svg
+
+    """
+    s = []
+    s.append('digraph G {\n')
+    s.append('node [shape=box style=rounded fontname=Helvetica];\n')
+    s.append('edge [ fontname=Helvetica ];\n')
+    # initial state
+    s.append('initial [shape=point width=0.2];\n')
+    for state_name in machine._states:
+        s.append(_print_state(machine._states[state_name]))
+    # initial transition
+    s.append(_print_transition(machine._intial_transition))
+    for t_id in machine._table:
+        s.append(_print_transition(machine._table[t_id]))
+    s.append('}')
+    return ''.join(s)
 
 def _parse_arg_list(arglist):
     """
@@ -618,6 +709,7 @@ class _Transition:
 class _State:
     # TODO does not work with empty entry and exit dict entries.
     def __init__(self, s_dict):
+        self.name = s_dict['name']
         if 'entry' in s_dict:
             self.entry = _parse_action_list_attribute(s_dict['entry'])
         else:

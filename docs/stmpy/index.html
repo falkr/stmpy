@@ -1045,6 +1045,13 @@ table {
     <h1>Index</h1>
     <ul id="index">
 
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#stmpy.get_graphviz_dot">get_graphviz_dot</a></li>
+  </ul>
+
+    </li>
 
     <li class="set"><h3><a href="#header-classes">Classes</a></h3>
       <ul>
@@ -1119,6 +1126,97 @@ requests and bug reports are welcome.</p>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The current version of stmpy.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_print_action</span><span class="p">(</span><span class="n">action</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;event_args&#39;</span><span class="p">]:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(*)&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+                <span class="n">first</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;, {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_print_state</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} [shape=plaintext margin=0 label=&lt;&lt;TABLE BORDER=&quot;1&quot; CELLBORDER=&quot;0&quot; CELLSPACING=&quot;0&quot; STYLE=&quot;ROUNDED&quot;&gt;&lt;TR&gt;&lt;TD&gt;&lt;B&gt;{}&lt;/B&gt;&lt;/TD&gt;&lt;/TR&gt;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">entry</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">exit</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;HR/&gt;&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;TR&gt;&lt;TD ALIGN=&quot;LEFT&quot;&gt;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">entry</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;entry / {}&lt;BR/&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_print_action</span><span class="p">(</span><span class="n">entry</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="nb">exit</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">exit</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;exit / {}&lt;BR/&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_print_action</span><span class="p">(</span><span class="nb">exit</span><span class="p">)))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/TD&gt;&lt;/TR&gt;&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/TABLE&gt;&gt;];&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_print_transition</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">trigger</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39; /&#39;</span>
+        <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span> <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">n&#39;</span>
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;{};</span><span class="se">\\</span><span class="s1">n&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_print_action</span><span class="p">(</span><span class="n">effect</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} -&gt; {} [label=&quot; {}&quot;]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">label</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_graphviz_dot</span><span class="p">(</span><span class="n">machine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the graph of the state machine.</span>
+
+<span class="sd">    The format is the dot format for Graphviz, and can be directly used as input</span>
+<span class="sd">    to Graphviz.</span>
+
+<span class="sd">    To learn more about Graphviz, visit https://graphviz.gitlab.io.</span>
+
+<span class="sd">    **Display in Jupyter Notebook**</span>
+<span class="sd">    Install Python support for Graphviz via `pip install graphviz`.</span>
+<span class="sd">    Install Graphviz.</span>
+<span class="sd">    In a notebook, build a stmpy.Machine. Then, declare a cell with the</span>
+<span class="sd">    following content:</span>
+
+<span class="sd">        from graphviz import Source</span>
+<span class="sd">        src = Source(stmpy.get_graphviz_dot(stm))</span>
+<span class="sd">        src</span>
+
+<span class="sd">    **Using Graphviz on the Command Line**</span>
+
+<span class="sd">    Write the graph file with the following code:</span>
+
+<span class="sd">        with open(&quot;graph.gv&quot;, &quot;w&quot;) as file:</span>
+<span class="sd">        print(stmpy.get_graphviz_dot(stm), file=file)</span>
+
+<span class="sd">    You can now use the command line tools from Graphviz to create a graphic</span>
+<span class="sd">    file with the graph. For instance:</span>
+
+<span class="sd">        dot -Tsvg graph.gv -o graph.svg</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;digraph G {</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;node [shape=box style=rounded fontname=Helvetica];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;edge [ fontname=Helvetica ];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># initial state</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;initial [shape=point width=0.2];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">state_name</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_state</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state_name</span><span class="p">]))</span>
+    <span class="c1"># initial transition</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t_id</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_parse_arg_list</span><span class="p">(</span><span class="n">arglist</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1720,6 +1818,7 @@ requests and bug reports are welcome.</p>
 <span class="k">class</span> <span class="nc">_State</span><span class="p">:</span>
     <span class="c1"># TODO does not work with empty entry and exit dict entries.</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s1">&#39;entry&#39;</span> <span class="ow">in</span> <span class="n">s_dict</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">_parse_action_list_attribute</span><span class="p">(</span><span class="n">s_dict</span><span class="p">[</span><span class="s1">&#39;entry&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1736,6 +1835,98 @@ requests and bug reports are welcome.</p>
 
   <section id="section-items">
 
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="stmpy.get_graphviz_dot">
+    <p>def <span class="ident">get_graphviz_dot</span>(</p><p>machine)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Return the graph of the state machine.</p>
+<p>The format is the dot format for Graphviz, and can be directly used as input
+to Graphviz.</p>
+<p>To learn more about Graphviz, visit https://graphviz.gitlab.io.</p>
+<p><strong>Display in Jupyter Notebook</strong>
+Install Python support for Graphviz via <code>pip install graphviz</code>.
+Install Graphviz.
+In a notebook, build a stmpy.Machine. Then, declare a cell with the
+following content:</p>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">graphviz</span> <span class="kn">import</span> <span class="n">Source</span>
+<span class="n">src</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">stmpy</span><span class="o">.</span><span class="n">get_graphviz_dot</span><span class="p">(</span><span class="n">stm</span><span class="p">))</span>
+<span class="n">src</span>
+</pre></div>
+
+
+<p><strong>Using Graphviz on the Command Line</strong></p>
+<p>Write the graph file with the following code:</p>
+<div class="codehilite"><pre><span></span>with open(&quot;graph.gv&quot;, &quot;w&quot;) as file:
+print(stmpy.get_graphviz_dot(stm), file=file)
+</pre></div>
+
+
+<p>You can now use the command line tools from Graphviz to create a graphic
+file with the graph. For instance:</p>
+<div class="codehilite"><pre><span></span>dot -Tsvg graph.gv -o graph.svg
+</pre></div></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-stmpy.get_graphviz_dot', this);">Show source &equiv;</a></p>
+  <div id="source-stmpy.get_graphviz_dot" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_graphviz_dot</span><span class="p">(</span><span class="n">machine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the graph of the state machine.</span>
+
+<span class="sd">    The format is the dot format for Graphviz, and can be directly used as input</span>
+<span class="sd">    to Graphviz.</span>
+
+<span class="sd">    To learn more about Graphviz, visit https://graphviz.gitlab.io.</span>
+
+<span class="sd">    **Display in Jupyter Notebook**</span>
+<span class="sd">    Install Python support for Graphviz via `pip install graphviz`.</span>
+<span class="sd">    Install Graphviz.</span>
+<span class="sd">    In a notebook, build a stmpy.Machine. Then, declare a cell with the</span>
+<span class="sd">    following content:</span>
+
+<span class="sd">        from graphviz import Source</span>
+<span class="sd">        src = Source(stmpy.get_graphviz_dot(stm))</span>
+<span class="sd">        src</span>
+
+<span class="sd">    **Using Graphviz on the Command Line**</span>
+
+<span class="sd">    Write the graph file with the following code:</span>
+
+<span class="sd">        with open(&quot;graph.gv&quot;, &quot;w&quot;) as file:</span>
+<span class="sd">        print(stmpy.get_graphviz_dot(stm), file=file)</span>
+
+<span class="sd">    You can now use the command line tools from Graphviz to create a graphic</span>
+<span class="sd">    file with the graph. For instance:</span>
+
+<span class="sd">        dot -Tsvg graph.gv -o graph.svg</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;digraph G {</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;node [shape=box style=rounded fontname=Helvetica];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;edge [ fontname=Helvetica ];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># initial state</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;initial [shape=point width=0.2];</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">state_name</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_state</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state_name</span><span class="p">]))</span>
+    <span class="c1"># initial transition</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">t_id</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
 
     <h2 class="section-title" id="header-classes">Classes</h2>
       
