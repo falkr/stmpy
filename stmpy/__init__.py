@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.6.1'
+__version__ = '0.6.2'
 """
 The current version of stmpy.
 """
@@ -49,7 +49,7 @@ def _print_state(state):
     s.append('</TABLE>>];')
     return ''.join(s)
 
-def _print_transition(t):
+def _print_transition(t, counter):
     s = []
     label = ''
     if t.trigger:
@@ -59,7 +59,15 @@ def _print_transition(t):
         if t.trigger: label = label + '\\n'
         for effect in t.effect:
             label = label + '{};\\n'.format(_print_action(effect))
-    s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
+    if hasattr(t, 'function'): # we have a compound transition
+        decision_name = 'd_{}'.format(counter)
+        s.append('{} -> {} [label="{}()"]\n'.format(t.source, decision_name, t.function.__name__))
+        s.append('{} [shape=diamond, style=filled, label="", fillcolor=black, height=0.3, width=0.3, fixedsize=true]\n'.format(decision_name))
+        if hasattr(t, 'targets'):
+            for target in t.targets:
+                s.append('{} -> {}\n'.format(decision_name, target))
+    else:
+        s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
     return ''.join(s)
 
 def get_graphviz_dot(machine):
@@ -103,9 +111,12 @@ def get_graphviz_dot(machine):
     for state_name in machine._states:
         s.append(_print_state(machine._states[state_name]))
     # initial transition
-    s.append(_print_transition(machine._intial_transition))
+    counter = 0
+    s.append(_print_transition(machine._intial_transition, counter))
+    ++counter
     for t_id in machine._table:
-        s.append(_print_transition(machine._table[t_id]))
+        s.append(_print_transition(machine._table[t_id], counter))
+        ++counter
     s.append('}')
     return ''.join(s)
 
@@ -465,6 +476,9 @@ class Machine:
         A compound transition can decide upon the target state at run-time, for instance based on data in variables.
         It is declared like a normal transition, but does not declare any effect or target.
         Instead, it refers to a function that is executed. The function must return a string that determines the target state.
+        The key 'targets' (notice the plural 's') allows to specify the potential target states.
+        This has no influence on the behavior of the state machine, but is just used when the data structure is also
+        used to generate a state machine graph.
 
             #!python
             def transition_1(args, kwargs):
@@ -476,6 +490,7 @@ class Machine:
 
             t_3 = {'source': 's_0',
                    'trigger': 't',
+                   'targets': 's1 s2',
                    'function': transition_1}
 
         **States:**
@@ -701,6 +716,8 @@ class _Transition:
             # transition is defined by a function
             self.target = None
             self.function = t_dict['function']
+            if 'targets' in t_dict:
+                self.targets = t_dict['targets'].strip().split(' ')
         else:
             # transition is declared in data structure
             self.target = t_dict['target']

@@ -1122,7 +1122,7 @@ requests and bug reports are welcome.</p>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 
 
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.6.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.6.2&#39;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The current version of stmpy.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -1158,7 +1158,7 @@ requests and bug reports are welcome.</p>
     <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;/TABLE&gt;&gt;];&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_print_transition</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_print_transition</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">counter</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
     <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span>
@@ -1168,7 +1168,15 @@ requests and bug reports are welcome.</p>
         <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">trigger</span><span class="p">:</span> <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">n&#39;</span>
         <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">effect</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;{};</span><span class="se">\\</span><span class="s1">n&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_print_action</span><span class="p">(</span><span class="n">effect</span><span class="p">))</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} -&gt; {} [label=&quot; {}&quot;]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">label</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">):</span> <span class="c1"># we have a compound transition</span>
+        <span class="n">decision_name</span> <span class="o">=</span> <span class="s1">&#39;d_{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} -&gt; {} [label=&quot;{}()&quot;]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">decision_name</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} [shape=diamond, style=filled, label=&quot;&quot;, fillcolor=black, height=0.3, width=0.3, fixedsize=true]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">decision_name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s1">&#39;targets&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} -&gt; {}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">decision_name</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{} -&gt; {} [label=&quot; {}&quot;]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">label</span><span class="p">))</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">get_graphviz_dot</span><span class="p">(</span><span class="n">machine</span><span class="p">):</span>
@@ -1212,9 +1220,12 @@ requests and bug reports are welcome.</p>
     <span class="k">for</span> <span class="n">state_name</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
         <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_state</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state_name</span><span class="p">]))</span>
     <span class="c1"># initial transition</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">))</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">,</span> <span class="n">counter</span><span class="p">))</span>
+    <span class="o">++</span><span class="n">counter</span>
     <span class="k">for</span> <span class="n">t_id</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">],</span> <span class="n">counter</span><span class="p">))</span>
+        <span class="o">++</span><span class="n">counter</span>
     <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
@@ -1574,6 +1585,9 @@ requests and bug reports are welcome.</p>
 <span class="sd">        A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
 <span class="sd">        It is declared like a normal transition, but does not declare any effect or target.</span>
 <span class="sd">        Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+<span class="sd">        The key &#39;targets&#39; (notice the plural &#39;s&#39;) allows to specify the potential target states.</span>
+<span class="sd">        This has no influence on the behavior of the state machine, but is just used when the data structure is also</span>
+<span class="sd">        used to generate a state machine graph.</span>
 
 <span class="sd">            #!python</span>
 <span class="sd">            def transition_1(args, kwargs):</span>
@@ -1585,6 +1599,7 @@ requests and bug reports are welcome.</p>
 
 <span class="sd">            t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
 <span class="sd">                   &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">                   &#39;targets&#39;: &#39;s1 s2&#39;,</span>
 <span class="sd">                   &#39;function&#39;: transition_1}</span>
 
 <span class="sd">        **States:**</span>
@@ -1810,6 +1825,8 @@ requests and bug reports are welcome.</p>
             <span class="c1"># transition is defined by a function</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;targets&#39;</span> <span class="ow">in</span> <span class="n">t_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;targets&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># transition is declared in data structure</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">t_dict</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span>
@@ -1915,9 +1932,12 @@ file with the graph. For instance:</p>
     <span class="k">for</span> <span class="n">state_name</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
         <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_state</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state_name</span><span class="p">]))</span>
     <span class="c1"># initial transition</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">))</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_intial_transition</span><span class="p">,</span> <span class="n">counter</span><span class="p">))</span>
+    <span class="o">++</span><span class="n">counter</span>
     <span class="k">for</span> <span class="n">t_id</span> <span class="ow">in</span> <span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">:</span>
-        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">]))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_print_transition</span><span class="p">(</span><span class="n">machine</span><span class="o">.</span><span class="n">_table</span><span class="p">[</span><span class="n">t_id</span><span class="p">],</span> <span class="n">counter</span><span class="p">))</span>
+        <span class="o">++</span><span class="n">counter</span>
     <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
@@ -2506,6 +2526,9 @@ machines terminated</p></div>
 <span class="sd">        A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
 <span class="sd">        It is declared like a normal transition, but does not declare any effect or target.</span>
 <span class="sd">        Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+<span class="sd">        The key &#39;targets&#39; (notice the plural &#39;s&#39;) allows to specify the potential target states.</span>
+<span class="sd">        This has no influence on the behavior of the state machine, but is just used when the data structure is also</span>
+<span class="sd">        used to generate a state machine graph.</span>
 
 <span class="sd">            #!python</span>
 <span class="sd">            def transition_1(args, kwargs):</span>
@@ -2517,6 +2540,7 @@ machines terminated</p></div>
 
 <span class="sd">            t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
 <span class="sd">                   &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">                   &#39;targets&#39;: &#39;s1 s2&#39;,</span>
 <span class="sd">                   &#39;function&#39;: transition_1}</span>
 
 <span class="sd">        **States:**</span>
@@ -2778,7 +2802,10 @@ trigger.</p>
 A compound transition is used to declare a transition that can contain decisions.
 A compound transition can decide upon the target state at run-time, for instance based on data in variables.
 It is declared like a normal transition, but does not declare any effect or target.
-Instead, it refers to a function that is executed. The function must return a string that determines the target state.</p>
+Instead, it refers to a function that is executed. The function must return a string that determines the target state.
+The key 'targets' (notice the plural 's') allows to specify the potential target states.
+This has no influence on the behavior of the state machine, but is just used when the data structure is also
+used to generate a state machine graph.</p>
 <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">transition_1</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># do something</span>
     <span class="k">if</span> <span class="o">...</span> <span class="p">:</span>
@@ -2788,6 +2815,7 @@ Instead, it refers to a function that is executed. The function must return a st
 
 <span class="n">t_3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="s1">&#39;s_0&#39;</span><span class="p">,</span>
        <span class="s1">&#39;trigger&#39;</span><span class="p">:</span> <span class="s1">&#39;t&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;targets&#39;</span><span class="p">:</span> <span class="s1">&#39;s1 s2&#39;</span><span class="p">,</span>
        <span class="s1">&#39;function&#39;</span><span class="p">:</span> <span class="n">transition_1</span><span class="p">}</span>
 </pre></div>
 
@@ -2865,6 +2893,9 @@ following effects:</p>
 <span class="sd">    A compound transition can decide upon the target state at run-time, for instance based on data in variables.</span>
 <span class="sd">    It is declared like a normal transition, but does not declare any effect or target.</span>
 <span class="sd">    Instead, it refers to a function that is executed. The function must return a string that determines the target state.</span>
+<span class="sd">    The key &#39;targets&#39; (notice the plural &#39;s&#39;) allows to specify the potential target states.</span>
+<span class="sd">    This has no influence on the behavior of the state machine, but is just used when the data structure is also</span>
+<span class="sd">    used to generate a state machine graph.</span>
 <span class="sd">        #!python</span>
 <span class="sd">        def transition_1(args, kwargs):</span>
 <span class="sd">            # do something</span>
@@ -2874,6 +2905,7 @@ following effects:</p>
 <span class="sd">                return &#39;s2&#39;</span>
 <span class="sd">        t_3 = {&#39;source&#39;: &#39;s_0&#39;,</span>
 <span class="sd">               &#39;trigger&#39;: &#39;t&#39;,</span>
+<span class="sd">               &#39;targets&#39;: &#39;s1 s2&#39;,</span>
 <span class="sd">               &#39;function&#39;: transition_1}</span>
 <span class="sd">    **States:**</span>
 <span class="sd">    States are specified as sources and targets as part of the transitions.</span>
