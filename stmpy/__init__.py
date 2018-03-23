@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.6.2'
+__version__ = '0.6.3'
 """
 The current version of stmpy.
 """
@@ -113,10 +113,10 @@ def get_graphviz_dot(machine):
     # initial transition
     counter = 0
     s.append(_print_transition(machine._intial_transition, counter))
-    ++counter
+    counter = 1
     for t_id in machine._table:
         s.append(_print_transition(machine._table[t_id], counter))
-        ++counter
+        counter = counter + 1
     s.append('}')
     return ''.join(s)
 
