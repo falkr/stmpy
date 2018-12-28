@@ -312,7 +312,7 @@ class Driver:
         for timer in self._timer_queue:
             if timer['tid'] == tid:
                 index_to_delete = index
-            ++index
+            index = index + 1
         if index_to_delete is not None:
             self._timer_queue.pop(index_to_delete)
 
@@ -631,7 +631,7 @@ class Machine:
                 self._logger.warning(
                     'Machine {} is in state {} and received '
                     'event {}, but no transition with this event is declared!'
-                    .format(self.id, self._state, event_id, self._table))
+                    .format(self.id, self._state, event_id))
                 return
             else:
                 transition = self._table[t_id]
