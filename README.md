@@ -1,5 +1,7 @@
 # State Machines in Python
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/26e97a1a6093442b9172f8d38c792174)](https://app.codacy.com/app/falkr/stmpy?utm_source=github.com&utm_medium=referral&utm_content=falkr/stmpy&utm_campaign=Badge_Grade_Settings)
+
 This is a simple implementation for state machines in Python.
 State machines define their logic in terms of states and transitions.
 Transitions are triggered by signals or the expiration or timers.
