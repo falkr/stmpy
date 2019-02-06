@@ -180,7 +180,7 @@ def _parse_action_list_attribute(attribute):
     return actions
 
 def _is_state_machine_method(name):
-        return name in ['start_timer', 'stop_timer', 'send_signal']
+        return name in ['start_timer', 'stop_timer', 'send']
 
 def _current_time_millis():
     return int(round(time.time() * 1000))
@@ -192,7 +192,7 @@ def _tid(state_id, event_id):
 
 class Driver:
     """
-    A driver can run several  machines.
+    A driver can run several machines.
 
     **Run-to-completion:**
     One driver contains one thread. Machines assigned to a driver are executed
@@ -354,21 +354,21 @@ class Driver:
         self._event_queue.put({'id': event_id, 'args': args, 'kwargs': kwargs,
                               'stm': stm})
 
-    def send_signal(self, signal_id, stm_id, args=[], kwargs={}):
+    def send(self, message_id, stm_id, args=[], kwargs={}):
         """
-        Send a signal to a state machine handled by this driver.
+        Send a message to a state machine handled by this driver.
 
         If you have a reference to the state machine, you can also send it
-        directly to it by using `stmpy.Machine.send_signal`.
+        directly to it by using `stmpy.Machine.send`.
 
         `stm_id` must be the id of a state machine earlier added to the driver.
         """
         if stm_id not in Driver._stms_by_id:
             self._logger.warn('Machine with name {} cannot be found. '
-                              'Ignoring signal {}.'.format(stm_id, signal_id))
+                              'Ignoring message {}.'.format(stm_id, message_id))
         else:
             stm = Driver._stms_by_id[stm_id]
-            self._add_event(signal_id, args, kwargs, stm)
+            self._add_event(message_id, args, kwargs, stm)
 
     def _terminate_stm(self, stm_id):
         self._logger.debug('Terminating machine {}.'.format(stm_id))
@@ -450,7 +450,7 @@ class Machine:
         Transitions are specified as a dictionary with the following key / value
         pairs:
 
-          * trigger: string with the name of a trigger, either a signal to receive or the name of a timer.
+          * trigger: string with the name of a trigger, either a message to receive or the name of a timer.
           * source: string with the name of a state.
           * target: string with the name of a state.
           * effect: (optional) a set of strings that refers to method name of the object passed to the state machine via `obj`. Several effects can be separated with a `;`.
@@ -527,13 +527,13 @@ class Machine:
 
         The actions can also directly refer to the state machine actions
         `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and
-        `stmpy.Machine.send_signal`. A transition can for instance declare the
+        `stmpy.Machine.send`. A transition can for instance declare the
         following effects:
 
-            effect='start_timer("t1", 100); stop_timer("t2"); send_signal("a")'
+            effect='start_timer("t1", 100); stop_timer("t2"); send("a")'
 
 
-        `name`: Name of the state machine. This name is used to send signals to it, and show its state during debugging.
+        `name`: Name of the state machine. This name is used to send messages to it, and show its state during debugging.
 
         `transitions`: A set of transitions, as explained above. There must be at least one initial transition.
 
@@ -594,8 +594,8 @@ class Machine:
         else:
             self._logger.error('Action {} is not a built-in method.'.format(name))
 
-    def _initialize(self, scheduler):
-        self._driver = scheduler
+    def _initialize(self, driver):
+        self._driver = driver
 
     def _run_actions(self, actions, args=[], kwargs={}):
         for action in actions:
@@ -678,24 +678,24 @@ class Machine:
         """
         return self._driver._get_timer(timer_id, self)
 
-    def send_signal(self, signal_id, args=[], kwargs={}):
+    def send(self, message_id, args=[], kwargs={}):
         """
-        Send a signal to this state machine.
+        Send a message to this state machine.
 
-        To send a signal to a machine by its name, use
-        `stmpy.Driver.send_signal` instead.
+        To send a message to a state machine by its name, use
+        `stmpy.Driver.send` instead.
         """
-        self._logger.debug('Send signal {} in stm {}'.format(signal_id, self.id))
+        self._logger.debug('Send {} in stm {}'.format(message_id, self.id))
         self._driver._add_event(
-            event_id=signal_id, args=args, kwargs=kwargs, stm=self)
+            event_id=message_id, args=args, kwargs=kwargs, stm=self)
 
     def terminate(self):
         """
         Terminate this state machine.
 
-        This removes it from the scheduler.
-        If this is the last state machine of the scheduler and the scheduler is
-        not configured to stay active, this will also terminate the scheduler.
+        This removes it from the driver.
+        If this is the last state machine of the driver and the driver is
+        not configured to stay active, this will also terminate the driver.
         """
         self._driver._terminate_stm(self.id)
 
