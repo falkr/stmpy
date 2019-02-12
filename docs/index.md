@@ -47,25 +47,22 @@ State machines are implemented by a combination of the two classes *Machine* and
 
       def on_init(self):
         print('Init!')
-        self.stm.start_timer('tick', 1000)
 
       def on_tick(self):
         print('Tick!')
         self.ticks = self.ticks + 1
-        self.stm.start_timer('tock', 1000)
 
       def on_tock(self):
         print('Tock!')
         self.tocks = self.tocks + 1
-        self.stm.start_timer('tick', 1000)
 
 
     driver = Driver()
     tick = Tick()
 
-    t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init'}
-    t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick'}
-    t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock'}
+    t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init; start_timer("tik", 1000)'}
+    t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick; start_timer("tok", 1000)'}
+    t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock; start_timer("tik", 1000)'}
 
     stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name='stm_tick')
     tick.stm = stm_tick
@@ -93,6 +90,6 @@ The transition is defined in the following way:
 
 t_3 = {'source': 's_0', trigger: 't', function: stm.transition_1}
 
-This is similar to simple transition, as it declares source state and trigger.
+This is similar to a simple transition, as it declares source state and trigger.
 It does not declare a target state or effects, however. Instead, it refers to a
 function that executes the transition, and returns the target state.s
