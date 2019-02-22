@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.6.4'
+__version__ = '0.6.5'
 """
 The current version of stmpy.
 """
@@ -43,6 +43,8 @@ def _print_state(state):
         s.append('<TR><TD ALIGN="LEFT">')
         for entry in state.entry:
             s.append('entry / {}<BR/>'.format(_print_action(entry)))
+        for internal in state.internal:
+            s.append('{} / {}<BR/>'.format(internal['trigger'], internal['effect_string']))
         for exit in state.exit:
             s.append('exit / {}<BR/>'.format(_print_action(exit)))
         s.append('</TD></TR>')
@@ -115,8 +117,10 @@ def get_graphviz_dot(machine):
     s.append(_print_transition(machine._intial_transition, counter))
     counter = 1
     for t_id in machine._table:
-        s.append(_print_transition(machine._table[t_id], counter))
-        counter = counter + 1
+        transition = machine._table[t_id]
+        if not transition.internal:
+            s.append(_print_transition(transition, counter))
+            counter = counter + 1
     s.append('}')
     return ''.join(s)
 
@@ -416,7 +420,7 @@ class Machine:
     A machine must be added to a driver to execute it.
     """
 
-    def _parse_transitions(self, transitions):
+    def _parse_transitions(self, transitions, states):
         self._intial_transition = None
         for transition_string in transitions:
             t_dict = transition_string  # ast.literal_eval(transition_string)
@@ -433,6 +437,15 @@ class Machine:
                 self._table[t_id] = transition
         if self._intial_transition is None:
             raise Exception('The machine has no initial transition')
+        # parse states for internal transitions
+        for s_dict in states:
+            source = s_dict['name']
+            for key in s_dict.keys():
+                if key not in ['name', 'entry', 'exit']:
+                    t_id = _tid(source, key)
+                    transition = _Transition({'source': source, 'target': source, 'effect': s_dict[key], 'internal': True})
+                    self._table[t_id] = transition
+        
 
     def _parse_states(self, states):
         for s_dict in states:
@@ -546,7 +559,7 @@ class Machine:
         self._table = {}
         self._states = {}
         self._parse_states(states)
-        self._parse_transitions(transitions)
+        self._parse_transitions(transitions, states)
 
     @property
     def state(self):
@@ -633,18 +646,22 @@ class Machine:
                 return
             else:
                 transition = self._table[t_id]
-                self._exit_state(self._state)
+                if not transition.internal:
+                    self._exit_state(self._state)
         # execute all effects
         self._run_actions(transition.effect, args, kwargs)
-        if transition.target:
-            # simple transition
-            target = transition.target
+        if transition.internal:
+            self._logger.debug('Internal transition in {} state {} triggered by {}'.format(self.id, previous_state, event_id))
         else:
-            # compound transitions defined in code
-            target = transition.function(*args, **kwargs)
-        # go into the next state
-        self._enter_state(target)
-        self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
+            if transition.target:
+                # simple transition
+                target = transition.target
+            else:
+                # compound transitions defined in code
+                target = transition.function(*args, **kwargs)
+            # go into the next state
+            self._enter_state(target)
+            self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
 
     def start_timer(self, timer_id, timeout):
         """
@@ -719,6 +736,10 @@ class _Transition:
         else:
             # transition is declared in data structure
             self.target = t_dict['target']
+        if 'internal' in t_dict:
+            self.internal = t_dict['internal']
+        else:
+            self.internal = False
 
 
 class _State:
@@ -733,3 +754,8 @@ class _State:
             self.exit = _parse_action_list_attribute(s_dict['exit'])
         else:
             self.exit = []
+        self.internal = []
+        for key in s_dict.keys():
+            if key not in ['entry', 'exit', 'name']:
+                self.internal.append({'trigger': key, 
+                                      'effect_string': s_dict[key]})
