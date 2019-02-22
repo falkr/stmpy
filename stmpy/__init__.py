@@ -526,12 +526,10 @@ class Machine:
         event and offers them to the method.
 
         The actions can also directly refer to the state machine actions
-        `stmpy.Machine.start_timer`, `stmpy.Machine.stop_timer`, and
-        `stmpy.Machine.send`. A transition can for instance declare the
-        following effects:
+        `stmpy.Machine.start_timer` and `stmpy.Machine.stop_timer`.
+        A transition can for instance declare the following effects:
 
-            effect='start_timer("t1", 100); stop_timer("t2"); send("a")'
-
+            effect='start_timer("t1", 100); stop_timer("t2");'
 
         `name`: Name of the state machine. This name is used to send messages to it, and show its state during debugging.
 
