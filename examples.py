@@ -16,11 +16,11 @@ class Tick:
         print('Tick!')
         self.ticks = self.ticks + 1
         self.stm.start_timer('tock', 1000)
-        print(self.stm.driver.print_state())
+        print(self.stm.driver.print_status())
         self.stm.start_timer('tock', 1000)
-        print(self.stm.driver.print_state())
+        print(self.stm.driver.print_status())
         self.stm.stop_timer('tock')
-        print(self.stm.driver.print_state())
+        print(self.stm.driver.print_status())
         self.stm.start_timer('tock', 1000)
 
     def on_tock(self):
@@ -32,9 +32,9 @@ class Tick:
 def test_tick():
 
     logger = logging.getLogger('stmpy.Driver')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    ch.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     ch.setFormatter(formatter)
     logger.addHandler(ch)
@@ -53,11 +53,11 @@ def test_tick():
     # the object may need the stm to add events and control timers
     tick.stm = stm_tick
 
-    scheduler.add_stm(stm_tick)
+    scheduler.add_machine(stm_tick)
     scheduler.start(max_transitions=3)
     scheduler.wait_until_finished()
 
-#test_tick()
+test_tick()
 
 class Tick_2:
 
@@ -245,6 +245,8 @@ def test_blink():
     stm_blink = Machine(transitions=[t0, t1, t2], obj=blink, name='blink')
     blink.stm = stm_blink
 
+    print(stm_blink.print_graph())
+
     scheduler = Driver()
     scheduler.add_stm(stm_blink)
     scheduler.start()
@@ -252,4 +254,4 @@ def test_blink():
 
     scheduler.wait_until_finished()
 
-test_blink()
+#test_blink()

@@ -9,8 +9,8 @@ pypi: docs
 
 dev-install: docs
 	rm -rf ./dist
-	python setup.py sdist
-	pip install -U dist/*.tar.gz
+	/usr/local/opt/python/bin/python3 setup.py sdist
+	/usr/local/opt/python/bin/pip3 install -U dist/*.tar.gz
 
 deploy: docs
 	rm -rf ./dist
