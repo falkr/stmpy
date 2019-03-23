@@ -194,6 +194,15 @@ def _tid(state_id, event_id):
     return state_id + '_' + event_id
 
 
+class EventQueue(Queue):
+
+    def add_to_front(self, defer_queue):
+        # TODO check sequence, maybe add different into defer_queue to begin with
+        self.queue.extendleft(defer_queue)
+        #self.not_empty.notify()
+        # TODO maybe we need to notify the queue?
+
+
 class Driver:
     """
     A driver can run several machines.
@@ -215,7 +224,7 @@ class Driver:
         self._logger = logging.getLogger(__name__)
         self._logger.debug('Logging works')
         self._active = False
-        self._event_queue = Queue()
+        self._event_queue = EventQueue()
         self._timer_queue = []
         self._next_timeout = None
         # TODO need clarity if this should be a class variable
@@ -353,6 +362,9 @@ class Driver:
         else:
             self._next_timeout = None
 
+    def _transfer_defer_queue(self, defer_queue):
+        self._event_queue.add_to_front(defer_queue)
+
     def _add_event(self, event_id, args, kwargs, stm):
         # add the event to the queue
         self._event_queue.put({'id': event_id, 'args': args, 'kwargs': kwargs,
@@ -383,7 +395,11 @@ class Driver:
             self._active = False
             self._wake_queue()
 
-    def _execute_transition(self, stm, event_id, args, kwargs):
+    def _execute_transition(self, stm, event_id, args, kwargs, event):
+        if stm._defers_event(event_id):
+            stm._add_to_defer_queue(event)
+            self._logger.debug('Machine {} defers event {} in state {}'.format(stm._id, event_id, stm._state))
+            return
         stm._execute_transition(event_id, args, kwargs)
         if self._max_transitions is not None:
             self._max_transitions = self._max_transitions-1
@@ -403,7 +419,7 @@ class Driver:
                     self._execute_transition(stm=event['stm'],
                                              event_id=event['id'],
                                              args=event['args'],
-                                             kwargs=event['kwargs'])
+                                             kwargs=event['kwargs'], event=event)
             except Empty:
                 # timeout has occured
                 self._logger.debug('Timer expired, driver loop active again.')
@@ -560,6 +576,7 @@ class Machine:
         self._states = {}
         self._parse_states(states)
         self._parse_transitions(transitions, states)
+        self._defer_queue = None
 
     @property
     def state(self):
@@ -619,11 +636,25 @@ class Machine:
                 # use the static arguments provided by declaration
                 self._run_function(self._obj, action['name'], action['args'], {})
 
+    def _defers_event(self, event_id):
+        if self._state in self._states:
+            return event_id in self._states[self._state].defer
+        return False
+
+    def _add_to_defer_queue(self, event):
+        if self._defer_queue is None:
+            self._defer_queue = []
+        self._defer_queue.append(event)
+
     def _enter_state(self, state):
         self._logger.debug('Machine {} enters state {}'.format(self.id, state))
         # execute any entry actions
         if state in self._states:
             self._run_actions(self._states[state].entry)
+        if self._state!=state and self._defer_queue!=None:
+            self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue))) 
+            self._driver._transfer_defer_queue(self._defer_queue)
+            self._defer_queue.clear()
         self._state = state
 
     def _exit_state(self, state):
@@ -755,7 +786,12 @@ class _State:
         else:
             self.exit = []
         self.internal = []
+        self.defer = []
         for key in s_dict.keys():
             if key not in ['entry', 'exit', 'name']:
-                self.internal.append({'trigger': key, 
-                                      'effect_string': s_dict[key]})
+                value = s_dict[key]
+                if value.strip().lower() == 'defer':
+                    self.defer.append(key)
+                else:
+                    self.internal.append({'trigger': key, 
+                                          'effect_string': s_dict[key]})
