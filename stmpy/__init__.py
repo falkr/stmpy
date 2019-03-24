@@ -644,17 +644,18 @@ class Machine:
     def _add_to_defer_queue(self, event):
         if self._defer_queue is None:
             self._defer_queue = []
-        self._defer_queue.append(event)
+        # add at beginning, because we reverse when putting back
+        self._defer_queue.insert(0, event)
 
     def _enter_state(self, state):
         self._logger.debug('Machine {} enters state {}'.format(self.id, state))
-        # execute any entry actions
-        if state in self._states:
-            self._run_actions(self._states[state].entry)
-        if self._state!=state and self._defer_queue!=None:
+        if self._state!=state and self._defer_queue!=None and len(self._defer_queue)>0:
             self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue))) 
             self._driver._transfer_defer_queue(self._defer_queue)
             self._defer_queue.clear()
+        # execute any entry actions
+        if state in self._states:
+            self._run_actions(self._states[state].entry)
         self._state = state
 
     def _exit_state(self, state):
