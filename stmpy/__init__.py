@@ -208,15 +208,6 @@ def _tid(state_id, event_id):
     return state_id + '_' + event_id
 
 
-class EventQueue(Queue):
-
-    def add_to_front(self, defer_queue):
-        # TODO check sequence, maybe add different into defer_queue to begin with
-        self.queue.extendleft(defer_queue)
-        #self.not_empty.notify()
-        # TODO maybe we need to notify the queue?
-
-
 class Driver:
     """
     A driver can run several machines.
@@ -238,7 +229,7 @@ class Driver:
         self._logger = logging.getLogger(__name__)
         self._logger.debug('Logging works')
         self._active = False
-        self._event_queue = EventQueue()
+        self._event_queue = Queue()
         self._timer_queue = []
         self._next_timeout = None
         # TODO need clarity if this should be a class variable
@@ -361,11 +352,10 @@ class Driver:
             timer = self._timer_queue[0]
             if timer['timeout_abs'] < _current_time_millis():
                 # the timer is expired, remove first element in queue
-                popped = self._timer_queue.pop(0)
+                self._timer_queue.pop(0)
                 # put into the event queue
-                # TODO maybe put timer first in queue?
                 self._logger.debug('Timer {} expired for stm {}, adding it to event queue.'.format(timer['id'], timer['stm'].id))
-                self._add_event(timer['id'], [], {}, timer['stm'])
+                self._add_event(timer['id'], [], {}, timer['stm'], front=True)
                 # not necessary to set next timeout,
                 # complete check timers will be called again
             else:
@@ -376,13 +366,11 @@ class Driver:
         else:
             self._next_timeout = None
 
-    def _transfer_defer_queue(self, defer_queue):
-        self._event_queue.add_to_front(defer_queue)
-
-    def _add_event(self, event_id, args, kwargs, stm):
-        # add the event to the queue
-        self._event_queue.put({'id': event_id, 'args': args, 'kwargs': kwargs,
-                              'stm': stm})
+    def _add_event(self, event_id, args, kwargs, stm, front=False):
+        if front:
+            self._event_queue.queue.appendleft({'id': event_id, 'args': args, 'kwargs': kwargs, 'stm': stm})
+        else:
+            self._event_queue.put({'id': event_id, 'args': args, 'kwargs': kwargs, 'stm': stm})
 
     def send(self, message_id, stm_id, args=[], kwargs={}):
         """
@@ -667,7 +655,7 @@ class Machine:
         self._logger.debug('Machine {} enters state {}'.format(self.id, state))
         if self._state!=state and self._defer_queue!=None and len(self._defer_queue)>0:
             self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue))) 
-            self._driver._transfer_defer_queue(self._defer_queue)
+            self._driver._event_queue.queue.extendleft(self._defer_queue)
             self._defer_queue.clear()
         # execute any entry actions
         if state in self._states:
