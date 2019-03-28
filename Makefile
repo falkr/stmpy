@@ -25,4 +25,8 @@ push:
 	git push github master
 
 runtests:
-	python -m unittest tests/test_stmpy.py
+	python3 -m unittest tests/unit/test_stmpy.py
+
+runcoverage:
+	coverage run -m unittest tests/unit/test_stmpy.py
+	coverage report
