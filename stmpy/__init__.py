@@ -38,13 +38,15 @@ def _print_action(action):
 def _print_state(state):
     s = []
     s.append('{} [shape=plaintext margin=0 label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" STYLE="ROUNDED"><TR><TD><B>{}</B></TD></TR>\n'.format(state.name, state.name))
-    if state.entry or state.exit:
+    if state.entry or state.exit or state.internal or state.defer:
         s.append('<HR/>')
         s.append('<TR><TD ALIGN="LEFT">')
         for entry in state.entry:
             s.append('entry / {}<BR/>'.format(_print_action(entry)))
         for internal in state.internal:
             s.append('{} / {}<BR/>'.format(internal['trigger'], internal['effect_string']))
+        for defer in state.defer:
+            s.append('{} / {}<BR/>'.format(defer, 'defer'))
         for exit in state.exit:
             s.append('exit / {}<BR/>'.format(_print_action(exit)))
         s.append('</TD></TR>')
@@ -69,7 +71,10 @@ def _print_transition(t, counter):
             for target in t.targets:
                 s.append('{} -> {}\n'.format(decision_name, target))
     else:
-        s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
+        if t.target is 'final': 
+            s.append('{} -> f{} [label=" {}"]\n'.format(t.source, counter, label))
+        else:
+            s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
     return ''.join(s)
 
 def get_graphviz_dot(machine):
@@ -110,6 +115,15 @@ def get_graphviz_dot(machine):
     s.append('edge [ fontname=Helvetica ];\n')
     # initial state
     s.append('initial [shape=point width=0.2];\n')
+    # final states
+    counter = 1
+    for t_id in machine._table:
+        transition = machine._table[t_id]
+        if not transition.internal:
+            if transition.target is 'final':
+                s.append('f{} [shape=doublecircle width=0.1 label="" style=filled fillcolor=black];\n'.format(counter))
+            counter = counter + 1
+
     for state_name in machine._states:
         s.append(_print_state(machine._states[state_name]))
     # initial transition
