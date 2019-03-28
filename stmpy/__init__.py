@@ -184,7 +184,7 @@ def _parse_action_list_attribute(attribute):
     return actions
 
 def _is_state_machine_method(name):
-        return name in ['start_timer', 'stop_timer', 'send']
+        return name in ['start_timer', 'stop_timer', 'send', 'terminate']
 
 def _current_time_millis():
     return int(round(time.time() * 1000))
@@ -619,6 +619,8 @@ class Machine:
             if len(args) != 1:
                 self._logger.error('Method {} expects 1 arg.'.format(name))
             self.stop_timer(args[0])
+        elif name == 'terminate':
+            self.terminate()
         else:
             self._logger.error('Action {} is not a built-in method.'.format(name))
 
@@ -692,8 +694,12 @@ class Machine:
                 # compound transitions defined in code
                 target = transition.function(*args, **kwargs)
             # go into the next state
-            self._enter_state(target)
-            self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
+            if target is 'final':
+                self.terminate()
+                self._logger.debug('Transition in {} from {} to final state triggered by {}'.format(self.id, previous_state, target, event_id))
+            else:
+                self._enter_state(target)
+                self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
 
     def start_timer(self, timer_id, timeout):
         """
