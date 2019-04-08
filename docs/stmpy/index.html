@@ -1651,6 +1651,19 @@ requests and bug reports are welcome.</p>
 <span class="sd">            s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
 <span class="sd">            &#39;a&#39;: &#39;action1(); action2()&#39;}</span>
 
+<span class="sd">        **Deferred Events**</span>
+
+<span class="sd">        A state can defer an event. In this case, the event, if it happens, does not trigger a transition, </span>
+<span class="sd">        but is ignored in the input queue until the state machine switches into another state</span>
+<span class="sd">        that does not defer the event anymore. </span>
+<span class="sd">        This is useful to handle events that can arrive in states when they are not useful yet.</span>
+<span class="sd">        To declare a deferred event, simply add the event with its name as key in the </span>
+<span class="sd">        extended state description, and use the keyword `defer` as value:</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            s1 = {&#39;name&#39;: &#39;s1&#39;, </span>
+<span class="sd">                &#39;a&#39;: &#39;defer&#39;}</span>
+
 <span class="sd">        **Actions and Effects:**</span>
 <span class="sd">        The value of the attributes for transition effects and for state entry</span>
 <span class="sd">        and exit actions can list several actions that are called on the object</span>
@@ -2703,6 +2716,19 @@ machines terminated</p></div>
 <span class="sd">            s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
 <span class="sd">            &#39;a&#39;: &#39;action1(); action2()&#39;}</span>
 
+<span class="sd">        **Deferred Events**</span>
+
+<span class="sd">        A state can defer an event. In this case, the event, if it happens, does not trigger a transition, </span>
+<span class="sd">        but is ignored in the input queue until the state machine switches into another state</span>
+<span class="sd">        that does not defer the event anymore. </span>
+<span class="sd">        This is useful to handle events that can arrive in states when they are not useful yet.</span>
+<span class="sd">        To declare a deferred event, simply add the event with its name as key in the </span>
+<span class="sd">        extended state description, and use the keyword `defer` as value:</span>
+
+<span class="sd">            #!python</span>
+<span class="sd">            s1 = {&#39;name&#39;: &#39;s1&#39;, </span>
+<span class="sd">                &#39;a&#39;: &#39;defer&#39;}</span>
+
 <span class="sd">        **Actions and Effects:**</span>
 <span class="sd">        The value of the attributes for transition effects and for state entry</span>
 <span class="sd">        and exit actions can list several actions that are called on the object</span>
@@ -3048,6 +3074,18 @@ as value.</p>
 </pre></div>
 
 
+<p><strong>Deferred Events</strong></p>
+<p>A state can defer an event. In this case, the event, if it happens, does not trigger a transition, 
+but is ignored in the input queue until the state machine switches into another state
+that does not defer the event anymore. 
+This is useful to handle events that can arrive in states when they are not useful yet.
+To declare a deferred event, simply add the event with its name as key in the 
+extended state description, and use the keyword <code>defer</code> as value:</p>
+<div class="codehilite"><pre><span></span><span class="n">s1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;s1&#39;</span><span class="p">,</span> 
+    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;defer&#39;</span><span class="p">}</span>
+</pre></div>
+
+
 <p><strong>Actions and Effects:</strong>
 The value of the attributes for transition effects and for state entry
 and exit actions can list several actions that are called on the object
@@ -3158,6 +3196,16 @@ transition must be triggered by the event <code>done</code>.</p>
 <span class="sd">        #!python</span>
 <span class="sd">        s_0 = {&#39;name&#39;: &#39;s_0&#39;,</span>
 <span class="sd">        &#39;a&#39;: &#39;action1(); action2()&#39;}</span>
+<span class="sd">    **Deferred Events**</span>
+<span class="sd">    A state can defer an event. In this case, the event, if it happens, does not trigger a transition, </span>
+<span class="sd">    but is ignored in the input queue until the state machine switches into another state</span>
+<span class="sd">    that does not defer the event anymore. </span>
+<span class="sd">    This is useful to handle events that can arrive in states when they are not useful yet.</span>
+<span class="sd">    To declare a deferred event, simply add the event with its name as key in the </span>
+<span class="sd">    extended state description, and use the keyword `defer` as value:</span>
+<span class="sd">        #!python</span>
+<span class="sd">        s1 = {&#39;name&#39;: &#39;s1&#39;, </span>
+<span class="sd">            &#39;a&#39;: &#39;defer&#39;}</span>
 <span class="sd">    **Actions and Effects:**</span>
 <span class="sd">    The value of the attributes for transition effects and for state entry</span>
 <span class="sd">    and exit actions can list several actions that are called on the object</span>

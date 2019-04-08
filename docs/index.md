@@ -161,3 +161,17 @@ transition must be triggered by the event `done`.
     #!python
     s1 = {'name': 's1', 
           'do': 'do_action("a")'}
+
+**Deferred Events**
+
+A state can defer an event. In this case, the event, if it happens, does not trigger a transition, 
+but is ignored in the input queue until the state machine switches into another state
+that does not defer the event anymore. 
+This is useful to handle events that can arrive in states when they are not useful yet.
+To declare a deferred event, simply add the event with its name as key in the 
+extended state description, and use the keyword `defer` as value:
+
+    #!python
+    s1 = {'name': 's1', 
+          'a': 'defer'}
+

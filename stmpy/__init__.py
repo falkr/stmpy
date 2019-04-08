@@ -542,6 +542,19 @@ class Machine:
             s_0 = {'name': 's_0',
             'a': 'action1(); action2()'}
 
+        **Deferred Events**
+
+        A state can defer an event. In this case, the event, if it happens, does not trigger a transition, 
+        but is ignored in the input queue until the state machine switches into another state
+        that does not defer the event anymore. 
+        This is useful to handle events that can arrive in states when they are not useful yet.
+        To declare a deferred event, simply add the event with its name as key in the 
+        extended state description, and use the keyword `defer` as value:
+
+            #!python
+            s1 = {'name': 's1', 
+                'a': 'defer'}
+
         **Actions and Effects:**
         The value of the attributes for transition effects and for state entry
         and exit actions can list several actions that are called on the object
