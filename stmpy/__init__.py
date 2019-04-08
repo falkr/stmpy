@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.6.5'
+__version__ = '0.7.0'
 """
 The current version of stmpy.
 """
@@ -493,7 +493,7 @@ class Machine:
                    'effect': 'on_tick'}
 
         **Initial Transition:**
-        A state machine requires a single initial transition. This is a normal
+        A state machine must have a single initial transition. This is a normal
         transition that has a source state with name `'initial'`, and no
         trigger.
 
@@ -526,16 +526,21 @@ class Machine:
 
         **States:**
         States are specified as sources and targets as part of the transitions.
-        This is done by simple strings.
+        This is done by simple strings. The name `initial` refers to the initial state 
+        of the state machine. (An initial transition is necessary, see above.) 
+        The name `final` refers to the final state of the machine. 
+        Once a machine executes a transition with target state `final`, it terminates.
 
-        States can also declare entry and exit actions that are called when they are entered or exited.
-        To declare these actions, declare a dictionary for the state. The name key refers to
-        the name of the state that is also used in the transition declaration.
+        States can declare internal transitions. These are transitions that have the
+        same source and target state, similar to self-transitions. However, they don't ever
+        leave the state, so that any entry or exit actions declared in the state are not executed.
+        An internal transition is declared as part of the extended state definition. 
+        It simply lists the name of the trigger (here `a`) as key and the list of actions it executes
+        as value.
 
             #!python
             s_0 = {'name': 's_0',
-                   'entry': 'op1; op2',
-                   'exit': 'op3'}
+            'a': 'action1(); action2()'}
 
         **Actions and Effects:**
         The value of the attributes for transition effects and for state entry
@@ -544,12 +549,13 @@ class Machine:
 
         This list of actions can look in the following way:
 
+            #!python
             effect='m1; m2(); m3(1, True, "a"); m4(*)'
 
         This is a semicolon-separated list of actions that are called, here as
         part of a transition's effect. Method m1 has no arguments, and neither
         does m2. This means the empty brackets are optional. Method m3 has three
-        litteral arguments, here the integer 1, the boolean True and the string
+        literal arguments, here the integer 1, the boolean True and the string
         'a'. Note how the string is surrounded by double quotation marks, since
         the entire effect is coded in single quotation marks. Vice-versa is also
         possible. The last method, m4, declares an asterisk as argument. This
@@ -560,7 +566,30 @@ class Machine:
         `stmpy.Machine.start_timer` and `stmpy.Machine.stop_timer`.
         A transition can for instance declare the following effects:
 
+            #!python
             effect='start_timer("t1", 100); stop_timer("t2");'
+
+        **Entry-, Exit-, and Do-Actions**
+
+        States also declare entry and exit actions that are called when they are entered or exited.
+        To declare these actions, declare a dictionary for the state. The name key refers to
+        the name of the state that is also used in the transition declaration.
+
+            #!python
+            s_0 = {'name': 's_0',
+                   'entry': 'op1; op2',
+                   'exit': 'op3'}
+
+        A state can also declare a do-action. This action is started once the state is entered, 
+        after any entry actions, if there are any. Do-actions can refer to code that takes a long time
+        to run, and are executed in their own thread, so that they don't block the execution of other 
+        behavior. Once the do-action finishes, the state machine automatically dispatches an event 
+        with name `done`. This implies that a state with a do-action has only one outgoing transition, and this
+        transition must be triggered by the event `done`.
+
+            #!python
+            s1 = {'name': 's1', 
+                  'do': 'do_action("a")'}
 
         `name`: Name of the state machine. This name is used to send messages to it, and show its state during debugging.
 
@@ -601,16 +630,28 @@ class Machine:
     def _reset(self):
         self._state = 'initial'
 
-    def _run_function(self, obj, function_name, args, kwargs):
+    def _run_function(self, obj, function_name, args, kwargs, asynchonous=False):
         function_name = function_name.strip()
         self._logger.debug('Running function {}.'.format(function_name))
-        try:
-            func = getattr(obj, function_name)
-            func(*args, **kwargs)
-        except AttributeError as error:
-            self._logger.error(
-                'Error when running function {} from machine.'.format(
-                    function_name), exc_info=True)
+        func = getattr(obj, function_name)
+        if asynchonous:
+            def running(function, args, kwargs):
+                try:
+                    function(*args, **kwargs)
+                except AttributeError as error:
+                    self._logger.error('Error when running function {} from machine.'.format(function_name), exc_info=True)
+                # dispatch completion event
+                self._logger.debug('Do action complete, sending completion action after done.'.format())
+                self._driver._add_event(event_id='done', args=args, kwargs=kwargs, stm=self)
+            function = getattr(obj, function_name.strip())
+            thread = Thread(target=running, args=[function, args, kwargs])
+            thread.start()
+            self._logger.debug('Started do action.'.format())
+        else:
+            try:
+                func(*args, **kwargs)
+            except AttributeError as error:
+                self._logger.error('Error when running function {} from machine.'.format(function_name), exc_info=True)
 
     def _run_state_machine_function(self, name, args, kwargs):
         if name == 'start_timer':
@@ -657,9 +698,13 @@ class Machine:
             self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue))) 
             self._driver._event_queue.queue.extendleft(self._defer_queue)
             self._defer_queue.clear()
-        # execute any entry actions
         if state in self._states:
+            # execute any entry actions
             self._run_actions(self._states[state].entry)
+            # execute any do actions
+            if self._states[state].do:
+                do_action = self._states[state].do[0]
+                self._run_function(self._obj, do_action['name'], do_action['args'], {}, asynchonous=True)
         self._state = state
 
     def _exit_state(self, state):
@@ -794,10 +839,14 @@ class _State:
             self.exit = _parse_action_list_attribute(s_dict['exit'])
         else:
             self.exit = []
+        if 'do' in s_dict:
+            self.do = _parse_action_list_attribute(s_dict['do'])
+        else:
+            self.do = []
         self.internal = []
         self.defer = []
         for key in s_dict.keys():
-            if key not in ['entry', 'exit', 'name']:
+            if key not in ['entry', 'exit', 'name', 'do']:
                 value = s_dict[key]
                 if value.strip().lower() == 'defer':
                     self.defer.append(key)
