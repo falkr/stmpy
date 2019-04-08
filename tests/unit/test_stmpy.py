@@ -11,13 +11,6 @@ from stmpy import Driver
 import stmpy
 
 
-class TestExample(unittest.TestCase):
-
-    def test_helper(self):
-        print(stmpy.__version__)
-        self.assertEqual(0, 0)
-
-
 class Busy:
 
     def __init__(self):
@@ -36,10 +29,7 @@ class BusyTestCase(unittest.TestCase):
         logger.setLevel(logging.DEBUG)
         pass
 
-    def tearDown(self):
-        pass
-
-    def test_busy(self):
+    def test(self):
         busy = Busy()
         t0 = {'source': 'initial', 'target': 's_busy', 'effect': 'on_busy'}
         t1 = {'trigger': 'busy', 'source': 's_busy',
@@ -70,14 +60,7 @@ class TwoMethods:
 
 class TwoMethodsTestCase(unittest.TestCase):
 
-    def setUp(self):
-        print('setup two test case')
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_two(self):
+    def test(self):
         two = TwoMethods()
         t0 = {'source': 'initial', 'target': 's_1'}
         t1 = {'trigger': 't', 'source': 's_1', 'target': 's_2',
@@ -111,7 +94,7 @@ class TerminateTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_terminate(self):
+    def test(self):
         terminate = Terminate()
         t0 = {'source': 'initial', 'target': 's_1'}
         t1 = {'trigger': 't', 'source': 's_1', 'target': 's_2',
@@ -135,7 +118,7 @@ class TerminateTestCase(unittest.TestCase):
     
 class DeferTestCase(unittest.TestCase):
 
-    def test_defer(self):
+    def test(self):
         print(__name__)
         debug_level = logging.DEBUG
         logger = logging.getLogger(__name__)
@@ -207,7 +190,7 @@ class Tick:
 
 class TestTick(unittest.TestCase):
 
-    def test_tick(self):
+    def test(self):
 
         #print(stmpy.__version__)
 
@@ -267,3 +250,137 @@ class TestTick(unittest.TestCase):
         #driver2.start(max_transitions=10)
 
         driver1.wait_until_finished()
+
+class EntryExitSelfLogic:
+
+        def __init__(self):
+            self.list = []
+
+        def add(self, x):
+            self.list.append(x)
+
+        def do_action(self, x):
+            self.list.append(x)
+
+class EntryExitSelf(unittest.TestCase):
+
+    def test(self):
+        tick1 = EntryExitSelfLogic()
+        t0 = {'source': 'initial', 'target': 's1'}
+        t1 = {'trigger': 'b', 'source': 's1', 'target': 's1', 'effect': 'add("b")'}
+        t2 = {'trigger': 'c', 'source': 's1', 'target': 'final', 'effect': 'add("c")'}
+
+        s1 = {'name': 's1', 'a': 'add("a")', 'entry': 'add("entry")', 'exit': 'add("exit")'}
+
+        stm = Machine(name='stm', transitions=[t0, t1, t2], states=[s1], obj=tick1)
+        tick1.stm = stm
+
+        _ = stmpy.get_graphviz_dot(stm)
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start(max_transitions=30, keep_active=False)
+        driver.send('a', 'stm')
+        driver.send('b', 'stm')
+        driver.send('c', 'stm')
+
+        driver.wait_until_finished()
+
+
+class StartStopTimer(unittest.TestCase):
+
+    def test(self):
+        t0 = {'source': 'initial', 'target': 's1', 'effect': 'start_timer("t1", "1000")'}
+        t1 = {'trigger': 'a', 'source': 's1', 'target': 's1', 'effect': 'stop_timer("t1")'}
+        t2 = {'trigger': 'b', 'source': 's1', 'target': 'final'}
+
+        stm = Machine(name='stm', transitions=[t0, t1, t2], obj=None)
+
+        _ = stmpy.get_graphviz_dot(stm)
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start(keep_active=False)
+        driver.send('a', 'stm')
+        driver.send('b', 'stm')
+
+        driver.wait_until_finished()
+
+
+class CompoundTransition(unittest.TestCase):
+
+    def compound(self, arg1, b1=None):
+        print(arg1)
+        print(b1)
+        return 'final'
+
+    def test(self):
+        t0 = {'source': 'initial', 'target': 's1'}
+        t1 = {'trigger': 'a', 'source': 's1', 'function': self.compound, 'targets': 'final'}
+
+        stm = Machine(name='stm', transitions=[t0, t1], obj=None)
+
+        _ = stmpy.get_graphviz_dot(stm)
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start(keep_active=False)
+        driver.send('a', 'stm', args=['hi'], kwargs={'b1': 'bbb'})
+
+        driver.wait_until_finished()
+
+class CompoundFunctionContainer:
+
+    def __init__(self, counter):
+        self.counter = counter
+    
+    def compound(self, arg1, b1=None):
+        print('_______________________________{}'.format(self.counter))
+        if self.counter > 13:
+            return 's2'
+        return 's3'
+
+class CompoundTransition_2(unittest.TestCase):
+
+    def test(self):
+
+        cfc = CompoundFunctionContainer(13)
+
+        t0 = {'source': 'initial', 'target': 's1'}
+        t1 = {'trigger': 'a', 'source': 's1', 'function': cfc.compound, 'targets': 's2 s3'}
+        t2 = {'trigger': 'b', 'source': 's2', 'target': 'final'}
+        t3 = {'trigger': 'b', 'source': 's3', 'target': 'final'}
+
+        stm = Machine(name='stm', transitions=[t0, t1, t2, t3], obj=None)
+
+        _ = stmpy.get_graphviz_dot(stm)
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start(keep_active=False)
+        driver.send('a', 'stm', args=['hi'], kwargs={'b1': 'bbb'})
+        driver.send('b', 'stm')
+
+        driver.wait_until_finished()
+
+
+class DoAction(unittest.TestCase):
+
+    def test(self):
+        tick1 = EntryExitSelfLogic()
+        t0 = {'source': 'initial', 'target': 's1'}
+        t1 = {'trigger': 'b', 'source': 's1', 'target': 's1', 'effect': 'add("b")'}
+        t2 = {'trigger': 'done', 'source': 's1', 'target': 'final', 'effect': 'add("c")'}
+
+        s1 = {'name': 's1', 'do': 'do_action("a")'}
+
+        stm = Machine(name='stm', transitions=[t0, t1, t2], states=[s1], obj=tick1)
+        tick1.stm = stm
+
+        _ = stmpy.get_graphviz_dot(stm)
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start()
+
+        driver.wait_until_finished()
