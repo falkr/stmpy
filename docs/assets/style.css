@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Source+Code+Pro|Source+Sans+Pro:200,300,400,600,400italic,600italic|Rock+Salt');
+
+.page, .content, aside {
+	box-sizing: content-box;
+}
+
+body {
+  line-height: 24px;
+  color: #222;
+  font: normal 14px/24px "Merriweather", Georgia, serif;
+  background: #fbfaf8; 
+}
+
+td {
+  font: normal 14px "Source Sans Pro", Menlo, Consolas, Monaco, monospace;
+}
+
+th {
+  font: bold 14px "Source Sans Pro", Menlo, Consolas, Monaco, monospace;
+  text-align: left;
+}
+
+
+li p {
+  margin: 0;
+}
+
+.page {
+  background: #fbfaf8;
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+  }
+
+.content {
+  padding: 0 40px 40px 40px;
+  background: white;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  border-radius: .25rem;
+  padding: 2rem 2rem 1rem;
+  border: 1px solid #e8e8e8;
+  overflow: hidden
+}
+
+p.subtitle {
+  font: 300 24px "Source Sans Pro", Georgia, serif;
+  color: #1481b8;
+}
+
+div.figure {
+  padding: 20px 0 20px 0;
+  width: 100%;
+}
+
+div.figurefullwitdth {
+  padding: 20px 0 20px 0;
+  margin-left: -33px;
+  margin-right: -33px;
+  width: 100%;
+}
+
+blockquote {
+  padding: 10px;
+  background: #f9fafb;
+  border: solid 1px #f3f5f7;
+  border-bottom: solid 1px #dee8ed;
+  border-radius: 3px; }
+  blockquote p {
+    font: italic 14px/24px "Merriweather", Georgia, serif;
+    color: #73848c; }
+  blockquote p:first-child {
+    margin-top: 0; }
+  blockquote p:last-child {
+    margin-bottom: 0; }
+
+aside {
+  color: #868279;
+  padding: 10px 10px;
+  background: #faf8f5;
+  border: solid 1px #f7f4ed;
+  border-bottom: solid 1px #f0e9db;
+  border-radius: 3px; }
+  aside h2 {
+    color: #9e9b94;
+    font-size: 24px;
+    border: none;
+    margin: 20px 0 10px 0;
+    padding: 0; }
+  aside p, aside li {
+    font: 15px/22px "Source Sans Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; }
+  aside li {
+    line-height: 20px; }
+  aside > p:first-child {
+    margin-top: 0; }
+  aside > p:last-child {
+    margin-bottom: 0; }
+  aside ul, aside ol {
+    padding: 0 0 0 18px; }
+  aside code {
+    color: #666;
+    font: normal 13px "Source Code Pro", Menlo, Consolas, Monaco, monospace; }
+  aside img {
+    padding: 0; }
+
+aside + aside {
+  margin-top: 10px; }
+
+
+@media only screen and (max-width: 479px) {
+  .content {
+    padding: 0 20px 2px 20px; }
+
+  .section {
+    display: block; }
+
+  .section:before {
+    content: ""; }
+
+ }
+
+@media only screen and (min-width: 800px) {
+  .page {
+    padding-right: 300px; }
+
+  aside {
+    position: absolute;
+    width: 240px;
+    right: 30px;
+    padding: 0;
+    background: none;
+    border: none;
+    padding-left: 22px;
+    border-radius: 0;
+    border-left: solid 8px #f0e9db; }
+    aside p, aside li {
+      font: 14px/20px "Source Sans Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; }
+
+ }
+
+pre {
+	padding: 8px;
+	color: #333;
+	background-color: #f5f5f5;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.navbar > * {
+	font: 14px/20px "Source Sans Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+	color: #ffffff;
+}
+
+.nav-link {
+	font: 14px/20px "Source Sans Pro", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
+	color: #ffffff;
+}
+
+markx {
+  background-color: #ffffff;
+  text-shadow: 
+    -3px 0px 3px yellow,
+     3px 0px 3px yellow,
+     6px 0px 6px yellow,
+    -6px 0px 6px yellow;
+
+}
+
+mark {
+    border: 1px solid #FAD7A0;
+    border-radius: 3px;
+    background-color: #FCF3CF;
+}
+
+span.minor {
+  color: grey
+}
+
+p {
+  margin: 15px 0 15px 0
+}
+
+h1 {
+  font: 200 40px "Source Sans Pro", Georgia, serif;
+  color: #1481b8;
+  padding: 0px 0 4px 0;
+  border-bottom: solid 0px #eeeeee; }
+
+.section:before {
+  content: " / "; }
+
+h2 {
+  Xcolor: #00509e;
+  xcolor: #79a2ce;
+  color: #1481b8;
+  font: 300 30px "Source Sans Pro", Georgia, serif;
+  margin: 34px 0 15px -33px;
+  padding: 0 0 2px 30px;
+  border-left: solid 8px #1481b8; }
+
+h3 {
+  xcolor: #00509e;
+  color: #1481b8;
+  font: 300 20px "Source Sans Pro", Georgia, serif;
+  margin: 34px 0 0 -33px;
+  padding-left: 25px;
+  border-left: solid 8px #1481b8; }
+  
+a {
+Xcolor: #00509e;
+color: #1481b8;
+text-decoration: none;
+outline: none;
+border-bottom: solid 1px rgba(209, 236, 250, 0);
+transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+div.color-well {
+  background-color:#d9eaf2; padding:12px 32px 32px 32px; margin: -32px -32px -32px -32px;
+}
+
+div.factbox {
+  width:250px; float: right; margin: 0 15px 15px 15px; padding:15px; background: lightblue
+}
+
+
+div.goals ul,
+div.goals ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+div.goals ul {
+  margin: 2em 0;
+}
+
+div.goals ul li {
+  margin: 1em;
+  margin-left: 3em;
+}
+
+div.goals ul li:before {
+  content: '\f0eb';
+  font-family: 'Font Awesome 5 Free';
+  font-size:20;
+  float: left;
+  margin-left: -1.5em;
+  color: #1481b8;
+}
+
+
+div.check ul,
+div.check ul li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+div.check ul {
+  margin: 2em 0;
+}
+
+div.check ul li {
+  margin: 1em;
+  margin-left: 3em;
+}
+
+div.check ul li:before {
+  content: '\f058';
+  font-family: 'Font Awesome 5 Free';
+  font-size:20;
+  float: left;
+  margin-left: -1.5em;
+  color: #1481b8;
+}
+
+
+
+a.ntnu-button {
+    font: 600 14px "Source Sans Pro", Georgia, serif;
+    background: #fff;
+    color: #00509e;
+    border: 1px solid #00509e;
+    border-color: #00509e !important
+    border-style: solid !important;
+    border-radius: 10rem;
+    display: inline-block;
+    padding: 5px 15px;
+    height: auto;
+    font-weight: bold;
+    line-height: 1.5em;
+    text-align: center;
+    vertical-align: top;
+    cursor: pointer;
+    text-decoration: none
+}
+
+a.ntnu-button:hover {
+    background: #00509e;
+    color: #fff;
+    text-decoration: none
+}
+
+
+a.arrow:before {
+  content: '\f0a9';
+  font-family: 'Font Awesome 5 Free';
+  font-size:14;
+  xfloat: left;
+  xmargin-left: -1.5em;
+  color: #1481b8;
+  xdisplay: block;
+  margin: 2px
+}
+
+a.arrow:hover {
+    border: 1px solid #1481b8;
+    border-radius: 10px;
+    text-decoration: none;
+    background-color: #DDEAF4;
+}
+
+
+a.help:before {
+  content: '\f4cd';
+  font-family: 'Font Awesome 5 Free';
+  font-size:14;
+  background-color: #1481b8;
+  color: #ffffff;
+  margin: 2px
+}
+
+a.help {
+  background-color: #1481b8;
+  border-color: #1481b8;
+}
+
+
+
+code {
+  font-size: 100%
+}
+
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: CORAL; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #FF1493; font-weight: bold; } /* Keyword */
+code span.op { color: MEDIUMSEAGREEN; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: MEDIUMSLATEBLUE; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */

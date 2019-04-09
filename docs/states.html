@@ -1,0 +1,96 @@
+<html lang="en-US"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>STMPY</title>
+<meta property="og:title" content="STMPY">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="State machines in Python">
+<meta property="og:description" content="State machines in Python">
+
+
+<!--<link rel="stylesheet" type="text/css" href="style.css" />-->
+<link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Source+Code+Pro|Source+Sans+Pro:200,300,400,600,400italic,600italic|Rock+Salt" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
+
+<!--<script src="jquery-1.10.1.min.js"></script>-->
+<script src="assets/script-aside.js"></script>
+</head>
+<body id="top">
+
+<nav class="navbar navbar-expand-md navbar-dark " style="background-color:#666666"#2B65EC"> <!-- fixed-top -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+    <a class="nav-link" href="index.html" style="font-weight: bold")>STMPY</a>
+  </li>
+        
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documentation</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="driver.html">Drivers and Machines</a>
+      <a class="dropdown-item" href="transitions.html">Transitions</a>
+      <a class="dropdown-item" href="states.html">States</a>
+      <a class="dropdown-item" href="timers.html">Timers</a>
+      <a class="dropdown-item" href="messages.html">Messages</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="logging.html">Logging</a>
+      <a class="dropdown-item" href="graphs.html">Graphs</a>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./stmpy/index.html">API</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Github</a>
+  </li>
+</ul>
+
+<div class="navbar-nav flex-row ml-md-auto d-none d-md-flex"></div>
+    </nav>
+
+
+<div class="page">
+    </section>
+    <section class="content">
+<h1 id="states">States</h1>
+<h2 id="simple-states">Simple States</h2>
+<p>States can be declared implicitly by referring to them as sources and targets in transition declarations. States can have meaningful names, like <code>idle</code>, <code>waiting</code> or <code>active</code>, or numeric names like <code>s1</code>. The names <code>initial</code> and <code>final</code> are reserved for initial and final states.</p>
+<h2 id="initial-states">Initial States</h2>
+<p>A state machine mist have exactly one initial state, declared implicitly with an initial transition.</p>
+<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, &#39;trigger&#39;: &#39;t&#39;, &#39;target&#39;=&#39;s1&#39;}</code></pre>
+<h2 id="final-states">Final States</h2>
+<p>A transition can have a state with name <code>final</code> as target. Once it executes, the state machine terminates and is removed from the driver. If this was the last machine of the driver, the driver terminates as well.</p>
+<h2 id="entry--and-exit-actions">Entry- and Exit-Actions</h2>
+<p>States can declare entry and exit actions that are called when they are entered or exited. To declare these actions, declare a dictionary for the state. The name key refers to the name of the state that is also used in the transition declaration.</p>
+<pre><code>s_0 = {&#39;name&#39;: &#39;s0&#39;,
+        &#39;entry&#39;: &#39;op1; op2&#39;,
+        &#39;exit&#39;: &#39;op3&#39;}</code></pre>
+
+<h2 id="do-actions">Do-Actions</h2>
+<p>A state can also declare a do-action. This action is started once the state is entered, after any entry actions, if there are any. Do-actions can execute code that takes a long time to run, and are executed in their own thread, so that they don’t block the execution of other behavior. Once the do-action finishes, the state machine automatically dispatches an event with name <code>done</code>. This implies that a state with a do-action has only one outgoing transition, and this transition must be triggered by the event <code>done</code>.</p>
+<pre><code>s1 = {&#39;name&#39;: &#39;s1&#39;, 
+      &#39;do&#39;: &#39;do_action(&quot;a&quot;)&#39;}</code></pre>
+
+<h2 id="deferred-events">Deferred Events</h2>
+<p>A state can defer an event. In this case, the event, if it happens, does not trigger a transition, but is ignored in the input queue until the state machine switches into another state that does not defer the event anymore. This is useful to handle events that can arrive in states when they are not useful yet. To declare a deferred event, simply add the event with its name as key in the extended state description, and use the keyword <code>defer</code> as value:</p>
+<pre><code>s1 = {&#39;name&#39;: &#39;s1&#39;, 
+      &#39;a&#39;: &#39;defer&#39;}</code></pre>
+
+    </section>
+</div>
+
+
+<footer></footer>
+</body>
+</html>

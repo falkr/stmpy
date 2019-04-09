@@ -1,0 +1,95 @@
+<html lang="en-US"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>STMPY</title>
+<meta property="og:title" content="STMPY">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="State machines in Python">
+<meta property="og:description" content="State machines in Python">
+
+
+<!--<link rel="stylesheet" type="text/css" href="style.css" />-->
+<link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Source+Code+Pro|Source+Sans+Pro:200,300,400,600,400italic,600italic|Rock+Salt" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
+
+<!--<script src="jquery-1.10.1.min.js"></script>-->
+<script src="assets/script-aside.js"></script>
+</head>
+<body id="top">
+
+<nav class="navbar navbar-expand-md navbar-dark " style="background-color:#666666"#2B65EC"> <!-- fixed-top -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+    <a class="nav-link" href="index.html" style="font-weight: bold")>STMPY</a>
+  </li>
+        
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documentation</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="driver.html">Drivers and Machines</a>
+      <a class="dropdown-item" href="transitions.html">Transitions</a>
+      <a class="dropdown-item" href="states.html">States</a>
+      <a class="dropdown-item" href="timers.html">Timers</a>
+      <a class="dropdown-item" href="messages.html">Messages</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="logging.html">Logging</a>
+      <a class="dropdown-item" href="graphs.html">Graphs</a>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./stmpy/index.html">API</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Github</a>
+  </li>
+</ul>
+
+<div class="navbar-nav flex-row ml-md-auto d-none d-md-flex"></div>
+    </nav>
+
+
+<div class="page">
+    </section>
+    <section class="content">
+<h1 id="timers">Timers</h1>
+<p>State machine transitions can be triggered by the expiration of a timer. The corresponding transition simply declares a trigger with the name of the timer.</p>
+<pre><code>t = {&#39;source&#39;: &#39;s0&#39;, trigger: &#39;t0&#39;, target=&#39;s2&#39;}</code></pre>
+
+<h2 id="starting-timers">Starting Timers</h2>
+<p>A timer can be started as part of a transition action:</p>
+<pre><code>t = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;m&#39;, target=&#39;s1&#39;, effect=&#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;}</code></pre>
+<p>Similarly, a timer can be started as part of the entry or exit action of a state:</p>
+<pre><code>s_0 = {&#39;name&#39;: &#39;s0&#39;,
+        &#39;entry&#39;: &#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;}</code></pre>
+<p>A state must have a name, for instance <code>t0</code>. The duration is given in milliseconds. It is the minimum time until the timer’s expiration, but may vary due to the state of the event queue and the load of the system.</p>
+<p>A timer can also be started from code, using the state machine method <a href="stmpy/index.html#stmpy.Machine.start_timer">start_timer()</a> directly. This has the advantage that the duration does not have to be hard-coded, and can depend on any calculation in code.</p>
+<h2 id="restarting-a-timer">Restarting a Timer</h2>
+<p>If a timer is active and <code>start_timer()</code> is called once again, the timer starts again with the new timeout.</p>
+
+<h2 id="stopping-timers">Stopping Timers</h2>
+<p>Timers can be stopped using the action <code>stop_timer()</code>, either using the method <a href="stmpy/index.html#stmpy.Machine.stop_timer">start_timer()</a> or as part of a transition action:</p>
+<pre><code>t = {&#39;source&#39;: &#39;s1&#39;, trigger: &#39;t&#39;, target=&#39;s2&#39;, effect=&#39;stop_timer(&quot;t0&quot;)&#39;}</code></pre>
+<p>As an effect, the timer will be stopped. If it already expired, nothing will happen.</p>
+
+<h2 id="checking-timer-status">Checking Timer Status</h2>
+<p>In seldom cases, you may want to check in code the status of a timer. For that, use method <a href="stmpy/index.html#stmpy.Machine.get_timer">start_timer()</a>. It returns either the remaining time for that timer, or <code>None</code> if the timer is not active or does not exist. Note that the most common patterns of accessing the status of a timer is via the state machine’s states and transitions, by letting the timer expire and then change the state of a state machine, which in turn changes how other events are handled.</p>
+
+    </section>
+</div>
+
+
+<footer></footer>
+</body>
+</html>

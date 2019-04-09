@@ -1,0 +1,91 @@
+<html lang="en-US"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>STMPY</title>
+<meta property="og:title" content="STMPY">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="State machines in Python">
+<meta property="og:description" content="State machines in Python">
+
+
+<!--<link rel="stylesheet" type="text/css" href="style.css" />-->
+<link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Source+Code+Pro|Source+Sans+Pro:200,300,400,600,400italic,600italic|Rock+Salt" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
+
+<!--<script src="jquery-1.10.1.min.js"></script>-->
+<script src="assets/script-aside.js"></script>
+</head>
+<body id="top">
+
+<nav class="navbar navbar-expand-md navbar-dark " style="background-color:#666666"#2B65EC"> <!-- fixed-top -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+    <a class="nav-link" href="index.html" style="font-weight: bold")>STMPY</a>
+  </li>
+        
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documentation</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="driver.html">Drivers and Machines</a>
+      <a class="dropdown-item" href="transitions.html">Transitions</a>
+      <a class="dropdown-item" href="states.html">States</a>
+      <a class="dropdown-item" href="timers.html">Timers</a>
+      <a class="dropdown-item" href="messages.html">Messages</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="logging.html">Logging</a>
+      <a class="dropdown-item" href="graphs.html">Graphs</a>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./stmpy/index.html">API</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Github</a>
+  </li>
+</ul>
+
+<div class="navbar-nav flex-row ml-md-auto d-none d-md-flex"></div>
+    </nav>
+
+
+<div class="page">
+    </section>
+    <section class="content">
+<h1 id="logging">Logging</h1>
+<p>To debug your state machine, you can adjust the log level to see individual transitions. There are the following log levels:</p>
+<ul>
+<li><strong>DEBUG:</strong> Most fine-grained logging, printing everything</li>
+<li><strong>INFO:</strong> Only the most important informational log items</li>
+<li><strong>WARN:</strong> Show only warnings and errors.</li>
+<li><strong>ERROR:</strong> Show only error messages.</li>
+</ul>
+<p>To change the log level for STMPY state machine:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="im">import</span> logging</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1">debug_level <span class="op">=</span> logging.DEBUG</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">logger <span class="op">=</span> logging.getLogger(<span class="st">&#39;stmpy&#39;</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">logger.setLevel(debug_level)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">ch <span class="op">=</span> logging.StreamHandler()</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">ch.setLevel(debug_level)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">formatter <span class="op">=</span> logging.Formatter(<span class="st">&#39;</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(name)-12s</span><span class="st"> - </span><span class="sc">%(levelname)-8s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">&#39;</span>)</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">ch.setFormatter(formatter)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">logger.addHandler(ch)</a></code></pre></div>
+
+    </section>
+</div>
+
+
+<footer></footer>
+</body>
+</html>

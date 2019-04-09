@@ -1,0 +1,102 @@
+<html lang="en-US"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>STMPY</title>
+<meta property="og:title" content="STMPY">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="State machines in Python">
+<meta property="og:description" content="State machines in Python">
+
+
+<!--<link rel="stylesheet" type="text/css" href="style.css" />-->
+<link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic|Source+Code+Pro|Source+Sans+Pro:200,300,400,600,400italic,600italic|Rock+Salt" rel="stylesheet" type="text/css">
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
+
+<!--<script src="jquery-1.10.1.min.js"></script>-->
+<script src="assets/script-aside.js"></script>
+</head>
+<body id="top">
+
+<nav class="navbar navbar-expand-md navbar-dark " style="background-color:#666666"#2B65EC"> <!-- fixed-top -->
+        <ul class="nav nav-pills">
+        <li class="nav-item">
+    <a class="nav-link" href="index.html" style="font-weight: bold")>STMPY</a>
+  </li>
+        
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Documentation</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="driver.html">Drivers and Machines</a>
+      <a class="dropdown-item" href="transitions.html">Transitions</a>
+      <a class="dropdown-item" href="states.html">States</a>
+      <a class="dropdown-item" href="timers.html">Timers</a>
+      <a class="dropdown-item" href="messages.html">Messages</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="logging.html">Logging</a>
+      <a class="dropdown-item" href="graphs.html">Graphs</a>
+    </div>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./stmpy/index.html">API</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Github</a>
+  </li>
+</ul>
+
+<div class="navbar-nav flex-row ml-md-auto d-none d-md-flex"></div>
+    </nav>
+
+
+<div class="page">
+    </section>
+    <section class="content">
+<h1 id="transitions">Transitions</h1>
+
+<p>Transitions are declared as a dictionary referring to source and target states, trigger, and effect.</p>
+<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;t&#39;, target=&#39;s1&#39;, effect=&#39;action()&#39;}</code></pre>
+<h2 id="initial-transitions">Initial Transitions</h2>
+<p>A state machine must have exactly one initial transition. An initial transition is declared as normal transition, with the source referring to <code>initial</code>.</p>
+<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;t&#39;, target=&#39;s1&#39;}</code></pre>
+<h2 id="transition-actions">Transition Actions</h2>
+<p>The value of the attributes for transition effects can list several actions that are called on the object provided to the state machine. This list of actions can look in the following way:</p>
+<pre><code>effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</code></pre>
+<p>This is a semicolon-separated list of actions that are called, here as part of a transition’s effect. Method m1 has no arguments, and neither does m2. This means the empty brackets are optional. Method m3 has three literal arguments, here the integer 1, the boolean True and the string ‘a’. Note how the string is surrounded by double quotation marks, since the entire effect is coded in single quotation marks. Vice-versa is also possible. The last method, m4, declares an asterisk as argument. This means that the state machine uses the args and kwargs of the incoming event and offers them to the method.</p>
+<p>The actions can also directly refer to the state machine actions <code>stmpy.Machine.start_timer</code> and <code>stmpy.Machine.stop_timer</code>. A transition can for instance declare the following effects:</p>
+<pre><code>effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;);&#39;</code></pre>
+<h2 id="internal-transitions">Internal Transitions</h2>
+<p>States can declare internal transitions. These are transitions that have the same source and target state, similar to self-transitions. However, they don’t ever leave the state, so that any entry or exit actions declared in the state are not executed. An internal transition is declared as part of the extended state definition. It simply lists the name of the trigger (here <code>a</code>) as key and the list of actions it executes as value.</p>
+<pre><code>s_0 = {&#39;name&#39;: &#39;s_0&#39;,
+       &#39;a&#39;: &#39;action1(); action2()&#39;}</code></pre>
+
+<h2 id="compound-transitions">Compound Transitions</h2>
+<p>Compound transitions can contain decisions, so that the target state of the transition can depend on data computed during the execution of the transition. To define compound transitions, declare a method that executes the transition.</p>
+<pre><code>def transition_1(args, kwargs):
+     ...
+     if ... :           
+         return &#39;s1&#39;
+     else:
+         return &#39;s2&#39;</code></pre>
+<p>The transition is defined in the following way:</p>
+<pre><code>t_3 = {&#39;source&#39;: &#39;s_0&#39;, trigger: &#39;t&#39;, function: transition_1, &#39;targets&#39;: &#39;s1 s2&#39; }</code></pre>
+<p>This is similar to a simple transition, as it declares source state and trigger. It does not declare a target state or effects, however. Instead, it refers to a function that executes the transition, and returns the target state. The optional key <code>targets</code> list all potential states so the state machine graph can be generated from the information, even without parsing the function.</p>
+
+    </section>
+</div>
+
+
+<footer></footer>
+</body>
+</html>
