@@ -71,7 +71,7 @@ def _print_transition(t, counter):
             for target in t.targets:
                 s.append('{} -> {}\n'.format(decision_name, target))
     else:
-        if t.target is 'final': 
+        if t.target is 'final':
             s.append('{} -> f{} [label=" {}"]\n'.format(t.source, counter, label))
         else:
             s.append('{} -> {} [label=" {}"]\n'.format(t.source, t.target, label))
@@ -463,7 +463,6 @@ class Machine:
                     t_id = _tid(source, key)
                     transition = _Transition({'source': source, 'target': source, 'effect': s_dict[key], 'internal': True})
                     self._table[t_id] = transition
-        
 
     def _parse_states(self, states):
         for s_dict in states:
@@ -528,13 +527,13 @@ class Machine:
         States are specified as sources and targets as part of the transitions.
         This is done by simple strings. The name `initial` refers to the initial state 
         of the state machine. (An initial transition is necessary, see above.) 
-        The name `final` refers to the final state of the machine. 
+        The name `final` refers to the final state of the machine.
         Once a machine executes a transition with target state `final`, it terminates.
 
         States can declare internal transitions. These are transitions that have the
         same source and target state, similar to self-transitions. However, they don't ever
         leave the state, so that any entry or exit actions declared in the state are not executed.
-        An internal transition is declared as part of the extended state definition. 
+        An internal transition is declared as part of the extended state definition.
         It simply lists the name of the trigger (here `a`) as key and the list of actions it executes
         as value.
 
@@ -546,7 +545,7 @@ class Machine:
 
         A state can defer an event. In this case, the event, if it happens, does not trigger a transition, 
         but is ignored in the input queue until the state machine switches into another state
-        that does not defer the event anymore. 
+        that does not defer the event anymore.
         This is useful to handle events that can arrive in states when they are not useful yet.
         To declare a deferred event, simply add the event with its name as key in the 
         extended state description, and use the keyword `defer` as value:
@@ -593,15 +592,15 @@ class Machine:
                    'entry': 'op1; op2',
                    'exit': 'op3'}
 
-        A state can also declare a do-action. This action is started once the state is entered, 
+        A state can also declare a do-action. This action is started once the state is entered,
         after any entry actions, if there are any. Do-actions can refer to code that takes a long time
-        to run, and are executed in their own thread, so that they don't block the execution of other 
-        behavior. Once the do-action finishes, the state machine automatically dispatches an event 
+        to run, and are executed in their own thread, so that they don't block the execution of other
+        behavior. Once the do-action finishes, the state machine automatically dispatches an event
         with name `done`. This implies that a state with a do-action has only one outgoing transition, and this
         transition must be triggered by the event `done`.
 
             #!python
-            s1 = {'name': 's1', 
+            s1 = {'name': 's1',
                   'do': 'do_action("a")'}
 
         `name`: Name of the state machine. This name is used to send messages to it, and show its state during debugging.
@@ -643,11 +642,11 @@ class Machine:
     def _reset(self):
         self._state = 'initial'
 
-    def _run_function(self, obj, function_name, args, kwargs, asynchonous=False):
+    def _run_function(self, obj, function_name, args, kwargs, asynchronous=False):
         function_name = function_name.strip()
         self._logger.debug('Running function {}.'.format(function_name))
         func = getattr(obj, function_name)
-        if asynchonous:
+        if asynchronous:
             def running(function, args, kwargs):
                 try:
                     function(*args, **kwargs)
@@ -756,7 +755,7 @@ class Machine:
             # go into the next state
             if target is 'final':
                 self.terminate()
-                self._logger.debug('Transition in {} from {} to final state triggered by {}'.format(self.id, previous_state, target, event_id))
+                self._logger.debug('Transition in {} from {} to final state triggered by {}'.format(self.id, previous_state, event_id))
             else:
                 self._enter_state(target)
                 self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))

@@ -1,6 +1,4 @@
 
-from datetime import date
-
 from tests import *
 from tests.helpers import *
 
@@ -179,10 +177,10 @@ class DeferTestCase(unittest.TestCase):
 class Tick:
 
     def __init__(self):
-        None
+        pass
 
     def print(self, message):
-        time = self.stm.get_timer('tick')
+        _ = self.stm.get_timer('tick')
         #print(message)
         #print('remaining {}'.format(time))
         #print(self.stm.driver.print_status())
@@ -310,8 +308,6 @@ class StartStopTimer(unittest.TestCase):
 class CompoundTransition(unittest.TestCase):
 
     def compound(self, arg1, b1=None):
-        print(arg1)
-        print(b1)
         return 'final'
 
     def test(self):

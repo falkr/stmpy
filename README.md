@@ -7,11 +7,6 @@ State machines define their logic in terms of states and transitions.
 Transitions are triggered by signals or the expiration or timers.
 
 
-## Current Project Status
-
-The project is in an early stage, and some features are missing.
-
-
 ## Installation
 
     pip install stmpy
