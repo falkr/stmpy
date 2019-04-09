@@ -329,7 +329,7 @@ class CompoundFunctionContainer:
 
     def __init__(self, counter):
         self.counter = counter
-    
+
     def compound(self, arg1, b1=None):
         print('_______________________________{}'.format(self.counter))
         if self.counter > 13:

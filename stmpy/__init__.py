@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 """
 The current version of stmpy.
 """
@@ -525,8 +525,8 @@ class Machine:
 
         **States:**
         States are specified as sources and targets as part of the transitions.
-        This is done by simple strings. The name `initial` refers to the initial state 
-        of the state machine. (An initial transition is necessary, see above.) 
+        This is done by simple strings. The name `initial` refers to the initial state
+        of the state machine. (An initial transition is necessary, see above.)
         The name `final` refers to the final state of the machine.
         Once a machine executes a transition with target state `final`, it terminates.
 
@@ -543,15 +543,15 @@ class Machine:
 
         **Deferred Events**
 
-        A state can defer an event. In this case, the event, if it happens, does not trigger a transition, 
+        A state can defer an event. In this case, the event, if it happens, does not trigger a transition,
         but is ignored in the input queue until the state machine switches into another state
         that does not defer the event anymore.
         This is useful to handle events that can arrive in states when they are not useful yet.
-        To declare a deferred event, simply add the event with its name as key in the 
+        To declare a deferred event, simply add the event with its name as key in the
         extended state description, and use the keyword `defer` as value:
 
             #!python
-            s1 = {'name': 's1', 
+            s1 = {'name': 's1',
                 'a': 'defer'}
 
         **Actions and Effects:**
@@ -707,7 +707,7 @@ class Machine:
     def _enter_state(self, state):
         self._logger.debug('Machine {} enters state {}'.format(self.id, state))
         if self._state!=state and self._defer_queue!=None and len(self._defer_queue)>0:
-            self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue))) 
+            self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue)))
             self._driver._event_queue.queue.extendleft(self._defer_queue)
             self._defer_queue.clear()
         if state in self._states:
@@ -716,7 +716,7 @@ class Machine:
             # execute any do actions
             if self._states[state].do:
                 do_action = self._states[state].do[0]
-                self._run_function(self._obj, do_action['name'], do_action['args'], {}, asynchonous=True)
+                self._run_function(self._obj, do_action['name'], do_action['args'], {}, asynchronous=True)
         self._state = state
 
     def _exit_state(self, state):
