@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.7.2'
+__version__ = '0.7.4'
 """
 The current version of stmpy.
 """

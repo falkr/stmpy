@@ -2,8 +2,8 @@ from distutils.core import setup
 setup(
   name='stmpy',
   packages=['stmpy'],
-  version='0.7.2',
-  description='Support for simple state machines',
+  version='0.7.4',
+  description='Support for state machines',
   author='Frank Alexander Kraemer',
   author_email='kraemer.frank@gmail.com',
   license='MIT',
@@ -17,5 +17,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5']
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8']
 )
