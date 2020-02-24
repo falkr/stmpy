@@ -704,7 +704,7 @@ class Machine:
         # add at beginning, because we reverse when putting back
         self._defer_queue.insert(0, event)
 
-    def _enter_state(self, state):
+    def _enter_state(self, state, args, kwargs):
         self._logger.debug('Machine {} enters state {}'.format(self.id, state))
         if self._state!=state and self._defer_queue!=None and len(self._defer_queue)>0:
             self._logger.debug('Machine {} transfers back {} deferred events into event queue.'.format(self.id, len(self._defer_queue)))
@@ -716,7 +716,10 @@ class Machine:
             # execute any do actions
             if self._states[state].do:
                 do_action = self._states[state].do[0]
-                self._run_function(self._obj, do_action['name'], do_action['args'], {}, asynchronous=True)
+                if do_action['event_args']:
+                    self._run_function(self._obj, do_action['name'], args, kwargs, asynchronous=True)
+                else:
+                    self._run_function(self._obj, do_action['name'], do_action['args'], {}, asynchronous=True)
         self._state = state
 
     def _exit_state(self, state):
@@ -757,7 +760,7 @@ class Machine:
                 self.terminate()
                 self._logger.debug('Transition in {} from {} to final state triggered by {}'.format(self.id, previous_state, event_id))
             else:
-                self._enter_state(target)
+                self._enter_state(target, args, kwargs)
                 self._logger.debug('Transition in {} from {} to {} triggered by {}'.format(self.id, previous_state, target, event_id))
 
     def start_timer(self, timer_id, timeout):
