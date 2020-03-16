@@ -13,7 +13,7 @@ from queue import Empty
 from threading import Thread
 
 
-__version__ = '0.7.4'
+__version__ = '0.7.5'
 """
 The current version of stmpy.
 """
@@ -684,14 +684,14 @@ class Machine:
 
     def _run_actions(self, actions, args=[], kwargs={}):
         for action in actions:
+            if action['event_args']: # use the arguments provided by the event
+                args, kwargs = args, kwargs
+            else: # use the arguments provided in the declaration
+                args, kwargs = action['args'], {}
             if _is_state_machine_method(action['name']):
-                self._run_state_machine_function(action['name'], action['args'], kwargs)
-            elif action['event_args']:
-                # use the arguments provided by the event
-                self._run_function(self._obj, action['name'], args, kwargs)
+                self._run_state_machine_function(action['name'], args, kwargs)
             else:
-                # use the static arguments provided by declaration
-                self._run_function(self._obj, action['name'], action['args'], {})
+                self._run_function(self._obj, action['name'], args, kwargs)
 
     def _defers_event(self, event_id):
         if self._state in self._states:
