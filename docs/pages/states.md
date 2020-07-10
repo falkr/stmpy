@@ -8,7 +8,7 @@ The names `initial` and `final` are reserved for initial and final states.
 
 ## Initial States
 
-A state machine mist have exactly one initial state, declared implicitly with 
+A state machine must have exactly one initial state, declared implicitly with 
 an initial transition.
 
     t0 = {'source': 'initial', 'trigger': 't', 'target'='s1'}
@@ -19,7 +19,7 @@ A transition can have a state with name `final` as target.
 Once it executes, the state machine terminates and is removed from the driver. 
 If this was the last machine of the driver, the driver terminates as well.
 
-## Entry- and Exit-Actions
+## Entry and Exit Actions
 
 States can declare entry and exit actions that are called when they are entered or exited.
 To declare these actions, declare a dictionary for the state. The name key refers to
@@ -28,6 +28,8 @@ the name of the state that is also used in the transition declaration.
     s_0 = {'name': 's0',
             'entry': 'op1; op2',
             'exit': 'op3'}
+
+Note that you can declare several entry or exit actions, like in the example above, which has the two entry actions `op1` and `op2`, separated by a `;`.
 
 
 ## Do-Actions

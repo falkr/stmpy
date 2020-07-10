@@ -9,10 +9,9 @@ trigger, and effect.
 ## Initial Transitions
 
 A state machine must have exactly one initial transition. 
-An initial transition is declared as normal transition, with the source referring 
-to `initial`.
+An initial transition is declared as normal transition, with the source referring to the keyword `initial`. An innitial transition is triggered when the state machine is started, and does hence not declare any trigger.
 
-    t0 = {'source': 'initial', trigger: 't', target='s1'}
+    t0 = {'source': 'initial', target='s1'}
 
 ## Transition Actions
 
@@ -47,12 +46,12 @@ An internal transition is declared as part of the extended state definition.
 It simply lists the name of the trigger (here `a`) as key and the list of actions it executes
 as value.
 
-    s_0 = {'name': 's_0',
+    s_0 = {'name': 's0',
            'a': 'action1(); action2()'}
 
 
 
-## Compound Transitions
+## Decisions with Compound Transitions
 
 Compound transitions can contain decisions, so that the target state of the
 transition can depend on data computed during the execution of the transition.
@@ -67,7 +66,7 @@ To define compound transitions, declare a method that executes the transition.
 
 The transition is defined in the following way:
 
-    t_3 = {'source': 's_0', trigger: 't', function: transition_1, 'targets': 's1 s2' }
+    t_3 = {'source': 's0', trigger: 't', function: transition_1, 'targets': 's1 s2' }
 
 This is similar to a simple transition, as it declares source state and trigger.
 It does not declare a target state or effects, however. Instead, it refers to a
