@@ -1,7 +1,4 @@
-import time
 import logging
-from queue import Queue
-from queue import Empty
 from threading import Thread
 
 def _parse_arg_list(arglist):
@@ -435,13 +432,15 @@ class Machine:
         """
         return self._driver._get_timer(timer_id, self)
 
-    def send(self, message_id, args=[], kwargs={}):
+    def send(self, message_id, args=None, kwargs=None):
         """
         Send a message to this state machine.
 
         To send a message to a state machine by its name, use
         `stmpy.Driver.send` instead.
         """
+        if args == None: args = []
+        if kwargs == None: kwargs = {}
         self._logger.debug('Send {} in stm {}'.format(message_id, self.id))
         self._driver._add_event(
             event_id=message_id, args=args, kwargs=kwargs, stm=self)

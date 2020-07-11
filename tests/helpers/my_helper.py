@@ -1,6 +1,4 @@
 from datetime import datetime
-import unittest
-import logging
 
 class MyHelper():
 

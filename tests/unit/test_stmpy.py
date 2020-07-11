@@ -25,11 +25,10 @@ class Busy:
 
 
 class BusyTestCase(unittest.TestCase):
-    
+
     def setUp(self):
         logger = logging.getLogger('stmpy')
         logger.setLevel(logging.DEBUG)
-        pass
 
     def test(self):
         busy = Busy()
@@ -146,7 +145,7 @@ class DeferTestCase(unittest.TestCase):
 
         def unwrap(queue):
             s = []
-            if queue is None: 
+            if queue is None:
                 return s
             for event in queue:
                 if event is not None:

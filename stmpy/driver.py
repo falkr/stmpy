@@ -171,7 +171,7 @@ class Driver:
         else:
             self._event_queue.put({'id': event_id, 'args': args, 'kwargs': kwargs, 'stm': stm})
 
-    def send(self, message_id, stm_id, args=[], kwargs=None):
+    def send(self, message_id, stm_id, args=None, kwargs=None):
         """
         Send a message to a state machine handled by this driver.
 
@@ -180,6 +180,7 @@ class Driver:
 
         `stm_id` must be the id of a state machine earlier added to the driver.
         """
+        if args == None: args = []
         if kwargs == None: kwargs = {}
         if stm_id not in Driver._stms_by_id:
             self._logger.warn('Machine with name {} cannot be found. '

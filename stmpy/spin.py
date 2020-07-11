@@ -212,7 +212,7 @@ class Promela:
             s.append('           requeue();')
         self._effect(transition,s)
         self._next_state(transition, s)
-        s.append('        }') 
+        s.append('        }')
 
 def to_promela(machines):
     p = Promela(machines)
