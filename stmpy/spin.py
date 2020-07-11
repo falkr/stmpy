@@ -117,8 +117,8 @@ class Promela:
         # initial transition
         s.append('  initial:')
         s.append('    atomic {')
-        self._effect(machine._intial_transition, s)
-        self._next_state(machine._intial_transition, s)
+        self._effect(machine._initial_transition, s)
+        self._next_state(machine._initial_transition, s)
         s.append('    }')
         s.append('\n')
         
@@ -213,3 +213,7 @@ class Promela:
         self._effect(transition,s)
         self._next_state(transition, s)
         s.append('        }') 
+
+def to_promela(machines):
+    p = Promela(machines)
+    return p.to_promela()
