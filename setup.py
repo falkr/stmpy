@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name='stmpy',
   packages=['stmpy'],
-  version='0.7.5',
+  version='0.7.6',
   description='Support for state machines',
   author='Frank Alexander Kraemer',
   author_email='kraemer.frank@gmail.com',

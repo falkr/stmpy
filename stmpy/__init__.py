@@ -23,7 +23,7 @@ def get_graphviz_dot(machine):
     """ For compatibility. Use to_graphviz() instead. """
     return to_graphviz(machine)
 
-__version__ = '0.7.5'
+__version__ = '0.7.6'
 """
 The current version of stmpy.
 """
