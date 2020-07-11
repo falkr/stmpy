@@ -24,9 +24,9 @@ push:
 	git push origin master
 	git push github master
 
-runtests:
+tests:
 	python3 -m unittest tests/unit/test_stmpy.py
 
-runcoverage:
+coverage:
 	coverage run -m unittest tests/unit/test_stmpy.py
 	coverage report

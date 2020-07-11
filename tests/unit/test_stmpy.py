@@ -1,11 +1,15 @@
 
 from tests import *
 from tests.helpers import *
-
 import unittest
 import logging
+
+import sys
+sys.path.insert(0, '../../stmpy')
+
 from stmpy import Machine
 from stmpy import Driver
+from stmpy import to_promela
 import stmpy
 
 
@@ -380,3 +384,15 @@ class DoAction(unittest.TestCase):
         driver.start()
 
         driver.wait_until_finished()
+
+class ToPromela(unittest.TestCase):
+
+    def test(self):
+        t0 = {'source': 'initial', 'target': 's_tick', 'effect': 'start_timer("tick", 1000); start_timer("tstop", 1000)'}
+        t1 = {'trigger': 'tick', 'source': 's_tick', 'target': 's_tock', 'effect': 'start_timer("tock", 1000)'}
+        t2 = {'trigger': 'tock', 'source': 's_tock', 'target': 's_tick', 'effect': 'start_timer("tick", 1000)'}
+        t3 = {'trigger': 'tstop', 'source': 's_tock', 'target': 'final'}
+        stm_tick = stmpy.Machine(name='stm_tick', transitions=[t0, t1, t2, t3], obj=None)
+        to_promela([stm_tick])
+        #raise Exception
+
