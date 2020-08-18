@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.4" />
+<title>stmpy.driver API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>stmpy.driver</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import time
+import logging
+from queue import Queue
+from queue import Empty
+from threading import Thread
+
+def _current_time_millis():
+    return int(round(time.time() * 1000))
+
+class Driver:
+    &#34;&#34;&#34;
+    A driver can run several machines.
+
+    **Run-to-completion:**
+    One driver contains one thread. Machines assigned to a driver are executed
+    within this single thread. This provides a strict temporal ordering of
+    behavior for state machines assigned to the same driver. A driver only
+    executes one transition at a time, and always executes this transition to
+    completion. This means that the action within a transition can access
+    shared variables without interleaving behavior. One transition is always
+    executed separate from all other transitions.
+    &#34;&#34;&#34;
+
+    _stms_by_id = {}
+
+    def __init__(self):
+        &#34;&#34;&#34;Create a new driver.&#34;&#34;&#34;
+        self._logger = logging.getLogger(__name__)
+        self._logger.debug(&#39;Logging works&#39;)
+        self._active = False
+        self._event_queue = Queue()
+        self._timer_queue = []
+        self._next_timeout = None
+        # TODO need clarity if this should be a class variable
+        Driver._stms_by_id = {}
+
+    def _wake_queue(self):
+        # Sends a None event to wake up the queue.
+        self._event_queue.put(None)
+
+    def print_status(self):
+        &#34;&#34;&#34;Provide a snapshot of the current status.&#34;&#34;&#34;
+        s = []
+        s.append(&#39;=== State Machines: ===\n&#39;)
+        for stm_id in Driver._stms_by_id:
+            stm = Driver._stms_by_id[stm_id]
+            s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+        s.append(&#39;=== Events in Queue: ===\n&#39;)
+        for event in self._event_queue.queue:
+            if event is not None:
+                s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                    event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                    event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+        s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+        for timer in self._timer_queue:
+            s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+                timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+        s.append(&#39;=== ================ ===\n&#39;)
+        return &#39;&#39;.join(s)
+
+    def status(self):
+        &#34;&#34;&#34;Provide a snapshot of the current status.
+        +------ Remaining steps: 023 ---------+
+        | timers  -----&gt; t1 (for stm_tick) 3000 ms
+        |                t2 (for stm_tick) 3000 ms
+        | (+ 3 more)     t3 (for stm_tick) 3000 ms
+        +---------------------------------------
+        | stm1: A     in state  s_01
+        | Queue head --&gt; A (saved)
+        |                B
+        |                C
+        |                ... (+ 3 more)
+        +---------------------------------------&#34;&#34;&#34;
+        s = []
+        s.append(&#39;=== State Machines: ===\n&#39;)
+        for stm_id in Driver._stms_by_id:
+            stm = Driver._stms_by_id[stm_id]
+            s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+        s.append(&#39;=== Events in Queue: ===\n&#39;)
+        for event in self._event_queue.queue:
+            if event is not None:
+                s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                    event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                    event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+        s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+        for timer in self._timer_queue:
+            s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+                timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+        s.append(&#39;=== ================ ===\n&#39;)
+        return &#39;&#39;.join(s)
+
+    def add_machine(self, machine):
+        &#34;&#34;&#34;Add the state machine to this driver.&#34;&#34;&#34;
+        self._logger.debug(&#39;Adding machine {} to driver&#39;.format(machine.id))
+        machine._driver = self
+        machine._reset()
+        if machine.id is not None:
+            # TODO warning when STM already registered
+            Driver._stms_by_id[machine.id] = machine
+            self._add_event(event_id=None, args=[], kwargs={}, stm=machine)
+
+    def start(self, max_transitions=None, keep_active=False):
+        &#34;&#34;&#34;
+        Start the driver.
+
+        This method creates a thread which runs the event loop.
+        The method returns immediately. To wait until the driver
+        finishes, use `stmpy.Driver.wait_until_finished`.
+
+        `max_transitions`: execute only this number of transitions, then stop
+        `keep_active`: When true, keep the driver running even when all state
+        machines terminated
+        &#34;&#34;&#34;
+        self._active = True
+        self._max_transitions = max_transitions
+        self._keep_active = keep_active
+        self.thread = Thread(target=self._start_loop)
+        self.thread.start()
+
+    def step(self, steps=1):
+        &#34;&#34;&#34;Execute a single step.&#34;&#34;&#34;
+        self.start(max_transitions=steps)
+        self.wait_until_finished()
+
+    def stop(self):
+        &#34;&#34;&#34;Stop the driver.&#34;&#34;&#34;
+        self._active = False
+        self._wake_queue()
+
+    def wait_until_finished(self):
+        &#34;&#34;&#34;Blocking method to wait until the driver finished its execution.&#34;&#34;&#34;
+        try:
+            self.thread.join()
+        except KeyboardInterrupt:
+            self._logger.debug(&#39;Keyboard interrupt detected, stopping driver.&#39;)
+            self._active = False
+            self._wake_queue()
+
+    def _sort_timer_queue(self):
+        self._timer_queue = sorted(
+            self._timer_queue, key=lambda timer: timer[&#39;timeout_abs&#39;])
+
+    def _start_timer(self, name, timeout, stm):
+        self._logger.debug(&#39;Start timer with name={} from stm={}&#39;
+                           .format(name, stm.id))
+        timeout_abs = _current_time_millis() + int(timeout)
+        self._stop_timer(name, stm, log=False)
+        self._timer_queue.append(
+            {&#39;id&#39;: name, &#39;timeout&#39;: timeout, &#39;timeout_abs&#39;: timeout_abs,
+             &#39;stm&#39;: stm, &#39;tid&#39;: stm.id + &#39;_&#39; + name})
+        self._sort_timer_queue()
+        self._wake_queue()
+
+    def _stop_timer(self, name, stm, log=True):
+        if log: self._logger.debug(&#39;Stopping timer with name={} from stm={}&#39;
+                                   .format(name, stm.id))
+        index = 0
+        index_to_delete = None
+        tid = stm.id + &#39;_&#39; + name
+        for timer in self._timer_queue:
+            if timer[&#39;tid&#39;] == tid:
+                index_to_delete = index
+            index = index + 1
+        if index_to_delete is not None:
+            self._timer_queue.pop(index_to_delete)
+
+    def _get_timer(self, name, stm):
+        tid = stm.id + &#39;_&#39; + name
+        for timer in self._timer_queue:
+            if timer[&#39;tid&#39;] == tid:
+                return timer[&#39;timeout_abs&#39;] - _current_time_millis()
+        return None
+
+    def _check_timers(self):
+        &#34;&#34;&#34;
+        Check for expired timers.
+
+        If there are any timers that expired, place them in the event
+        queue.
+        &#34;&#34;&#34;
+        if self._timer_queue:
+            timer = self._timer_queue[0]
+            if timer[&#39;timeout_abs&#39;] &lt; _current_time_millis():
+                # the timer is expired, remove first element in queue
+                self._timer_queue.pop(0)
+                # put into the event queue
+                self._logger.debug(&#39;Timer {} expired for stm {}, adding it to event queue.&#39;.format(timer[&#39;id&#39;], timer[&#39;stm&#39;].id))
+                self._add_event(timer[&#39;id&#39;], [], {}, timer[&#39;stm&#39;], front=True)
+                # not necessary to set next timeout,
+                # complete check timers will be called again
+            else:
+                self._next_timeout = (
+                    timer[&#39;timeout_abs&#39;] - _current_time_millis()) / 1000
+                if self._next_timeout &lt; 0:
+                    self._next_timeout = 0
+        else:
+            self._next_timeout = None
+
+    def _add_event(self, event_id, args, kwargs, stm, front=False):
+        if front:
+            self._event_queue.queue.appendleft({&#39;id&#39;: event_id, &#39;args&#39;: args, &#39;kwargs&#39;: kwargs, &#39;stm&#39;: stm})
+        else:
+            self._event_queue.put({&#39;id&#39;: event_id, &#39;args&#39;: args, &#39;kwargs&#39;: kwargs, &#39;stm&#39;: stm})
+
+    def send(self, message_id, stm_id, args=None, kwargs=None):
+        &#34;&#34;&#34;
+        Send a message to a state machine handled by this driver.
+
+        If you have a reference to the state machine, you can also send it
+        directly to it by using `stmpy.Machine.send`.
+
+        `stm_id` must be the id of a state machine earlier added to the driver.
+        &#34;&#34;&#34;
+        if args == None: args = []
+        if kwargs == None: kwargs = {}
+        if stm_id not in Driver._stms_by_id:
+            self._logger.warn(&#39;Machine with name {} cannot be found. &#39;
+                              &#39;Ignoring message {}.&#39;.format(stm_id, message_id))
+        else:
+            stm = Driver._stms_by_id[stm_id]
+            self._add_event(message_id, args, kwargs, stm)
+
+    def _terminate_stm(self, stm_id):
+        self._logger.debug(&#39;Terminating machine {}.&#39;.format(stm_id))
+        # removing it from the table of machines
+        Driver._stms_by_id.pop(stm_id, None)
+        if not self._keep_active and not Driver._stms_by_id:
+            self._logger.debug(&#39;No machines anymore, stopping driver.&#39;)
+            self._active = False
+            self._wake_queue()
+
+    def _execute_transition(self, stm, event_id, args, kwargs, event):
+        if stm._defers_event(event_id):
+            stm._add_to_defer_queue(event)
+            self._logger.debug(&#39;Machine {} defers event {} in state {}&#39;.format(stm._id, event_id, stm._state))
+            return
+        stm._execute_transition(event_id, args, kwargs)
+        if self._max_transitions is not None:
+            self._max_transitions = self._max_transitions-1
+            if self._max_transitions == 0:
+                self._logger.debug(&#39;Stopping driver because max_transitions reached.&#39;)
+                self._active = False
+
+    def _start_loop(self):
+        self._logger.debug(&#39;Starting loop of the driver.&#39;)
+        while self._active:
+            self._check_timers()
+            try:
+                event = self._event_queue.get(block=True,
+                                              timeout=(self._next_timeout))
+                if event is not None:
+                    # (None events are just used to wake up the queue.)
+                    self._execute_transition(stm=event[&#39;stm&#39;],
+                                             event_id=event[&#39;id&#39;],
+                                             args=event[&#39;args&#39;],
+                                             kwargs=event[&#39;kwargs&#39;], event=event)
+            except Empty:
+                # timeout has occured
+                self._logger.debug(&#39;Timer expired, driver loop active again.&#39;)
+            except KeyboardInterrupt:
+                self.active = False
+                self._logger.debug(&#39;Keyboard interrupt. Stopping the driver.&#39;)
+        self._logger.debug(&#39;Driver loop is finished.&#39;)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="stmpy.driver.Driver"><code class="flex name class">
+<span>class <span class="ident">Driver</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A driver can run several machines.</p>
+<p><strong>Run-to-completion:</strong>
+One driver contains one thread. Machines assigned to a driver are executed
+within this single thread. This provides a strict temporal ordering of
+behavior for state machines assigned to the same driver. A driver only
+executes one transition at a time, and always executes this transition to
+completion. This means that the action within a transition can access
+shared variables without interleaving behavior. One transition is always
+executed separate from all other transitions.</p>
+<p>Create a new driver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Driver:
+    &#34;&#34;&#34;
+    A driver can run several machines.
+
+    **Run-to-completion:**
+    One driver contains one thread. Machines assigned to a driver are executed
+    within this single thread. This provides a strict temporal ordering of
+    behavior for state machines assigned to the same driver. A driver only
+    executes one transition at a time, and always executes this transition to
+    completion. This means that the action within a transition can access
+    shared variables without interleaving behavior. One transition is always
+    executed separate from all other transitions.
+    &#34;&#34;&#34;
+
+    _stms_by_id = {}
+
+    def __init__(self):
+        &#34;&#34;&#34;Create a new driver.&#34;&#34;&#34;
+        self._logger = logging.getLogger(__name__)
+        self._logger.debug(&#39;Logging works&#39;)
+        self._active = False
+        self._event_queue = Queue()
+        self._timer_queue = []
+        self._next_timeout = None
+        # TODO need clarity if this should be a class variable
+        Driver._stms_by_id = {}
+
+    def _wake_queue(self):
+        # Sends a None event to wake up the queue.
+        self._event_queue.put(None)
+
+    def print_status(self):
+        &#34;&#34;&#34;Provide a snapshot of the current status.&#34;&#34;&#34;
+        s = []
+        s.append(&#39;=== State Machines: ===\n&#39;)
+        for stm_id in Driver._stms_by_id:
+            stm = Driver._stms_by_id[stm_id]
+            s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+        s.append(&#39;=== Events in Queue: ===\n&#39;)
+        for event in self._event_queue.queue:
+            if event is not None:
+                s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                    event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                    event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+        s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+        for timer in self._timer_queue:
+            s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+                timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+        s.append(&#39;=== ================ ===\n&#39;)
+        return &#39;&#39;.join(s)
+
+    def status(self):
+        &#34;&#34;&#34;Provide a snapshot of the current status.
+        +------ Remaining steps: 023 ---------+
+        | timers  -----&gt; t1 (for stm_tick) 3000 ms
+        |                t2 (for stm_tick) 3000 ms
+        | (+ 3 more)     t3 (for stm_tick) 3000 ms
+        +---------------------------------------
+        | stm1: A     in state  s_01
+        | Queue head --&gt; A (saved)
+        |                B
+        |                C
+        |                ... (+ 3 more)
+        +---------------------------------------&#34;&#34;&#34;
+        s = []
+        s.append(&#39;=== State Machines: ===\n&#39;)
+        for stm_id in Driver._stms_by_id:
+            stm = Driver._stms_by_id[stm_id]
+            s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+        s.append(&#39;=== Events in Queue: ===\n&#39;)
+        for event in self._event_queue.queue:
+            if event is not None:
+                s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                    event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                    event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+        s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+        for timer in self._timer_queue:
+            s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+                timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+        s.append(&#39;=== ================ ===\n&#39;)
+        return &#39;&#39;.join(s)
+
+    def add_machine(self, machine):
+        &#34;&#34;&#34;Add the state machine to this driver.&#34;&#34;&#34;
+        self._logger.debug(&#39;Adding machine {} to driver&#39;.format(machine.id))
+        machine._driver = self
+        machine._reset()
+        if machine.id is not None:
+            # TODO warning when STM already registered
+            Driver._stms_by_id[machine.id] = machine
+            self._add_event(event_id=None, args=[], kwargs={}, stm=machine)
+
+    def start(self, max_transitions=None, keep_active=False):
+        &#34;&#34;&#34;
+        Start the driver.
+
+        This method creates a thread which runs the event loop.
+        The method returns immediately. To wait until the driver
+        finishes, use `stmpy.Driver.wait_until_finished`.
+
+        `max_transitions`: execute only this number of transitions, then stop
+        `keep_active`: When true, keep the driver running even when all state
+        machines terminated
+        &#34;&#34;&#34;
+        self._active = True
+        self._max_transitions = max_transitions
+        self._keep_active = keep_active
+        self.thread = Thread(target=self._start_loop)
+        self.thread.start()
+
+    def step(self, steps=1):
+        &#34;&#34;&#34;Execute a single step.&#34;&#34;&#34;
+        self.start(max_transitions=steps)
+        self.wait_until_finished()
+
+    def stop(self):
+        &#34;&#34;&#34;Stop the driver.&#34;&#34;&#34;
+        self._active = False
+        self._wake_queue()
+
+    def wait_until_finished(self):
+        &#34;&#34;&#34;Blocking method to wait until the driver finished its execution.&#34;&#34;&#34;
+        try:
+            self.thread.join()
+        except KeyboardInterrupt:
+            self._logger.debug(&#39;Keyboard interrupt detected, stopping driver.&#39;)
+            self._active = False
+            self._wake_queue()
+
+    def _sort_timer_queue(self):
+        self._timer_queue = sorted(
+            self._timer_queue, key=lambda timer: timer[&#39;timeout_abs&#39;])
+
+    def _start_timer(self, name, timeout, stm):
+        self._logger.debug(&#39;Start timer with name={} from stm={}&#39;
+                           .format(name, stm.id))
+        timeout_abs = _current_time_millis() + int(timeout)
+        self._stop_timer(name, stm, log=False)
+        self._timer_queue.append(
+            {&#39;id&#39;: name, &#39;timeout&#39;: timeout, &#39;timeout_abs&#39;: timeout_abs,
+             &#39;stm&#39;: stm, &#39;tid&#39;: stm.id + &#39;_&#39; + name})
+        self._sort_timer_queue()
+        self._wake_queue()
+
+    def _stop_timer(self, name, stm, log=True):
+        if log: self._logger.debug(&#39;Stopping timer with name={} from stm={}&#39;
+                                   .format(name, stm.id))
+        index = 0
+        index_to_delete = None
+        tid = stm.id + &#39;_&#39; + name
+        for timer in self._timer_queue:
+            if timer[&#39;tid&#39;] == tid:
+                index_to_delete = index
+            index = index + 1
+        if index_to_delete is not None:
+            self._timer_queue.pop(index_to_delete)
+
+    def _get_timer(self, name, stm):
+        tid = stm.id + &#39;_&#39; + name
+        for timer in self._timer_queue:
+            if timer[&#39;tid&#39;] == tid:
+                return timer[&#39;timeout_abs&#39;] - _current_time_millis()
+        return None
+
+    def _check_timers(self):
+        &#34;&#34;&#34;
+        Check for expired timers.
+
+        If there are any timers that expired, place them in the event
+        queue.
+        &#34;&#34;&#34;
+        if self._timer_queue:
+            timer = self._timer_queue[0]
+            if timer[&#39;timeout_abs&#39;] &lt; _current_time_millis():
+                # the timer is expired, remove first element in queue
+                self._timer_queue.pop(0)
+                # put into the event queue
+                self._logger.debug(&#39;Timer {} expired for stm {}, adding it to event queue.&#39;.format(timer[&#39;id&#39;], timer[&#39;stm&#39;].id))
+                self._add_event(timer[&#39;id&#39;], [], {}, timer[&#39;stm&#39;], front=True)
+                # not necessary to set next timeout,
+                # complete check timers will be called again
+            else:
+                self._next_timeout = (
+                    timer[&#39;timeout_abs&#39;] - _current_time_millis()) / 1000
+                if self._next_timeout &lt; 0:
+                    self._next_timeout = 0
+        else:
+            self._next_timeout = None
+
+    def _add_event(self, event_id, args, kwargs, stm, front=False):
+        if front:
+            self._event_queue.queue.appendleft({&#39;id&#39;: event_id, &#39;args&#39;: args, &#39;kwargs&#39;: kwargs, &#39;stm&#39;: stm})
+        else:
+            self._event_queue.put({&#39;id&#39;: event_id, &#39;args&#39;: args, &#39;kwargs&#39;: kwargs, &#39;stm&#39;: stm})
+
+    def send(self, message_id, stm_id, args=None, kwargs=None):
+        &#34;&#34;&#34;
+        Send a message to a state machine handled by this driver.
+
+        If you have a reference to the state machine, you can also send it
+        directly to it by using `stmpy.Machine.send`.
+
+        `stm_id` must be the id of a state machine earlier added to the driver.
+        &#34;&#34;&#34;
+        if args == None: args = []
+        if kwargs == None: kwargs = {}
+        if stm_id not in Driver._stms_by_id:
+            self._logger.warn(&#39;Machine with name {} cannot be found. &#39;
+                              &#39;Ignoring message {}.&#39;.format(stm_id, message_id))
+        else:
+            stm = Driver._stms_by_id[stm_id]
+            self._add_event(message_id, args, kwargs, stm)
+
+    def _terminate_stm(self, stm_id):
+        self._logger.debug(&#39;Terminating machine {}.&#39;.format(stm_id))
+        # removing it from the table of machines
+        Driver._stms_by_id.pop(stm_id, None)
+        if not self._keep_active and not Driver._stms_by_id:
+            self._logger.debug(&#39;No machines anymore, stopping driver.&#39;)
+            self._active = False
+            self._wake_queue()
+
+    def _execute_transition(self, stm, event_id, args, kwargs, event):
+        if stm._defers_event(event_id):
+            stm._add_to_defer_queue(event)
+            self._logger.debug(&#39;Machine {} defers event {} in state {}&#39;.format(stm._id, event_id, stm._state))
+            return
+        stm._execute_transition(event_id, args, kwargs)
+        if self._max_transitions is not None:
+            self._max_transitions = self._max_transitions-1
+            if self._max_transitions == 0:
+                self._logger.debug(&#39;Stopping driver because max_transitions reached.&#39;)
+                self._active = False
+
+    def _start_loop(self):
+        self._logger.debug(&#39;Starting loop of the driver.&#39;)
+        while self._active:
+            self._check_timers()
+            try:
+                event = self._event_queue.get(block=True,
+                                              timeout=(self._next_timeout))
+                if event is not None:
+                    # (None events are just used to wake up the queue.)
+                    self._execute_transition(stm=event[&#39;stm&#39;],
+                                             event_id=event[&#39;id&#39;],
+                                             args=event[&#39;args&#39;],
+                                             kwargs=event[&#39;kwargs&#39;], event=event)
+            except Empty:
+                # timeout has occured
+                self._logger.debug(&#39;Timer expired, driver loop active again.&#39;)
+            except KeyboardInterrupt:
+                self.active = False
+                self._logger.debug(&#39;Keyboard interrupt. Stopping the driver.&#39;)
+        self._logger.debug(&#39;Driver loop is finished.&#39;)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="stmpy.driver.Driver.add_machine"><code class="name flex">
+<span>def <span class="ident">add_machine</span></span>(<span>self, machine)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add the state machine to this driver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_machine(self, machine):
+    &#34;&#34;&#34;Add the state machine to this driver.&#34;&#34;&#34;
+    self._logger.debug(&#39;Adding machine {} to driver&#39;.format(machine.id))
+    machine._driver = self
+    machine._reset()
+    if machine.id is not None:
+        # TODO warning when STM already registered
+        Driver._stms_by_id[machine.id] = machine
+        self._add_event(event_id=None, args=[], kwargs={}, stm=machine)</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.print_status"><code class="name flex">
+<span>def <span class="ident">print_status</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provide a snapshot of the current status.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_status(self):
+    &#34;&#34;&#34;Provide a snapshot of the current status.&#34;&#34;&#34;
+    s = []
+    s.append(&#39;=== State Machines: ===\n&#39;)
+    for stm_id in Driver._stms_by_id:
+        stm = Driver._stms_by_id[stm_id]
+        s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+    s.append(&#39;=== Events in Queue: ===\n&#39;)
+    for event in self._event_queue.queue:
+        if event is not None:
+            s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+    s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+    for timer in self._timer_queue:
+        s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+            timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+    s.append(&#39;=== ================ ===\n&#39;)
+    return &#39;&#39;.join(s)</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.send"><code class="name flex">
+<span>def <span class="ident">send</span></span>(<span>self, message_id, stm_id, args=None, kwargs=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Send a message to a state machine handled by this driver.</p>
+<p>If you have a reference to the state machine, you can also send it
+directly to it by using <code><a title="stmpy.Machine.send" href="index.html#stmpy.Machine.send">Machine.send()</a></code>.</p>
+<p><code>stm_id</code> must be the id of a state machine earlier added to the driver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send(self, message_id, stm_id, args=None, kwargs=None):
+    &#34;&#34;&#34;
+    Send a message to a state machine handled by this driver.
+
+    If you have a reference to the state machine, you can also send it
+    directly to it by using `stmpy.Machine.send`.
+
+    `stm_id` must be the id of a state machine earlier added to the driver.
+    &#34;&#34;&#34;
+    if args == None: args = []
+    if kwargs == None: kwargs = {}
+    if stm_id not in Driver._stms_by_id:
+        self._logger.warn(&#39;Machine with name {} cannot be found. &#39;
+                          &#39;Ignoring message {}.&#39;.format(stm_id, message_id))
+    else:
+        stm = Driver._stms_by_id[stm_id]
+        self._add_event(message_id, args, kwargs, stm)</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.start"><code class="name flex">
+<span>def <span class="ident">start</span></span>(<span>self, max_transitions=None, keep_active=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Start the driver.</p>
+<p>This method creates a thread which runs the event loop.
+The method returns immediately. To wait until the driver
+finishes, use <code><a title="stmpy.Driver.wait_until_finished" href="index.html#stmpy.Driver.wait_until_finished">Driver.wait_until_finished()</a></code>.</p>
+<p><code>max_transitions</code>: execute only this number of transitions, then stop
+<code>keep_active</code>: When true, keep the driver running even when all state
+machines terminated</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start(self, max_transitions=None, keep_active=False):
+    &#34;&#34;&#34;
+    Start the driver.
+
+    This method creates a thread which runs the event loop.
+    The method returns immediately. To wait until the driver
+    finishes, use `stmpy.Driver.wait_until_finished`.
+
+    `max_transitions`: execute only this number of transitions, then stop
+    `keep_active`: When true, keep the driver running even when all state
+    machines terminated
+    &#34;&#34;&#34;
+    self._active = True
+    self._max_transitions = max_transitions
+    self._keep_active = keep_active
+    self.thread = Thread(target=self._start_loop)
+    self.thread.start()</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.status"><code class="name flex">
+<span>def <span class="ident">status</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provide a snapshot of the current status.
++------ Remaining steps: 023 ---------+
+| timers
+-----&gt; t1 (for stm_tick) 3000 ms
+|
+t2 (for stm_tick) 3000 ms
+| (+ 3 more)
+t3 (for stm_tick) 3000 ms
++---------------------------------------
+| stm1: A
+in state
+s_01
+| Queue head &ndash;&gt; A (saved)
+|
+B
+|
+C
+|
+&hellip; (+ 3 more)
++---------------------------------------</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def status(self):
+    &#34;&#34;&#34;Provide a snapshot of the current status.
+    +------ Remaining steps: 023 ---------+
+    | timers  -----&gt; t1 (for stm_tick) 3000 ms
+    |                t2 (for stm_tick) 3000 ms
+    | (+ 3 more)     t3 (for stm_tick) 3000 ms
+    +---------------------------------------
+    | stm1: A     in state  s_01
+    | Queue head --&gt; A (saved)
+    |                B
+    |                C
+    |                ... (+ 3 more)
+    +---------------------------------------&#34;&#34;&#34;
+    s = []
+    s.append(&#39;=== State Machines: ===\n&#39;)
+    for stm_id in Driver._stms_by_id:
+        stm = Driver._stms_by_id[stm_id]
+        s.append(&#39;    - {} in state {}\n&#39;.format(stm.id, stm.state))
+    s.append(&#39;=== Events in Queue: ===\n&#39;)
+    for event in self._event_queue.queue:
+        if event is not None:
+            s.append(&#39;    - {} for {} with args:{} kwargs:{}\n&#39;.format(
+                event[&#39;id&#39;], event[&#39;stm&#39;].id,
+                event[&#39;args&#39;], event[&#39;kwargs&#39;]))
+    s.append(&#39;=== Active Timers: {} ===\n&#39;.format(len(self._timer_queue)))
+    for timer in self._timer_queue:
+        s.append(&#39;    - {} for {} with timeout {}\n&#39;.format(
+            timer[&#39;id&#39;], timer[&#39;stm&#39;].id, timer[&#39;timeout&#39;]))
+    s.append(&#39;=== ================ ===\n&#39;)
+    return &#39;&#39;.join(s)</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.step"><code class="name flex">
+<span>def <span class="ident">step</span></span>(<span>self, steps=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Execute a single step.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def step(self, steps=1):
+    &#34;&#34;&#34;Execute a single step.&#34;&#34;&#34;
+    self.start(max_transitions=steps)
+    self.wait_until_finished()</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.stop"><code class="name flex">
+<span>def <span class="ident">stop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stop the driver.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop(self):
+    &#34;&#34;&#34;Stop the driver.&#34;&#34;&#34;
+    self._active = False
+    self._wake_queue()</code></pre>
+</details>
+</dd>
+<dt id="stmpy.driver.Driver.wait_until_finished"><code class="name flex">
+<span>def <span class="ident">wait_until_finished</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Blocking method to wait until the driver finished its execution.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def wait_until_finished(self):
+    &#34;&#34;&#34;Blocking method to wait until the driver finished its execution.&#34;&#34;&#34;
+    try:
+        self.thread.join()
+    except KeyboardInterrupt:
+        self._logger.debug(&#39;Keyboard interrupt detected, stopping driver.&#39;)
+        self._active = False
+        self._wake_queue()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="stmpy" href="index.html">stmpy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="stmpy.driver.Driver" href="#stmpy.driver.Driver">Driver</a></code></h4>
+<ul class="two-column">
+<li><code><a title="stmpy.driver.Driver.add_machine" href="#stmpy.driver.Driver.add_machine">add_machine</a></code></li>
+<li><code><a title="stmpy.driver.Driver.print_status" href="#stmpy.driver.Driver.print_status">print_status</a></code></li>
+<li><code><a title="stmpy.driver.Driver.send" href="#stmpy.driver.Driver.send">send</a></code></li>
+<li><code><a title="stmpy.driver.Driver.start" href="#stmpy.driver.Driver.start">start</a></code></li>
+<li><code><a title="stmpy.driver.Driver.status" href="#stmpy.driver.Driver.status">status</a></code></li>
+<li><code><a title="stmpy.driver.Driver.step" href="#stmpy.driver.Driver.step">step</a></code></li>
+<li><code><a title="stmpy.driver.Driver.stop" href="#stmpy.driver.Driver.stop">stop</a></code></li>
+<li><code><a title="stmpy.driver.Driver.wait_until_finished" href="#stmpy.driver.Driver.wait_until_finished">wait_until_finished</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+</footer>
+</body>
+</html>

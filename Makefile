@@ -2,10 +2,14 @@ all:
 	@echo "Specify a target."
 
 docs:
-	pdoc --html --overwrite --html-dir ./docs ./stmpy
+	pdoc3 --html --force --output-dir ./docs ./stmpy
 
 pypi: docs
 	sudo python2 setup.py register sdist upload
+
+code:
+	python3 -m isort ./
+	python3 -m black .
 
 dev-install: docs
 	rm -rf ./dist
