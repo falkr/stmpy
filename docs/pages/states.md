@@ -11,7 +11,9 @@ The names `initial` and `final` are reserved for initial and final states.
 A state machine must have exactly one initial state, declared implicitly with 
 an initial transition.
 
-    t0 = {'source': 'initial', 'trigger': 't', 'target'='s1'}
+```python
+t0 = {'source': 'initial', 'trigger': 't', 'target'='s1'}
+```
 
 ## Final States
 
@@ -25,9 +27,11 @@ States can declare entry and exit actions that are called when they are entered 
 To declare these actions, declare a dictionary for the state. The name key refers to
 the name of the state that is also used in the transition declaration.
 
-    s_0 = {'name': 's0',
-            'entry': 'op1; op2',
-            'exit': 'op3'}
+```python
+s_0 = {'name': 's0',
+        'entry': 'op1; op2',
+        'exit': 'op3'}
+```
 
 Note that you can declare several entry or exit actions, like in the example above, which has the two entry actions `op1` and `op2`, separated by a `;`.
 
@@ -41,9 +45,10 @@ so that they don't block the execution of other behavior.
 Once the do-action finishes, the state machine automatically dispatches an event with name `done`. 
 This implies that a state with a do-action has only one outgoing transition, and this transition must be triggered by the event `done`.
 
-    s1 = {'name': 's1', 
-          'do': 'do_action("a")'}
-
+```python
+s1 = {'name': 's1', 
+        'do': 'do_action("a")'}
+```
 
 ## Deferred Events
 
@@ -54,5 +59,7 @@ This is useful to handle events that can arrive in states when they are not usef
 To declare a deferred event, simply add the event with its name as key in the 
 extended state description, and use the keyword `defer` as value:
 
-    s1 = {'name': 's1', 
-          'a': 'defer'}
+```python
+s1 = {'name': 's1', 
+        'a': 'defer'}
+```

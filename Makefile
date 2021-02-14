@@ -32,5 +32,5 @@ tests:
 	python3 -m pytest -s tests/unit/test_stmpy.py
 
 coverage:
-	coverage run -m unittest tests/unit/test_stmpy.py
-	coverage report
+	coverage run -m pytest -s tests/unit/test_stmpy.py
+	coverage html -d coverage_html

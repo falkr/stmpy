@@ -65,14 +65,19 @@
     <section class="content">
 <h1 id="timers">Timers</h1>
 <p>State machine transitions can be triggered by the expiration of a timer. The corresponding transition simply declares a trigger with the name of the timer.</p>
-<pre><code>t = {&#39;source&#39;: &#39;s0&#39;, trigger: &#39;t0&#39;, target=&#39;s2&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;s0&#39;</span>, trigger: <span class="st">&#39;t0&#39;</span>, target<span class="op">=</span><span class="st">&#39;s2&#39;</span>}</span></code></pre></div>
 
 <h2 id="starting-timers">Starting Timers</h2>
 <p>A timer can be started as part of a transition action:</p>
-<pre><code>t = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;m&#39;, target=&#39;s1&#39;, effect=&#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;initial&#39;</span>, trigger: <span class="st">&#39;m&#39;</span>, target<span class="op">=</span><span class="st">&#39;s1&#39;</span>, effect<span class="op">=</span><span class="st">&#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;</span>}</span></code></pre></div>
+
 <p>Similarly, a timer can be started as part of the entry or exit action of a state:</p>
-<pre><code>s_0 = {&#39;name&#39;: &#39;s0&#39;,
-        &#39;entry&#39;: &#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s_0 <span class="op">=</span> {<span class="st">&#39;name&#39;</span>: <span class="st">&#39;s0&#39;</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;entry&#39;</span>: <span class="st">&#39;start_timer(&quot;t0&quot;, &quot;1000&quot;)&#39;</span>}</span></code></pre></div>
+
 <p>A state must have a name, for instance <code>t0</code>. The duration is given in milliseconds. It is the minimum time until the timer’s expiration, but may vary due to the state of the event queue and the load of the system.</p>
 <p>A timer can also be started from code, using the state machine method <a href="stmpy/index.html#stmpy.Machine.start_timer">start_timer()</a> directly. This has the advantage that the duration does not have to be hard-coded, and can depend on any calculation in code.</p>
 <h2 id="restarting-a-timer">Restarting a Timer</h2>
@@ -80,7 +85,9 @@
 
 <h2 id="stopping-timers">Stopping Timers</h2>
 <p>Timers can be stopped using the action <code>stop_timer()</code>, either using the method <a href="stmpy/index.html#stmpy.Machine.stop_timer">start_timer()</a> or as part of a transition action:</p>
-<pre><code>t = {&#39;source&#39;: &#39;s1&#39;, trigger: &#39;t&#39;, target=&#39;s2&#39;, effect=&#39;stop_timer(&quot;t0&quot;)&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;s1&#39;</span>, trigger: <span class="st">&#39;t&#39;</span>, target<span class="op">=</span><span class="st">&#39;s2&#39;</span>, effect<span class="op">=</span><span class="st">&#39;stop_timer(&quot;t0&quot;)&#39;</span>}</span></code></pre></div>
+
 <p>As an effect, the timer will be stopped. If it already expired, nothing will happen.</p>
 
 <h2 id="checking-timer-status">Checking Timer Status</h2>

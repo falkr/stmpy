@@ -65,12 +65,15 @@
     <section class="content">
 <h1 id="messages">Messages</h1>
 <p>The transition of a state machine can be triggered by the reception of a message. The corresponding transition simply declares a trigger with the name of the message.</p>
-<pre><code>t = {&#39;source&#39;: &#39;s0&#39;, trigger: &#39;m1&#39;, target=&#39;s1&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;s0&#39;</span>, trigger: <span class="st">&#39;m1&#39;</span>, target<span class="op">=</span><span class="st">&#39;s1&#39;</span>}</span></code></pre></div>
+
 <p>The messages can origin from the state machine itself, from another state machine, or from any other Python code. Hence messages are useful to couple state machines with each other, or to trigger a state machine transition from code.</p>
 
 <h2 id="sending-messages-via-the-state-machine">Sending Messages (via the State Machine)</h2>
 <p>Messages can be sent by a state machine using the action <code>send()</code>, either using the method <a href="stmpy/index.html#stmpy.Machine.send">send()</a> or as part of a transition action:</p>
-<pre><code>t = {&#39;source&#39;: &#39;s1&#39;, trigger: &#39;t&#39;, target=&#39;s2&#39;, effect=&#39;send(&quot;m1&quot;)&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;s1&#39;</span>, trigger: <span class="st">&#39;t&#39;</span>, target<span class="op">=</span><span class="st">&#39;s2&#39;</span>, effect<span class="op">=</span><span class="st">&#39;send(&quot;m1&quot;)&#39;</span>}</span></code></pre></div>
 
 <h2 id="sending-messages-via-the-driver">Sending Messages (via the Driver)</h2>
 <p>To send a message to another state machine, use the <a href="stmpy/index.html#stmpy.Driver.send">send()</a> method of the driver class. This method lets you specify the name of the receiving state machine.</p>

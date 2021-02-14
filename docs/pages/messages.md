@@ -3,7 +3,9 @@
 The transition of a state machine can be triggered by the reception of a message.
 The corresponding transition simply declares a trigger with the name of the message.
 
-    t = {'source': 's0', trigger: 'm1', target='s1'}
+```python
+t = {'source': 's0', trigger: 'm1', target='s1'}
+```
 
 The messages can origin from the state machine itself, from another state machine, or from any other Python code.
 Hence messages are useful to couple state machines with each other, or to trigger a state machine transition from code.
@@ -14,8 +16,9 @@ Hence messages are useful to couple state machines with each other, or to trigge
 Messages can be sent by a state machine using the action `send()`, either using the method <a href="stmpy/index.html#stmpy.Machine.send">send()</a>
 or as part of a transition action:
 
-    t = {'source': 's1', trigger: 't', target='s2', effect='send("m1")'}
-
+```python
+t = {'source': 's1', trigger: 't', target='s2', effect='send("m1")'}
+```
 
 ## Sending Messages (via the Driver)
 

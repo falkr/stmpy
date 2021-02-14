@@ -3,19 +3,24 @@
 State machine transitions can be triggered by the expiration of a timer. 
 The corresponding transition simply declares a trigger with the name of the timer.
 
-    t = {'source': 's0', trigger: 't0', target='s2'}
-
+```python
+t = {'source': 's0', trigger: 't0', target='s2'}
+```
 
 ## Starting Timers
 
 A timer can be started as part of a transition action:
 
-    t = {'source': 'initial', trigger: 'm', target='s1', effect='start_timer("t0", "1000")'}
+```python
+t = {'source': 'initial', trigger: 'm', target='s1', effect='start_timer("t0", "1000")'}
+```
 
 Similarly, a timer can be started as part of the entry or exit action of a state:
 
-    s_0 = {'name': 's0',
-            'entry': 'start_timer("t0", "1000")'}
+```python
+s_0 = {'name': 's0',
+        'entry': 'start_timer("t0", "1000")'}
+```
 
 A state must have a name, for instance `t0`. 
 The duration is given in milliseconds. 
@@ -34,7 +39,9 @@ If a timer is active and `start_timer()` is called once again, the timer starts 
 Timers can be stopped using the action `stop_timer()`, either using the method <a href="stmpy/index.html#stmpy.Machine.stop_timer">start_timer()</a>
 or as part of a transition action:
 
-    t = {'source': 's1', trigger: 't', target='s2', effect='stop_timer("t0")'}
+```python
+t = {'source': 's1', trigger: 't', target='s2', effect='stop_timer("t0")'}
+```
 
 As an effect, the timer will be stopped. 
 If it already expired, nothing will happen.

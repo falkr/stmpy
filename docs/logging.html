@@ -72,15 +72,17 @@
 <li><strong>ERROR:</strong> Show only error messages.</li>
 </ul>
 <p>To change the log level for STMPY state machine:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="im">import</span> logging</a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1">debug_level <span class="op">=</span> logging.DEBUG</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">logger <span class="op">=</span> logging.getLogger(<span class="st">&#39;stmpy&#39;</span>)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">logger.setLevel(debug_level)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">ch <span class="op">=</span> logging.StreamHandler()</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">ch.setLevel(debug_level)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">formatter <span class="op">=</span> logging.Formatter(<span class="st">&#39;</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(name)-12s</span><span class="st"> - </span><span class="sc">%(levelname)-8s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">&#39;</span>)</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">ch.setFormatter(formatter)</a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">logger.addHandler(ch)</a></code></pre></div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> logging</span></code></pre></div>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>debug_level <span class="op">=</span> logging.DEBUG</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="st">&#39;stmpy&#39;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>logger.setLevel(debug_level)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ch <span class="op">=</span> logging.StreamHandler()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>ch.setLevel(debug_level)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>formatter <span class="op">=</span> logging.Formatter(<span class="st">&#39;</span><span class="sc">%(asctime)s</span><span class="st"> - </span><span class="sc">%(name)-12s</span><span class="st"> - </span><span class="sc">%(levelname)-8s</span><span class="st"> - </span><span class="sc">%(message)s</span><span class="st">&#39;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ch.setFormatter(formatter)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>logger.addHandler(ch)</span></code></pre></div>
 
     </section>
 </div>

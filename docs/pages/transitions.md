@@ -4,14 +4,18 @@
 Transitions are declared as a dictionary referring to source and target states, 
 trigger, and effect.
 
-    t0 = {'source': 'initial', trigger: 't', target='s1', effect='action()'}
+```python
+t0 = {'source': 'initial', trigger: 't', target='s1', effect='action()'}
+```
 
 ## Initial Transitions
 
 A state machine must have exactly one initial transition. 
 An initial transition is declared as normal transition, with the source referring to the keyword `initial`. An innitial transition is triggered when the state machine is started, and does hence not declare any trigger.
 
-    t0 = {'source': 'initial', target='s1'}
+```python
+t0 = {'source': 'initial', target='s1'}
+```
 
 ## Transition Actions
 
@@ -19,7 +23,9 @@ The value of the attributes for transition effects can list several actions
 that are called on the object provided to the state machine.
 This list of actions can look in the following way:
 
-    effect='m1; m2(); m3(1, True, "a"); m4(*)'
+```python
+effect='m1; m2(); m3(1, True, "a"); m4(*)'
+```
 
 This is a semicolon-separated list of actions that are called, here as
 part of a transition's effect. Method m1 has no arguments, and neither
@@ -35,7 +41,9 @@ The actions can also directly refer to the state machine actions
 `stmpy.Machine.start_timer` and `stmpy.Machine.stop_timer`.
 A transition can for instance declare the following effects:
 
-    effect='start_timer("t1", 100); stop_timer("t2");'
+```python
+effect='start_timer("t1", 100); stop_timer("t2");'
+```
 
 ## Internal Transitions
 
@@ -46,9 +54,10 @@ An internal transition is declared as part of the extended state definition.
 It simply lists the name of the trigger (here `a`) as key and the list of actions it executes
 as value.
 
-    s_0 = {'name': 's0',
-           'a': 'action1(); action2()'}
-
+```python
+s_0 = {'name': 's0',
+        'a': 'action1(); action2()'}
+```
 
 
 ## Decisions with Compound Transitions
@@ -57,16 +66,20 @@ Compound transitions can contain decisions, so that the target state of the
 transition can depend on data computed during the execution of the transition.
 To define compound transitions, declare a method that executes the transition.
 
-    def transition_1(args, kwargs):
-         ...
-         if ... :           
-             return 's1'
-         else:
-             return 's2'
+```python
+def transition_1(args, kwargs):
+        ...
+        if ... :           
+            return 's1'
+        else:
+            return 's2'
+```
 
 The transition is defined in the following way:
 
-    t_3 = {'source': 's0', trigger: 't', function: transition_1, 'targets': 's1 s2' }
+```python
+t_3 = {'source': 's0', trigger: 't', function: transition_1, 'targets': 's1 s2' }
+```
 
 This is similar to a simple transition, as it declares source state and trigger.
 It does not declare a target state or effects, however. Instead, it refers to a

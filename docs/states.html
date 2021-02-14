@@ -67,25 +67,32 @@
 <h2 id="simple-states">Simple States</h2>
 <p>States can be declared implicitly by referring to them as sources and targets in transition declarations. States can have meaningful names, like <code>idle</code>, <code>waiting</code> or <code>active</code>, or numeric names like <code>s1</code>. The names <code>initial</code> and <code>final</code> are reserved for initial and final states.</p>
 <h2 id="initial-states">Initial States</h2>
-<p>A state machine mist have exactly one initial state, declared implicitly with an initial transition.</p>
-<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, &#39;trigger&#39;: &#39;t&#39;, &#39;target&#39;=&#39;s1&#39;}</code></pre>
+<p>A state machine must have exactly one initial state, declared implicitly with an initial transition.</p>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;initial&#39;</span>, <span class="st">&#39;trigger&#39;</span>: <span class="st">&#39;t&#39;</span>, <span class="st">&#39;target&#39;</span><span class="op">=</span><span class="st">&#39;s1&#39;</span>}</span></code></pre></div>
+
 <h2 id="final-states">Final States</h2>
 <p>A transition can have a state with name <code>final</code> as target. Once it executes, the state machine terminates and is removed from the driver. If this was the last machine of the driver, the driver terminates as well.</p>
-<h2 id="entry--and-exit-actions">Entry- and Exit-Actions</h2>
+<h2 id="entry-and-exit-actions">Entry and Exit Actions</h2>
 <p>States can declare entry and exit actions that are called when they are entered or exited. To declare these actions, declare a dictionary for the state. The name key refers to the name of the state that is also used in the transition declaration.</p>
-<pre><code>s_0 = {&#39;name&#39;: &#39;s0&#39;,
-        &#39;entry&#39;: &#39;op1; op2&#39;,
-        &#39;exit&#39;: &#39;op3&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s_0 <span class="op">=</span> {<span class="st">&#39;name&#39;</span>: <span class="st">&#39;s0&#39;</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;entry&#39;</span>: <span class="st">&#39;op1; op2&#39;</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;exit&#39;</span>: <span class="st">&#39;op3&#39;</span>}</span></code></pre></div>
+
+<p>Note that you can declare several entry or exit actions, like in the example above, which has the two entry actions <code>op1</code> and <code>op2</code>, separated by a <code>;</code>.</p>
 
 <h2 id="do-actions">Do-Actions</h2>
 <p>A state can also declare a do-action. This action is started once the state is entered, after any entry actions, if there are any. Do-actions can execute code that takes a long time to run, and are executed in their own thread, so that they don’t block the execution of other behavior. Once the do-action finishes, the state machine automatically dispatches an event with name <code>done</code>. This implies that a state with a do-action has only one outgoing transition, and this transition must be triggered by the event <code>done</code>.</p>
-<pre><code>s1 = {&#39;name&#39;: &#39;s1&#39;, 
-      &#39;do&#39;: &#39;do_action(&quot;a&quot;)&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="op">=</span> {<span class="st">&#39;name&#39;</span>: <span class="st">&#39;s1&#39;</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;do&#39;</span>: <span class="st">&#39;do_action(&quot;a&quot;)&#39;</span>}</span></code></pre></div>
 
 <h2 id="deferred-events">Deferred Events</h2>
 <p>A state can defer an event. In this case, the event, if it happens, does not trigger a transition, but is ignored in the input queue until the state machine switches into another state that does not defer the event anymore. This is useful to handle events that can arrive in states when they are not useful yet. To declare a deferred event, simply add the event with its name as key in the extended state description, and use the keyword <code>defer</code> as value:</p>
-<pre><code>s1 = {&#39;name&#39;: &#39;s1&#39;, 
-      &#39;a&#39;: &#39;defer&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="op">=</span> {<span class="st">&#39;name&#39;</span>: <span class="st">&#39;s1&#39;</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;a&#39;</span>: <span class="st">&#39;defer&#39;</span>}</span></code></pre></div>
 
     </section>
 </div>

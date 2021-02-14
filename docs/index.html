@@ -68,43 +68,47 @@
 
 <h2 id="installation">Installation</h2>
 <p>STMPY is available via <a href="https://pypi.org/project/stmpy/">Python Package Index</a>, and you can install it via pip:</p>
-<pre><code>pip install stmpy</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install stmpy</span></code></pre></div>
+
 <p>To upgrade, use:</p>
-<pre><code>pip install --upgrade stmpy</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install --upgrade stmpy</span></code></pre></div>
 
 <h2 id="example-tick-tock-state-machine">Example: Tick Tock State Machine</h2>
-<pre><code>from stmpy import Machine, Driver
 
-class Tick:
-
-  def __init__(self):
-    self.ticks = 0
-    self.tocks = 0
-
-  def on_init(self):
-    print(&#39;Init!&#39;)
-
-  def on_tick(self):
-    print(&#39;Tick!&#39;)
-    self.ticks = self.ticks + 1
-
-  def on_tock(self):
-    print(&#39;Tock!&#39;)
-    self.tocks = self.tocks + 1
-
-driver = Driver()
-tick = Tick()
-
-t0 = {&#39;source&#39;:&#39;initial&#39;, &#39;target&#39;:&#39;s_tick&#39;, &#39;effect&#39;:&#39;on_init; start_timer(&quot;tick&quot;, 1000)&#39;}
-t1 = {&#39;trigger&#39;:&#39;tick&#39;, &#39;source&#39;:&#39;s_tick&#39;, &#39;target&#39;:&#39;s_tock&#39;, &#39;effect&#39;:&#39;on_tick; start_timer(&quot;tock&quot;, 1000)&#39;}
-t2 = {&#39;trigger&#39;:&#39;tock&#39;, &#39;source&#39;:&#39;s_tock&#39;, &#39;target&#39;:&#39;s_tick&#39;, &#39;effect&#39;:&#39;on_tock; start_timer(&quot;tick&quot;, 1000)&#39;}
-
-stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name=&#39;stm_tick&#39;)
-tick.stm = stm_tick
-
-driver.add_stm(stm_tick)
-driver.start(max_transitions=5)
-driver.wait_until_finished()</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stmpy <span class="im">import</span> Machine, Driver</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Tick:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.ticks <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.tocks <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> on_init(<span class="va">self</span>):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;Init!&#39;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> on_tick(<span class="va">self</span>):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;Tick!&#39;</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.ticks <span class="op">=</span> <span class="va">self</span>.ticks <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> on_tock(<span class="va">self</span>):</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;Tock!&#39;</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.tocks <span class="op">=</span> <span class="va">self</span>.tocks <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>driver <span class="op">=</span> Driver()</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>tick <span class="op">=</span> Tick()</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> {<span class="st">&#39;source&#39;</span>:<span class="st">&#39;initial&#39;</span>, <span class="st">&#39;target&#39;</span>:<span class="st">&#39;s_tick&#39;</span>, <span class="st">&#39;effect&#39;</span>:<span class="st">&#39;on_init; start_timer(&quot;tick&quot;, 1000)&#39;</span>}</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> {<span class="st">&#39;trigger&#39;</span>:<span class="st">&#39;tick&#39;</span>, <span class="st">&#39;source&#39;</span>:<span class="st">&#39;s_tick&#39;</span>, <span class="st">&#39;target&#39;</span>:<span class="st">&#39;s_tock&#39;</span>, <span class="st">&#39;effect&#39;</span>:<span class="st">&#39;on_tick; start_timer(&quot;tock&quot;, 1000)&#39;</span>}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> {<span class="st">&#39;trigger&#39;</span>:<span class="st">&#39;tock&#39;</span>, <span class="st">&#39;source&#39;</span>:<span class="st">&#39;s_tock&#39;</span>, <span class="st">&#39;target&#39;</span>:<span class="st">&#39;s_tick&#39;</span>, <span class="st">&#39;effect&#39;</span>:<span class="st">&#39;on_tock; start_timer(&quot;tick&quot;, 1000)&#39;</span>}</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>stm_tick <span class="op">=</span> Machine(transitions<span class="op">=</span>[t0, t1, t2], obj<span class="op">=</span>tick, name<span class="op">=</span><span class="st">&#39;stm_tick&#39;</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>tick.stm <span class="op">=</span> stm_tick</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>driver.add_stm(stm_tick)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>driver.start(max_transitions<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>driver.wait_until_finished()</span></code></pre></div>
 
 <h2 id="contributing">Contributing</h2>
 <p><code>stmpy</code> <a href="https://github.com/falkr/stmpy">is on GitHub</a>. Pull requests and bug reports are welcome.</p>

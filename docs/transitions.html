@@ -66,31 +66,44 @@
 <h1 id="transitions">Transitions</h1>
 
 <p>Transitions are declared as a dictionary referring to source and target states, trigger, and effect.</p>
-<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;t&#39;, target=&#39;s1&#39;, effect=&#39;action()&#39;}</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;initial&#39;</span>, trigger: <span class="st">&#39;t&#39;</span>, target<span class="op">=</span><span class="st">&#39;s1&#39;</span>, effect<span class="op">=</span><span class="st">&#39;action()&#39;</span>}</span></code></pre></div>
+
 <h2 id="initial-transitions">Initial Transitions</h2>
-<p>A state machine must have exactly one initial transition. An initial transition is declared as normal transition, with the source referring to <code>initial</code>.</p>
-<pre><code>t0 = {&#39;source&#39;: &#39;initial&#39;, trigger: &#39;t&#39;, target=&#39;s1&#39;}</code></pre>
+<p>A state machine must have exactly one initial transition. An initial transition is declared as normal transition, with the source referring to the keyword <code>initial</code>. An innitial transition is triggered when the state machine is started, and does hence not declare any trigger.</p>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;initial&#39;</span>, target<span class="op">=</span><span class="st">&#39;s1&#39;</span>}</span></code></pre></div>
+
 <h2 id="transition-actions">Transition Actions</h2>
 <p>The value of the attributes for transition effects can list several actions that are called on the object provided to the state machine. This list of actions can look in the following way:</p>
-<pre><code>effect=&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>effect<span class="op">=</span><span class="st">&#39;m1; m2(); m3(1, True, &quot;a&quot;); m4(*)&#39;</span></span></code></pre></div>
+
 <p>This is a semicolon-separated list of actions that are called, here as part of a transition’s effect. Method m1 has no arguments, and neither does m2. This means the empty brackets are optional. Method m3 has three literal arguments, here the integer 1, the boolean True and the string ‘a’. Note how the string is surrounded by double quotation marks, since the entire effect is coded in single quotation marks. Vice-versa is also possible. The last method, m4, declares an asterisk as argument. This means that the state machine uses the args and kwargs of the incoming event and offers them to the method.</p>
 <p>The actions can also directly refer to the state machine actions <code>stmpy.Machine.start_timer</code> and <code>stmpy.Machine.stop_timer</code>. A transition can for instance declare the following effects:</p>
-<pre><code>effect=&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;);&#39;</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>effect<span class="op">=</span><span class="st">&#39;start_timer(&quot;t1&quot;, 100); stop_timer(&quot;t2&quot;);&#39;</span></span></code></pre></div>
+
 <h2 id="internal-transitions">Internal Transitions</h2>
 <p>States can declare internal transitions. These are transitions that have the same source and target state, similar to self-transitions. However, they don’t ever leave the state, so that any entry or exit actions declared in the state are not executed. An internal transition is declared as part of the extended state definition. It simply lists the name of the trigger (here <code>a</code>) as key and the list of actions it executes as value.</p>
-<pre><code>s_0 = {&#39;name&#39;: &#39;s_0&#39;,
-       &#39;a&#39;: &#39;action1(); action2()&#39;}</code></pre>
 
-<h2 id="compound-transitions">Compound Transitions</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>s_0 <span class="op">=</span> {<span class="st">&#39;name&#39;</span>: <span class="st">&#39;s0&#39;</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;a&#39;</span>: <span class="st">&#39;action1(); action2()&#39;</span>}</span></code></pre></div>
+
+<h2 id="decisions-with-compound-transitions">Decisions with Compound Transitions</h2>
 <p>Compound transitions can contain decisions, so that the target state of the transition can depend on data computed during the execution of the transition. To define compound transitions, declare a method that executes the transition.</p>
-<pre><code>def transition_1(args, kwargs):
-     ...
-     if ... :           
-         return &#39;s1&#39;
-     else:
-         return &#39;s2&#39;</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> transition_1(args, kwargs):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        ...</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ... :           </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&#39;s1&#39;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="st">&#39;s2&#39;</span></span></code></pre></div>
+
 <p>The transition is defined in the following way:</p>
-<pre><code>t_3 = {&#39;source&#39;: &#39;s_0&#39;, trigger: &#39;t&#39;, function: transition_1, &#39;targets&#39;: &#39;s1 s2&#39; }</code></pre>
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>t_3 <span class="op">=</span> {<span class="st">&#39;source&#39;</span>: <span class="st">&#39;s0&#39;</span>, trigger: <span class="st">&#39;t&#39;</span>, function: transition_1, <span class="st">&#39;targets&#39;</span>: <span class="st">&#39;s1 s2&#39;</span> }</span></code></pre></div>
+
 <p>This is similar to a simple transition, as it declares source state and trigger. It does not declare a target state or effects, however. Instead, it refers to a function that executes the transition, and returns the target state. The optional key <code>targets</code> list all potential states so the state machine graph can be generated from the information, even without parsing the function.</p>
 
     </section>

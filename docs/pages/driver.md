@@ -20,38 +20,40 @@ This name is used to log all events of the state machine, and as an address when
 
 If the state machine should invoke Python methods, it requires an object of a class that implements all actions.
 
-    from stmpy import Machine, Driver
+```python
+from stmpy import Machine, Driver
 
-    class Tick:
+class Tick:
 
-      def __init__(self):
-        self.ticks = 0
-        self.tocks = 0
+  def __init__(self):
+    self.ticks = 0
+    self.tocks = 0
 
-      def on_init(self):
-        print('Init!')
+  def on_init(self):
+    print('Init!')
 
-      def on_tick(self):
-        print('Tick!')
-        self.ticks = self.ticks + 1
+  def on_tick(self):
+    print('Tick!')
+    self.ticks = self.ticks + 1
 
-      def on_tock(self):
-        print('Tock!')
-        self.tocks = self.tocks + 1
+  def on_tock(self):
+    print('Tock!')
+    self.tocks = self.tocks + 1
 
-    driver = Driver()
-    tick = Tick()
+driver = Driver()
+tick = Tick()
 
-    t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init; start_timer("tick", 1000)'}
-    t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick; start_timer("tok", 1000)'}
-    t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock; start_timer("tik", 1000)'}
+t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init; start_timer("tick", 1000)'}
+t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick; start_timer("tok", 1000)'}
+t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock; start_timer("tik", 1000)'}
 
-    stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name='stm_tick')
-    tick.stm = stm_tick
+stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name='stm_tick')
+tick.stm = stm_tick
 
-    driver.add_stm(stm_tick)
-    driver.start()
-    driver.wait_until_finished()
+driver.add_stm(stm_tick)
+driver.start()
+driver.wait_until_finished()
+```
 
 Above, the class `Tick` contains all methods that the state machine uses. 
 Variable `tick` holds an instance of the class, and is passed to the constructor of the state machine.
@@ -74,18 +76,19 @@ executed separate from all other transitions.
 
 To run a state machine, you need to add it to a driver, then start the driver:
 
-    driver = Driver()
-    tick = Tick()
+```python
+driver = Driver()
+tick = Tick()
 
-    t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init; start_timer("tik", 1000)'}
-    t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick; start_timer("tok", 1000)'}
-    t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock; start_timer("tik", 1000)'}
+t0 = {'source':'initial', 'target':'s_tick', 'effect':'on_init; start_timer("tik", 1000)'}
+t1 = {'trigger':'tick', 'source':'s_tick', 'target':'s_tock', 'effect':'on_tick; start_timer("tok", 1000)'}
+t2 = {'trigger':'tock', 'source':'s_tock', 'target':'s_tick', 'effect':'on_tock; start_timer("tik", 1000)'}
 
-    stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name='stm_tick')
-    tick.stm = stm_tick
+stm_tick = Machine(transitions=[t0, t1, t2], obj=tick, name='stm_tick')
+tick.stm = stm_tick
 
-    driver.add_stm(stm_tick)
-    driver.start()
-    driver.wait_until_finished()
-
+driver.add_stm(stm_tick)
+driver.start()
+driver.wait_until_finished()
+```
 

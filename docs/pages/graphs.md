@@ -17,18 +17,24 @@ In addition, install the Python library for Graphviz:
 
 Write the graph file with the following code:
 
-    with open("graph.gv", "w") as file:
-        print(stmpy.get_graphviz_dot(stm), file=file)
+```python
+with open("graph.gv", "w") as file:
+    print(stmpy.get_graphviz_dot(stm), file=file)
+```
 
 The format is the dot format for Graphviz, and can be directly used as input to the Graphviz command line tool:
 
-    dot -Tsvg graph.gv -o graph.svg
+```bash
+dot -Tsvg graph.gv -o graph.svg
+```
 
 
 ## Display in Jupyter Notebook
 
 In a notebook, build a stmpy.Machine. Then, declare a cell with the following content:
 
-    from graphviz import Source
-    src = Source(stmpy.get_graphviz_dot(stm))
-    src
+```python
+from graphviz import Source
+src = Source(stmpy.get_graphviz_dot(stm))
+src
+```
