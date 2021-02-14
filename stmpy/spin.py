@@ -80,15 +80,15 @@ class Promela:
         inline_requeue = textwrap.dedent(
             """\
             inline requeue() {
-              atomic { 
+              atomic {
                 do
-                :: queue ? msg -> queue_temp ! msg; 
-                :: empty(queue) -> break; 
+                :: queue ? msg -> queue_temp ! msg;
+                :: empty(queue) -> break;
                 od;
                 do
                 :: queue_temp ? msg -> queue ! msg;
                 :: empty(queue_temp) -> break;
-                od;  
+                od;
               }
             }"""
         )
@@ -226,7 +226,7 @@ class Promela:
 
 
 def to_promela(machines):
-    """ Experimental feature to export machines as Promela processes 
+    """Experimental feature to export machines as Promela processes
     for model checking in Spin.
     """
     p = Promela(machines)

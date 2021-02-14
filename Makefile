@@ -29,7 +29,7 @@ push:
 	git push github master
 
 tests:
-	python3 -m unittest tests/unit/test_stmpy.py
+	python3 -m pytest -s tests/unit/test_stmpy.py
 
 coverage:
 	coverage run -m unittest tests/unit/test_stmpy.py

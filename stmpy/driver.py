@@ -240,9 +240,9 @@ class Driver:
 
         `stm_id` must be the id of a state machine earlier added to the driver.
         """
-        if args == None:
+        if args is None:
             args = []
-        if kwargs == None:
+        if kwargs is None:
             kwargs = {}
         if stm_id not in Driver._stms_by_id:
             self._logger.warn(

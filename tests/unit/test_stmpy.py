@@ -207,14 +207,14 @@ class TestTick(unittest.TestCase):
         t0 = {
             "source": "initial",
             "target": "active",
-            "effect": 'start_timer("tick", 1000); print("initial1")',
+            "effect": "start_timer('tick', 1000); print('initial1')",
         }
         #'effect': 'print("initial1")'}
         t1 = {
             "trigger": "tick",
             "source": "active",
             "target": "active",
-            "effect": 'start_timer("tick", 1000); print("timeout1")',
+            "effect": "start_timer('tick', 1000); print('timeout1')",
         }
         #'effect': 'print("timeout1")'}
         stm_tick_1 = Machine(name="stm_tick_1", transitions=[t0, t1], obj=tick1)
@@ -224,15 +224,14 @@ class TestTick(unittest.TestCase):
         t0 = {
             "source": "initial",
             "target": "active",
-            "effect": 'start_timer("tick", 2000); print("initial2")',
+            "effect": "start_timer('tick', 2000); print('initial2')",
         }
         #'effect': 'print("initial2")'}
         t1 = {
             "trigger": "tick",
             "source": "active",
             "target": "active",
-            #'effect': 'print("timeout2")'}
-            "effect": 'start_timer("tick", 1000); print("timeout2")',
+            "effect": "start_timer('tick', 1000); print('timeout2')",
         }
         stm_tick_2 = Machine(name="stm_tick_2", transitions=[t0, t1], obj=tick2)
         tick2.stm = stm_tick_2
@@ -282,14 +281,14 @@ class EntryExitSelf(unittest.TestCase):
     def test(self):
         tick1 = EntryExitSelfLogic()
         t0 = {"source": "initial", "target": "s1"}
-        t1 = {"trigger": "b", "source": "s1", "target": "s1", "effect": 'add("b")'}
-        t2 = {"trigger": "c", "source": "s1", "target": "final", "effect": 'add("c")'}
+        t1 = {"trigger": "b", "source": "s1", "target": "s1", "effect": "add('b')"}
+        t2 = {"trigger": "c", "source": "s1", "target": "final", "effect": "add('c')"}
 
         s1 = {
             "name": "s1",
-            "a": 'add("a")',
-            "entry": 'add("entry")',
-            "exit": 'add("exit")',
+            "a": "add('a')",
+            "entry": "add('entry')",
+            "exit": "add('exit')",
         }
 
         stm = Machine(name="stm", transitions=[t0, t1, t2], states=[s1], obj=tick1)
@@ -312,13 +311,13 @@ class StartStopTimer(unittest.TestCase):
         t0 = {
             "source": "initial",
             "target": "s1",
-            "effect": 'start_timer("t1", "1000")',
+            "effect": "start_timer('t1', 1000)",
         }
         t1 = {
             "trigger": "a",
             "source": "s1",
             "target": "s1",
-            "effect": 'stop_timer("t1")',
+            "effect": "stop_timer('t1')",
         }
         t2 = {"trigger": "b", "source": "s1", "target": "final"}
 
@@ -403,15 +402,15 @@ class DoAction(unittest.TestCase):
     def test(self):
         tick1 = EntryExitSelfLogic()
         t0 = {"source": "initial", "target": "s1"}
-        t1 = {"trigger": "b", "source": "s1", "target": "s1", "effect": 'add("b")'}
+        t1 = {"trigger": "b", "source": "s1", "target": "s1", "effect": "add('b')"}
         t2 = {
             "trigger": "done",
             "source": "s1",
             "target": "final",
-            "effect": 'add("c")',
+            "effect": "add('c')",
         }
 
-        s1 = {"name": "s1", "do": 'do_action("a")'}
+        s1 = {"name": "s1", "do": "do_action('a')"}
 
         stm = Machine(name="stm", transitions=[t0, t1, t2], states=[s1], obj=tick1)
         tick1.stm = stm
@@ -430,19 +429,19 @@ class ToPromela(unittest.TestCase):
         t0 = {
             "source": "initial",
             "target": "s_tick",
-            "effect": 'start_timer("tick", 1000); start_timer("tstop", 1000)',
+            "effect": "start_timer('tick', 1000); start_timer('tstop', 1000)",
         }
         t1 = {
             "trigger": "tick",
             "source": "s_tick",
             "target": "s_tock",
-            "effect": 'start_timer("tock", 1000)',
+            "effect": "start_timer('tock', 1000)",
         }
         t2 = {
             "trigger": "tock",
             "source": "s_tock",
             "target": "s_tick",
-            "effect": 'start_timer("tick", 1000)',
+            "effect": "start_timer('tick', 1000)",
         }
         t3 = {"trigger": "tstop", "source": "s_tock", "target": "final"}
         stm_tick = stmpy.Machine(
