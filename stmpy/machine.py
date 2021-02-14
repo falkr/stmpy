@@ -1,5 +1,6 @@
 import logging
 from threading import Thread
+from ast import literal_eval
 
 
 def _parse_arg_list(arglist):
@@ -13,7 +14,7 @@ def _parse_arg_list(arglist):
     for arg in arglist.split(","):
         arg = arg.strip()
         if arg:  # string is not empty
-            args.append(eval(arg))
+            args.append(literal_eval(arg))
     return args
 
 
