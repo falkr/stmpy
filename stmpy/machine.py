@@ -389,6 +389,7 @@ class Machine:
             )
             self._driver._event_queue.queue.extendleft(self._defer_queue)
             self._defer_queue.clear()
+        self._state = state
         if state in self._states:
             # execute any entry actions
             self._run_actions(self._states[state].entry)
@@ -407,7 +408,6 @@ class Machine:
                         {},
                         asynchronous=True,
                     )
-        self._state = state
 
     def _exit_state(self, state):
         self._logger.debug("Machine {} exits state {}".format(self.id, state))
